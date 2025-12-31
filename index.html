@@ -1,564 +1,15 @@
-<html lang="zh-TW"><head><script>(function(firebaseConfig, initialAuthToken, appId) {
-        window.__firebase_config = firebaseConfig;
-        window.__initial_auth_token = initialAuthToken;
-        window.__app_id = appId;
-            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyNDIwNWRjNjYzMGQwMGYzOWIxODY4ZDRmYWI3NTc1N2Y0ZGI0OTAiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxMDc4ODU4MTYwMjkxODkzNjE3OSIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjX2U3MzM2NDM1YzgxNTI5MGVfaW5kZXguaHRtbC0yNTkifSwiZXhwIjoxNzY3MjIxMjgxLCJpYXQiOjE3NjcyMTc2ODEsImFsZyI6IlJTMjU2In0.H74QEFzTfM7K3XdR5WZ-8cTc4coGNzR4R_hoidWekSnoUDZExa7riJROS3ePSbyGPKiIRBPNev7sT7pABlzhTu4IghGPT7nHURxdAWKj2lp_ReTxUG3wGWPObSasMEdeqvHjaGa2dl69uJSxraIgwFQOLdU8bBo3MtuEheaNPW3PH5B-dE_0PsQ0KuJ6qJYl-qpZC9EnE3eQxxns3pb4U6IlU0zuiPZG1BhKvOWLX9cf21LUfGG2lozyzgMGyZLnKxQvrFS2W0YI9raBKLhwZsIMHZ3Sxn1l3wUfIhjc_aHlRJtiC8oVprfTiwnkjJSDKYtLzQE56pQWATAs1zfrKg","c_e7336435c815290e_index.html-259")</script><script>'use strict';var h=typeof Object.defineProperties=="function"?Object.defineProperty:function(a,b,d){if(a==Array.prototype||a==Object.prototype)return a;a[b]=d.value;return a};function l(a){a=["object"==typeof globalThis&&globalThis,a,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var b=0;b<a.length;++b){var d=a[b];if(d&&d.Math==Math)return d}throw Error("Cannot find global object");}var n=l(this);
-function p(a,b){if(b)a:{var d=n;a=a.split(".");for(var c=0;c<a.length-1;c++){var e=a[c];if(!(e in d))break a;d=d[e]}a=a[a.length-1];c=d[a];b=b(c);b!=c&&b!=null&&h(d,a,{configurable:!0,writable:!0,value:b})}}function r(a){function b(c){return a.next(c)}function d(c){return a.throw(c)}return new Promise(function(c,e){function f(g){g.done?c(g.value):Promise.resolve(g.value).then(b,d).then(f,e)}f(a.next())})}function t(a){return r(a())}
-p("Object.values",function(a){return a?a:function(b){var d=[],c;for(c in b)Object.prototype.hasOwnProperty.call(b,c)&&d.push(b[c]);return d}});p("Array.prototype.includes",function(a){return a?a:function(b,d){var c=this;c instanceof String&&(c=String(c));var e=c.length;d=d||0;for(d<0&&(d=Math.max(d+e,0));d<e;d++){var f=c[d];if(f===b||Object.is(f,b))return!0}return!1}});/*
-
- MIT License
-
- Copyright (c) 2017-2023 W.Y.
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-
-*/
-function u(a,b){const d=a.style;b.backgroundColor&&(d.backgroundColor=b.backgroundColor);b.width&&(d.width=`${b.width}px`);b.height&&(d.height=`${b.height}px`);const c=b.style;c!=null&&Object.keys(c).forEach(e=>{d[e]=c[e]})};var v=(()=>{let a=0;return()=>{a+=1;return`u${`0000${(Math.random()*1679616<<0).toString(36)}`.slice(-4)}${a}`}})();function w(a){const b=[];for(let d=0,c=a.length;d<c;d++)b.push(a[d]);return b}let x=null;function y(a={}){return x?x:a.l?x=a.l:x=w(window.getComputedStyle(document.documentElement))}function z(a,b){return(a=(a.ownerDocument.defaultView||window).getComputedStyle(a).getPropertyValue(b))?parseFloat(a.replace("px","")):0}
-function A(a,b={}){var d;if(!(d=b.width)){d=z(a,"border-left-width");var c=z(a,"border-right-width");d=a.clientWidth+d+c}(b=b.height)||(b=z(a,"border-top-width"),c=z(a,"border-bottom-width"),b=a.clientHeight+b+c);return{width:d,height:b}}function B(a){return new Promise((b,d)=>{const c=new Image;c.onload=()=>{c.decode().then(()=>{requestAnimationFrame(()=>b(c))})};c.onerror=d;c.crossOrigin="anonymous";c.decoding="async";c.src=a})}
-function C(a){return t(function*(){return Promise.resolve().then(()=>(new XMLSerializer).serializeToString(a)).then(encodeURIComponent).then(b=>`data:image/svg+xml;charset=utf-8,${b}`)})}
-function D(a,b,d){return t(function*(){const c=document.createElementNS("http://www.w3.org/2000/svg","svg"),e=document.createElementNS("http://www.w3.org/2000/svg","foreignObject");c.setAttribute("width",`${b}`);c.setAttribute("height",`${d}`);c.setAttribute("viewBox",`0 0 ${b} ${d}`);e.setAttribute("width","100%");e.setAttribute("height","100%");e.setAttribute("x","0");e.setAttribute("y","0");e.setAttribute("externalResourcesRequired","true");c.appendChild(e);e.appendChild(a);return C(c)})}
-var E=(a,b)=>{if(a instanceof b)return!0;a=Object.getPrototypeOf(a);return a===null?!1:a.constructor.name===b.name||E(a,b)};function F(a,b){return y(b).map(d=>{const c=a.getPropertyValue(d),e=a.getPropertyPriority(d);return`${d}: ${c}${e?" !important":""};`}).join(" ")}
-function G(a,b,d,c){a=window.getComputedStyle(a,d);var e=a.getPropertyValue("content");if(e!==""&&e!=="none"){var f=v();try{b.className=`${b.className} ${f}`}catch(k){return}e=document.createElement("style");var g=e.appendChild;d=`.${f}:${d}`;a.cssText?(c=a.getPropertyValue("content"),c=`${a.cssText} content: '${c.replace(/'|"/g,"")}';`):c=F(a,c);g.call(e,document.createTextNode(`${d}{${c}}`));b.appendChild(e)}};function H(a){return a.search(/^(data:)/)!==-1}function I(a,b,d){return t(function*(){const c=yield fetch(a,b);if(c.status===404)throw Error(`Resource "${c.url}" not found`);const e=yield c.blob();return new Promise((f,g)=>{const k=new FileReader;k.onerror=g;k.onloadend=()=>{try{f(d({o:c,result:k.result}))}catch(m){g(m)}};k.readAsDataURL(e)})})}const J={};function K(a,b,d){let c=a.replace(/\?.*/,"");d&&(c=a);/ttf|otf|eot|woff2?/i.test(c)&&(c=c.replace(/.*\//,""));return b?`[${b}]${c}`:c}
-function L(a,b,d){return t(function*(){const c=K(a,b,d.C);if(J[c]!=null)return J[c];d.u&&(a+=(/\?/.test(a)?"&":"?")+(new Date).getTime());let e;try{const f=yield I(a,d.i,({o:g,result:k})=>{b||(b=g.headers.get("Content-Type")||"");return k.split(/,/)[1]});e=`data:${b};base64,${f}`}catch(f){e=d.B||""}return J[c]=e})};const M={P:"application/font-woff",R:"application/font-woff",N:"application/font-truetype",v:"application/vnd.ms-fontobject",H:"image/png",F:"image/jpeg",D:"image/jpeg",A:"image/gif",M:"image/tiff",L:"image/svg+xml",O:"image/webp"};function N(a){return(a=/\.([^./]*?)$/g.exec(a))?a[1]:""};function O(a){return t(function*(){const b=a.toDataURL();return b==="data:,"?a.cloneNode(!1):B(b)})}function aa(a,b){return t(function*(){if(a.currentSrc){var d=document.createElement("canvas");const c=d.getContext("2d");d.width=a.clientWidth;d.height=a.clientHeight;c==null||c.drawImage(a,0,0,d.width,d.height);d=d.toDataURL();return B(d)}d=a.poster;d=yield L(d,M[N(d).toLowerCase()]||"",b);return B(d)})}
-function ba(a,b){return t(function*(){try{let d;if(a==null?0:(d=a.contentDocument)==null?0:d.body)return yield P(a.contentDocument.body,b,!0)}catch(d){}return a.cloneNode(!1)})}function ca(a,b){return t(function*(){return E(a,HTMLCanvasElement)?O(a):E(a,HTMLVideoElement)?aa(a,b):E(a,HTMLIFrameElement)?ba(a,b):a.cloneNode(a.tagName!=null&&a.tagName.toUpperCase()==="SVG")})}
-function da(a,b,d){return t(function*(){if(b.tagName!=null&&b.tagName.toUpperCase()==="SVG")return b;let c=[];if(a.tagName!=null&&a.tagName.toUpperCase()==="SLOT"&&a.assignedNodes)c=w(a.assignedNodes());else{let e;if(E(a,HTMLIFrameElement)&&((e=a.contentDocument)==null?0:e.body))c=w(a.contentDocument.body.childNodes);else{let f;c=w(((f=a.shadowRoot)!=null?f:a).childNodes)}}if(c.length===0||E(a,HTMLVideoElement))return b;yield c.reduce((e,f)=>e.then(()=>P(f,d)).then(g=>{g&&b.appendChild(g)}),Promise.resolve());
-return b})}function ea(a,b,d){const c=b.style;if(c){var e=window.getComputedStyle(a);e.cssText?(c.cssText=e.cssText,c.transformOrigin=e.transformOrigin):y(d).forEach(f=>{let g=e.getPropertyValue(f);f==="font-size"&&g.endsWith("px")&&(g=`${Math.floor(parseFloat(g.substring(0,g.length-2)))-.1}px`);E(a,HTMLIFrameElement)&&f==="display"&&g==="inline"&&(g="block");f==="d"&&b.getAttribute("d")&&(g=`path(${b.getAttribute("d")})`);c.setProperty(f,g,e.getPropertyPriority(f))})}}
-function fa(a,b){E(a,HTMLSelectElement)&&(b=Array.from(b.children).find(d=>a.value===d.getAttribute("value")))&&b.setAttribute("selected","")}
-function ha(a,b){return t(function*(){var d=a.querySelectorAll?a.querySelectorAll("use"):[];if(d.length===0)return a;var c={};for(var e=0;e<d.length;e++){var f=d[e].getAttribute("xlink:href");if(f){const g=document.querySelector(f);a.querySelector(f)||!g||c[f]||(c[f]=yield P(g,b,!0))}}d=Object.values(c);if(d.length){c=document.createElementNS("http://www.w3.org/1999/xhtml","svg");c.setAttribute("xmlns","http://www.w3.org/1999/xhtml");c.style.position="absolute";c.style.width="0";c.style.height="0";
-c.style.overflow="hidden";c.style.display="none";e=document.createElementNS("http://www.w3.org/1999/xhtml","defs");c.appendChild(e);for(f=0;f<d.length;f++)e.appendChild(d[f]);a.appendChild(c)}return a})}
-function P(a,b,d){return t(function*(){return d||!b.filter||b.filter(a)?Promise.resolve(a).then(c=>ca(c,b)).then(c=>da(a,c,b)).then(c=>{E(c,Element)&&(ea(a,c,b),G(a,c,":before",b),G(a,c,":after",b),E(a,HTMLTextAreaElement)&&(c.textContent=a.value),E(a,HTMLInputElement)&&c.setAttribute("value",a.value),fa(a,c));return c}).then(c=>ha(c,b)):null})};const Q=/url\((['"]?)([^'"]+?)\1\)/g,ia=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,ja=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function ka(a){const b=[];a.replace(Q,(d,c,e)=>{b.push(e);return d});return b.filter(d=>!H(d))}
-function la(a,b,d,c){return t(function*(){try{const e=d?(new URL(b,d||void 0)).toString():b;let f;f=yield L(e,M[N(b).toLowerCase()]||"",c);return a.replace(new RegExp(`(url\\(['"]?)(${b.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1")})(['"]?\\))`,"g"),`$1${f}$3`)}catch(e){}return a})}function ma(a,{I:b}){return b?a.replace(ja,d=>{for(;;){const [c,,e]=ia.exec(d)||[],f=c,g=e;if(!g)return"";if(g===b)return`src: ${f};`}}):a}
-function R(a,b,d){return t(function*(){if(a.search(Q)===-1)return a;const c=ma(a,d);return ka(c).reduce((e,f)=>e.then(g=>la(g,f,b,d)),Promise.resolve(c))})};function S(a,b,d){return t(function*(){var c;const e=(c=b.style)==null?void 0:c.getPropertyValue(a);return e?(c=yield R(e,null,d),b.style.setProperty(a,c,b.style.getPropertyPriority(a)),!0):!1})}function na(a,b){return t(function*(){(yield S("background",a,b))||(yield S("background-image",a,b));(yield S("mask",a,b))||(yield S("-webkit-mask",a,b))||(yield S("mask-image",a,b))||(yield S("-webkit-mask-image",a,b))})}
-function oa(a,b){return t(function*(){const d=E(a,HTMLImageElement);if(d&&!H(a.src)||E(a,SVGImageElement)&&!H(a.href.baseVal)){var c=d?a.src:a.href.baseVal,e=yield L(c,M[N(c).toLowerCase()]||"",b);yield new Promise((f,g)=>{a.onload=f;a.onerror=b.m?(...k)=>{try{f(b.m(...k))}catch(m){g(m)}}:g;a.decode&&(a.decode=f);a.loading==="lazy"&&(a.loading="eager");d?(a.srcset="",a.src=e):a.href.baseVal=e})}})}
-function pa(a,b){return t(function*(){const d=w(a.childNodes).map(c=>T(c,b));yield Promise.all(d).then(()=>a)})}function T(a,b){return t(function*(){E(a,Element)&&(yield na(a,b),yield oa(a,b),yield pa(a,b))})};const U={};function V(a){return t(function*(){var b=U[a];if(b!=null)return b;b=yield(yield fetch(a)).text();b={url:a,cssText:b};return U[a]=b})}function W(a,b){return t(function*(){let d=a.cssText;const c=/url\(["']?([^"')]+)["']?\)/g,e=(d.match(/url\([^)]+\)/g)||[]).map(f=>t(function*(){let g=f.replace(c,"$1");g.startsWith("https://")||(g=(new URL(g,a.url)).href);return I(g,b.i,({result:k})=>{d=d.replace(f,`url(${k})`);return[f,k]})}));return Promise.all(e).then(()=>d)})}
-function X(a){if(a==null)return[];const b=[];a=a.replace(/(\/\*[\s\S]*?\*\/)/gi,"");for(var d=RegExp("((@.*?keyframes [\\s\\S]*?){([\\s\\S]*?}\\s*?)})","gi");;){var c=d.exec(a);if(c===null)break;b.push(c[0])}a=a.replace(d,"");d=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi;for(c=RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");;){let e=d.exec(a);if(e===null)if(e=c.exec(a),e===null)break;else d.lastIndex=c.lastIndex;else c.lastIndex=
-d.lastIndex;b.push(e[0])}return b}
-function qa(a,b){return t(function*(){const d=[],c=[];a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach((f,g)=>{if(f.type===CSSRule.IMPORT_RULE){let k=g+1;f=V(f.href).then(m=>W(m,b)).then(m=>X(m).forEach(q=>{try{e.insertRule(q,q.startsWith("@import")?k+=1:e.cssRules.length)}catch(Da){}})).catch(()=>{});c.push(f)}})}catch(f){const g=a.find(k=>k.href==null)||document.styleSheets[0];e.href!=null&&c.push(V(e.href).then(k=>W(k,b)).then(k=>X(k).forEach(m=>{g.insertRule(m,g.cssRules.length)})).catch(()=>
-{}))}});return Promise.all(c).then(()=>{a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach(f=>{d.push(f)})}catch(f){}});return d})})}function ra(a){return a.filter(b=>b.type===CSSRule.FONT_FACE_RULE).filter(b=>b.style.getPropertyValue("src").search(Q)!==-1)}function sa(a,b){return t(function*(){if(a.ownerDocument==null)throw Error("Provided element is not within a Document");var d=w(a.ownerDocument.styleSheets);d=yield qa(d,b);return ra(d)})}
-function ta(a){function b(c){(c.style.fontFamily||getComputedStyle(c).fontFamily).split(",").forEach(e=>{d.add(e.trim().replace(/["']/g,""))});Array.from(c.children).forEach(e=>{e instanceof HTMLElement&&b(e)})}const d=new Set;b(a);return d}function ua(a,b){return t(function*(){const d=yield sa(a,b),c=ta(a);return(yield Promise.all(d.filter(e=>c.has(e.style.fontFamily.trim().replace(/["']/g,""))).map(e=>R(e.cssText,e.parentStyleSheet?e.parentStyleSheet.href:null,b)))).join("\n")})}
-function va(a,b){return t(function*(){const d=b.j!=null?b.j:b.K?null:yield ua(a,b);if(d){const c=document.createElement("style");c.appendChild(document.createTextNode(d));a.firstChild?a.insertBefore(c,a.firstChild):a.appendChild(c)}})};function wa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b),e=yield P(a,b,!0);yield va(e,b);yield T(e,b);u(e,b);return yield D(e,d,c)})}
-function xa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b);var e=yield wa(a,b);e=yield B(e);const f=document.createElement("canvas"),g=f.getContext("2d"),k=b.G||window.devicePixelRatio||1,m=b.h||d,q=b.g||c;f.width=m*k;f.height=q*k;!b.J&&(f.width>16384||f.height>16384)&&(f.width>16384&&f.height>16384?f.width>f.height?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=16384):f.width>16384?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=
-16384));f.style.width=`${m}`;f.style.height=`${q}`;b.backgroundColor&&(g.fillStyle=b.backgroundColor,g.fillRect(0,0,f.width,f.height));g.drawImage(e,0,0,f.width,f.height);return f})}function ya(a,b={}){return t(function*(){return(yield xa(a,b)).toDataURL()})};const za=["gemini.google.com","corp.google.com","proxy.googlers.com"];function Y(){return document.body.querySelectorAll('[class*="animate"]').length>0}function Z(a){return t(function*(){try{return yield ya(a,{h:a.offsetWidth,g:a.offsetHeight})}catch(d){var b=a.offsetHeight;const c=document.createElement("canvas");c.width=a.offsetWidth;c.height=b;return c.toDataURL("image/png")}})}
-function Aa(){return t(function*(){const a=document.body.offsetWidth,b=document.body.offsetHeight,d=document.body.cloneNode(!0);d.querySelectorAll('[class*="animate"]').forEach(c=>{c.classList.remove(...Array.from(c.classList).filter(e=>e.startsWith("animate")))});d.style.width=`${a}px`;d.style.height=`${b}px`;return d})}
-function Ba(a){return t(function*(){let b=document.body;if(Y()){var d=yield Aa();b=d;document.body.appendChild(d)}d=yield Z(b);Y()&&document.body.removeChild(b);window.parent.postMessage({type:"SEND_SCREENSHOT",image:d,topOffset:document.documentElement.scrollTop},a.origin)})}function Ca(a){return t(function*(){const b={type:"SEND_SCREENSHOT_FOR_DATA_VISUALIZATION",image:yield Z(document.body),topOffset:0};window.parent.postMessage(b,a.origin)})}
-window.addEventListener("message",a=>t(function*(){if(za.some(d=>a.origin.includes(d))){var b=a.data;b&&(b.type==="MAKE_SCREENSHOT"&&(yield Ba(a)),b.type==="MAKE_SCREENSHOT_FOR_DATA_VISUALIZATION"&&(yield Ca(a)))}}));
-</script><script>(function() {
-  // Ensure this script is executed only once
-  if (window.firebaseAuthBridgeScriptLoaded) {
-    return;
-  }
-  window.firebaseAuthBridgeScriptLoaded = true;
-
-  let nextTokenPromiseId = 0;
-
-  // Stores { resolve, reject } for ongoing token requests
-  const pendingTokenPromises = {};
-
-  // Listen for messages from the Host Application
-  window.addEventListener('message', function(event) {
-
-    const messageData = event.data;
-
-  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
-      const { success, token, error, promiseId } = messageData ?? {};
-      if (pendingTokenPromises[promiseId]) {
-        if (success) {
-          pendingTokenPromises[promiseId].resolve(token);
-        } else {
-          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
-        }
-        delete pendingTokenPromises[promiseId];
-      }
-    }
-  });
-
-  // Expose a function for the Generated App to request a new Firebase token
-  window.requestNewFirebaseToken = function() {
-    const currentPromiseId = nextTokenPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingTokenPromises[currentPromiseId] = { resolve, reject };
-    });
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({
-        type: 'REQUEST_NEW_FIREBASE_TOKEN',
-        promiseId: currentPromiseId
-      }, '*');
-    } else {
-      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
-      delete pendingTokenPromises[currentPromiseId];
-    }
-    return promise;
-  };
-})();</script><script>
-let realOriginalGetUserMedia = null;
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-}
-
-(function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
-    try {
-      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
-        get: function() {
-          return undefined; // Or throw an error
-        },
-        configurable: false
-      });
-    } catch (error) {
-      console.error("Error defining prototype getter:", error);
-    }
-  }
-})();
-
-(function() {
-  const pendingMediaResolvers = {};
-  let nextMediaPromiseId = 0;
-
-  function requestMediaPermissions(constraints) {
-    const mediaPromiseId = nextMediaPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingMediaResolvers[mediaPromiseId] = (granted) => {
-        delete pendingMediaResolvers[mediaPromiseId];
-        resolve(granted);
-      };
-    });
-
-    window.parent.postMessage({
-      type: 'requestMediaPermission',
-      constraints: constraints,
-      promiseId: mediaPromiseId,
-    }, '*');
-
-    return promise;
-  }
-
-  let originalGetUserMedia = realOriginalGetUserMedia;
-
-  function interceptGetUserMedia() {
-    if (navigator.mediaDevices) {
-      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
-        value: function(constraints) {
-          return requestMediaPermissions(constraints).then((granted) => {
-            if (granted) {
-              if (originalGetUserMedia) {
-                return originalGetUserMedia(constraints);
-              } else {
-                throw new Error("Original getUserMedia not available.");
-              }
-            } else {
-              throw new DOMException('Permission denied', 'NotAllowedError');
-            }
-          });
-        },
-        writable: false,
-        configurable: false
-      });
-    }
-  }
-
-  interceptGetUserMedia();
-
-  const observer = new MutationObserver(function(mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'childList' && mutation.addedNodes) {
-        mutation.addedNodes.forEach(node => {
-          if (node === navigator.mediaDevices) {
-            interceptGetUserMedia();
-          }
-        });
-      }
-    }
-  });
-
-  function interceptSpeechRecognition() {
-    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
-      return;
-    }
-
-    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const SpeechRecognitionWrapper = function(...args) {
-      const recognizer = new OriginalSpeechRecognition(...args);
-      const originalStart = recognizer.start.bind(recognizer);
-
-      recognizer.start = function() {
-        requestMediaPermissions({ audio: true }).then(granted => {
-          if (granted) {
-            originalStart();
-          } else {
-            const errorEvent = new SpeechRecognitionErrorEvent('error');
-            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
-            recognizer.dispatchEvent(errorEvent);
-          }
-        });
-      };
-
-      return recognizer;
-    };
-
-    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
-    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
-
-    if (window.SpeechRecognition) {
-      window.SpeechRecognition = SpeechRecognitionWrapper;
-    }
-    if (window.webkitSpeechRecognition) {
-      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
-    }
-  }
-
-  interceptSpeechRecognition();
-
-  window.addEventListener('message', function(event) {
-    if (event.data) {
-      if (event.data.type === 'resolveMediaPermission') {
-        const { promiseId, granted } = event.data;
-        if (pendingMediaResolvers[promiseId]) {
-          pendingMediaResolvers[promiseId](granted);
-        }
-      }
-    }
-  });
-
-})();</script><script>((function(modelInformation) {
-  const originalFetch = window.fetch;
-  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
-  let googleLlmBaseApiUrls = [
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
-  ];
-  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-    );
-  });
-  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
-    );
-  });
-
-  const pendingFetchResolvers = {};
-  let nextPromiseId = 0;
-
-  function handleStringInput(input, optionsArgument) {
-    const actualUrl = input;
-    const fetchCallArgs = [actualUrl, optionsArgument];
-    const effectiveOptions = optionsArgument || {};
-    const bodyForApiKeyCheck = effectiveOptions.body;
-    const bodyForPostMessage = effectiveOptions.body;
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  function handleRequestInput(input, optionsArgument) {
-    const actualUrl = input.url;
-    const fetchCallArgs = [input, optionsArgument];
-    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (optionsArgument) {
-      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
-      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
-      if ('body' in optionsArgument) {
-        bodyForApiKeyCheck = optionsArgument.body;
-        bodyForPostMessage = optionsArgument.body;
-      } else {
-        bodyForApiKeyCheck = undefined;
-        bodyForPostMessage = input.body;
-      }
-    } else {
-      bodyForApiKeyCheck = undefined;
-      bodyForPostMessage = input.body;
-    }
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  window.fetch = function(input, optionsArgument) {
-    let actualUrl;
-    let fetchCallArgs;
-    let effectiveOptions = {};
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (typeof input === 'string') {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
-    } else if (input instanceof Request) {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
-    } else {
-      return originalFetch.apply(window, [input, optionsArgument]);
-    }
-
-    effectiveOptions.method = effectiveOptions.method || 'GET';
-    if (!effectiveOptions.headers) {
-      effectiveOptions.headers = new Headers();
-    }
-
-
-    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
-      let apiKeyIsNull = true;
-
-      const regex = new RegExp("models/([^:]+)");
-      const modelNameMatch = actualUrl.match(regex);
-      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
-
-
-      try {
-        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
-        const apiKeyParam = urlObject.searchParams.get('key');
-        if (apiKeyParam) {
-          apiKeyIsNull = false;
-        }
-      } catch (e) {
-        // Continue checks even if URL parsing fails
-      }
-
-      if (apiKeyIsNull && effectiveOptions.headers) {
-        const h = new Headers(effectiveOptions.headers);
-        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
-        if (apiKeyHeaderValue) {
-          apiKeyIsNull = false;
-          return originalFetch.apply(window, fetchCallArgs);
-        }
-      }
-
-      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
-        try {
-          const bodyData = JSON.parse(bodyForApiKeyCheck);
-          if (bodyData && bodyData.apiKey) {
-            apiKeyIsNull = false;
-            return originalFetch.apply(window, fetchCallArgs);
-          }
-        } catch (e) {
-          // Ignore JSON parsing errors
-        }
-      }
-
-      if(apiKeyIsNull) {
-        const promiseId = nextPromiseId++;
-        const promise = new Promise((resolve) => {
-          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
-            delete pendingFetchResolvers[promiseId];
-            resolve(resolvedResponse);
-          };
-        });
-
-        let serializedBodyForPostMessage;
-        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
-            serializedBodyForPostMessage = bodyForPostMessage;
-        } else if (bodyForPostMessage instanceof ReadableStream) {
-            serializedBodyForPostMessage = null;
-        } else {
-            try {
-                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
-            } catch (e) {
-                serializedBodyForPostMessage = null;
-            }
-        }
-
-        const messageOptions = {
-            method: effectiveOptions.method,
-            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
-            body: serializedBodyForPostMessage
-        };
-
-        window.parent.postMessage({
-          type: 'requestFetch',
-          url: actualUrl,
-          modelName: modelName,
-          options: messageOptions,
-          promiseId: promiseId,
-        }, '*');
-
-        return promise;
-      }
-      return originalFetch.apply(window, fetchCallArgs);
-    }
-    return originalFetch.apply(window, fetchCallArgs);
-  };
-
-  window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'resolveFetch') {
-      const { promiseId, response } = event.data;
-      if (pendingFetchResolvers[promiseId]) {
-        try {
-          const reconstructedResponse = new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: new Headers(response.headers),
-          });
-          pendingFetchResolvers[promiseId](reconstructedResponse);
-        } catch (error) {
-          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
-        }
-      }
-    }
-  });
-
-}))({"textModelName":"gemini-2.5-flash-preview-09-2025","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-2.5-flash-image-preview","imageTransformModelName":"gemini-3-pro-image-preview-11-2025","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"]})</script><script>(function() {
-  const originalConsoleLog = console.log;
-  const originalConsoleError = console.error;
-
-    /**
-   * Normalizes an error event or a promise rejection reason into a structured error object.
-   * @param {*} errorEventOrReason The error object or reason.
-   * @return {object} Structured error data { message, name, stack }.
-   */
-  function getErrorObject(errorEventOrReason) {
-    if (errorEventOrReason instanceof Error) {
-      return {
-        message: errorEventOrReason.message,
-        name: errorEventOrReason.name,
-        stack: errorEventOrReason.stack,
-      };
-    }
-    // Fallback for non-Error objects.
-    try {
-      return {
-        message: JSON.stringify(errorEventOrReason),
-        name: 'UnknownErrorType',
-        stack: null,
-      };
-    } catch (e) {
-      return {
-        message: String(errorEventOrReason),
-        name: 'UnknownErrorTypeNonStringifiable',
-        stack: null,
-      };
-    }
-  }
-
-  /**
-   * Converts an array of arguments (from log/error) into a single string.
-   * Handles Error objects specially to include their message and stack.
-   * @param {Array<*>} args - Arguments passed to console methods.
-   * @return {string} A string representation of the arguments.
-   */
-  function stringifyArgs(args) {
-    return args
-      .map((arg) => {
-        if (arg instanceof Error) {
-          const {message, stack} = arg;
-          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
-        }
-        if (typeof arg === 'object' && arg !== null) {
-          try {
-            return JSON.stringify(arg);
-          } catch (error) {
-            return '[Circular Object]';
-          }
-        } else {
-          return String(arg);
-        }
-      })
-      .join(' ');
-  }
-
-  console.log = function(...args) {
-    const logString = stringifyArgs(args);
-    window.parent.postMessage({ type: 'log', message: logString }, '*');
-    originalConsoleLog.apply(console, args);
-  };
-
-  console.error = function(...args) {
-    let errorData;
-    if (args.length > 0 && args[0] instanceof Error) {
-      const err = args[0];
-      // If the first arg is an Error, capture its details.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        ...getErrorObject(err),
-        rawArgsString: stringifyArgs(args.slice(1)),
-        timestamp: new Date().toISOString(),
-      };
-    } else {
-      // If not an Error object, treat all args as a general error message.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        message: stringifyArgs(args),
-        name: 'ConsoleLoggedError',
-        stack: null,
-        timestamp: new Date().toISOString(),
-      };
-    }
-    window.parent.postMessage(errorData, '*');
-    originalConsoleError.apply(console, args);
-  };
-
-  // Listen for global unhandled synchronous errors.
-  window.addEventListener('error', function(event) {
-    const errorDetails = event.error ? getErrorObject(event.error) : {
-      message: event.message,
-      name: 'GlobalError',
-      stack: null,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    };
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'global',
-      ...errorDetails,
-      message: errorDetails.message || event.message,
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-  // Listen for unhandled promise rejections (asynchronous errors).
-  window.addEventListener('unhandledrejection', function(event) {
-    const errorDetails = getErrorObject(event.reason);
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'unhandledrejection',
-      ...errorDetails,
-      message: errorDetails.message || 'Unhandled Promise Rejection',
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-})();</script>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TINA JOURNAL</title>
-    <!-- 使用穩定 CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js" crossorigin="anonymous"></script>
+    <!-- 資源庫載入 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&amp;family=Montserrat:wght@700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --muji-bg: #F2EFE9;
@@ -573,323 +24,434 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             background-color: var(--muji-bg);
             color: var(--muji-text);
             -webkit-tap-highlight-color: transparent;
-            overscroll-behavior: none;
-            /* 防止手機拉動網頁時的橡皮筋回彈效果 */
-        }
-        .muji-header {
-            background-color: var(--muji-bg);
-            z-index: 50;
-        }
-        .logo-font {
-            font-family: 'Montserrat', sans-serif;
-            letter-spacing: 0.2em;
-        }
-        /* 極簡底線樣式 */
-        .muji-input-underline {
-            background-color: transparent;
-            border: none;
-            border-bottom: 1px solid #EBE7E0;
-            border-radius: 0;
-            padding: 0.75rem 0.25rem;
-            width: 100%;
-            font-size: 16px; /* 設為 16px 防止 iPhone 輸入時畫面自動縮放 */
-            transition: border-color 0.3s;
-        }
-        .muji-input-underline:focus {
-            outline: none;
-            border-bottom-color: var(--muji-accent);
-        }
-        .muji-card {
-            background-color: var(--muji-card);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(230, 224, 217, 0.4);
-        }
-        .muji-btn-confirm {
-            background-color: var(--muji-accent);
-            color: white;
-            border-radius: 999px;
-            padding: 1rem;
-            width: 100%;
-            font-weight: 500;
-            letter-spacing: 0.2em;
-        }
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(2px);
-            z-index: 100;
-        }
-        .calendar-cell {
-            aspect-ratio: 1 / 1.5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding-top: 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            position: relative;
-        }
-        .weekend-day { color: var(--muji-red) !important; }
-        .segmented-control {
-            display: flex;
-            background-color: rgba(230, 224, 217, 0.4);
-            padding: 4px;
-            border-radius: 14px;
-        }
-        .segmented-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 10px;
-            transition: all 0.2s;
-            color: #A8A096;
-        }
-        .segmented-item.active {
-            background-color: white;
-            color: var(--muji-accent);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        .cat-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 999px;
-            font-size: 12px;
-            border: 1px solid #EBE7E0;
-            background: white;
-            color: #A8A096;
-            transition: all 0.2s;
-        }
-        .cat-btn.active {
-            background: var(--muji-accent);
-            color: white;
-            border-color: var(--muji-accent);
+            touch-action: manipulation;
         }
         [v-cloak] { display: none; }
+        #app-error { display: none; padding: 40px; text-align: center; color: #888; font-size: 14px; }
+        
+        .muji-header { background-color: var(--muji-bg); z-index: 50; }
+        .logo-font { font-family: 'Montserrat', sans-serif; letter-spacing: 0.2em; }
+        
+        /* 底線欄位樣式 */
+        .muji-input-underline {
+            background-color: transparent; border: none; border-bottom: 1px solid #EBE7E0;
+            border-radius: 0; padding: 0.75rem 0.25rem; width: 100%; font-size: 16px;
+        }
+        .muji-input-underline:focus { outline: none; border-bottom-color: var(--muji-accent); }
+        
+        .muji-card { background-color: var(--muji-card); border-radius: 1.5rem; border: 1px solid rgba(230, 224, 217, 0.4); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .muji-btn-confirm { background-color: var(--muji-accent); color: white; border-radius: 999px; padding: 1rem; width: 100%; font-weight: 500; letter-spacing: 0.2em; transition: opacity 0.2s; }
+        .muji-btn-confirm:active { opacity: 0.8; }
+        
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); z-index: 100; }
+        
+        /* 月曆格子設計 */
+        .calendar-cell { aspect-ratio: 1 / 1.5; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 10px; border-radius: 12px; font-size: 12px; position: relative; }
+        .weekend-day { color: var(--muji-red) !important; }
+        
+        /* 分段按鈕 */
+        .segmented-control { display: flex; background-color: rgba(230, 224, 217, 0.4); padding: 4px; border-radius: 14px; }
+        .segmented-item { flex: 1; text-align: center; padding: 10px 0; font-size: 12px; font-weight: 600; border-radius: 10px; transition: all 0.2s; color: #A8A096; }
+        .segmented-item.active { background-color: white; color: var(--muji-accent); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        
+        .cat-btn { padding: 0.6rem 1rem; border-radius: 999px; font-size: 12px; border: 1px solid #EBE7E0; background: white; color: #A8A096; transition: all 0.2s; }
+        .cat-btn.active { background: var(--muji-accent); color: white; border-color: var(--muji-accent); }
+        
         ::-webkit-scrollbar { display: none; }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:0px}.bottom-0{bottom:0px}.left-0{left:0px}.right-0{right:0px}.top-0{top:0px}.top-28{top:7rem}.z-40{z-index:40}.z-\[60\]{z-index:60}.mx-auto{margin-left:auto;margin-right:auto}.-mt-20{margin-top:-5rem}.-mt-4{margin-top:-1rem}.mb-1{margin-bottom:0.25rem}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-3{margin-left:0.75rem}.mr-2{margin-right:0.5rem}.mt-1{margin-top:0.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.block{display:block}.flex{display:flex}.grid{display:grid}.h-0\.5{height:0.125rem}.h-1{height:0.25rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-16{height:4rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-16{width:4rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-xs{max-width:20rem}.flex-grow{flex-grow:1}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.appearance-none{-webkit-appearance:none;appearance:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.grid-cols-7{grid-template-columns:repeat(7, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-10 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2.5rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-stone-50 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(250 250 249 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.overflow-x-hidden{overflow-x:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-\[3rem\]{border-radius:3rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-t-\[3\.5rem\]{border-top-left-radius:3.5rem;border-top-right-radius:3.5rem}.rounded-t-\[4rem\]{border-top-left-radius:4rem;border-top-right-radius:4rem}.border{border-width:1px}.border-\[8px\]{border-width:8px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-none{border-style:none}.border-\[\#F2EFE9\]{--tw-border-opacity:1;border-color:rgb(242 239 233 / var(--tw-border-opacity, 1))}.border-red-100{--tw-border-opacity:1;border-color:rgb(254 226 226 / var(--tw-border-opacity, 1))}.border-stone-100{--tw-border-opacity:1;border-color:rgb(245 245 244 / var(--tw-border-opacity, 1))}.border-stone-200{--tw-border-opacity:1;border-color:rgb(231 229 228 / var(--tw-border-opacity, 1))}.border-stone-50{--tw-border-opacity:1;border-color:rgb(250 250 249 / var(--tw-border-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-stone-100{--tw-bg-opacity:1;background-color:rgb(245 245 244 / var(--tw-bg-opacity, 1))}.bg-stone-400{--tw-bg-opacity:1;background-color:rgb(168 162 158 / var(--tw-bg-opacity, 1))}.bg-stone-50{--tw-bg-opacity:1;background-color:rgb(250 250 249 / var(--tw-bg-opacity, 1))}.bg-stone-50\/50{background-color:rgb(250 250 249 / 0.5)}.bg-stone-800{--tw-bg-opacity:1;background-color:rgb(41 37 36 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/20{background-color:rgb(255 255 255 / 0.2)}.bg-white\/95{background-color:rgb(255 255 255 / 0.95)}.p-10{padding:2.5rem}.p-12{padding:3rem}.p-14{padding:3.5rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-0\.5{padding-left:0.125rem;padding-right:0.125rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-20{padding-left:5rem;padding-right:5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:0.25rem}.pb-16{padding-bottom:4rem}.pb-36{padding-bottom:9rem}.pb-4{padding-bottom:1rem}.pt-12{padding-top:3rem}.pt-6{padding-top:1.5rem}.text-center{text-align:center}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-9xl{font-size:8rem;line-height:1}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-light{font-weight:300}.font-medium{font-weight:500}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-\[0\.3em\]{letter-spacing:0.3em}.tracking-\[0\.4em\]{letter-spacing:0.4em}.tracking-\[0\.5em\]{letter-spacing:0.5em}.tracking-tighter{letter-spacing:-0.05em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-\[\#333\]{--tw-text-opacity:1;color:rgb(51 51 51 / var(--tw-text-opacity, 1))}.text-\[\#B3544B\]{--tw-text-opacity:1;color:rgb(179 84 75 / var(--tw-text-opacity, 1))}.text-red-200{--tw-text-opacity:1;color:rgb(254 202 202 / var(--tw-text-opacity, 1))}.text-red-300{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-stone-200{--tw-text-opacity:1;color:rgb(231 229 228 / var(--tw-text-opacity, 1))}.text-stone-300{--tw-text-opacity:1;color:rgb(214 211 209 / var(--tw-text-opacity, 1))}.text-stone-400{--tw-text-opacity:1;color:rgb(168 162 158 / var(--tw-text-opacity, 1))}.text-stone-500{--tw-text-opacity:1;color:rgb(120 113 108 / var(--tw-text-opacity, 1))}.text-stone-600{--tw-text-opacity:1;color:rgb(87 83 78 / var(--tw-text-opacity, 1))}.text-stone-700{--tw-text-opacity:1;color:rgb(68 64 60 / var(--tw-text-opacity, 1))}.text-stone-800{--tw-text-opacity:1;color:rgb(41 37 36 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.\!text-\[\#6B7A5F\]{--tw-text-opacity:1 !important;color:rgb(107 122 95 / var(--tw-text-opacity, 1)) !important}.opacity-100{opacity:1}.opacity-30{opacity:0.3}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-1000{transition-duration:1000ms}.active\:scale-90:active{--tw-scale-x:.9;--tw-scale-y:.9;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.active\:bg-stone-100:active{--tw-bg-opacity:1;background-color:rgb(245 245 244 / var(--tw-bg-opacity, 1))}.active\:bg-stone-50:active{--tw-bg-opacity:1;background-color:rgb(250 250 249 / var(--tw-bg-opacity, 1))}.active\:opacity-80:active{opacity:0.8}@media (min-width: 640px){.sm\:opacity-0{opacity:0}.group:hover .sm\:group-hover\:opacity-100{opacity:1}}</style></head>
+</head>
 <body class="max-w-md mx-auto min-h-screen flex flex-col overflow-x-hidden">
 
-<div id="app" data-v-app=""><!-- Header --><header class="muji-header sticky top-0 px-6 py-8 flex justify-between items-center border-b border-stone-100"><div class="flex flex-col"><span class="text-xl font-bold logo-font text-[#333]">TINA JOURNAL</span></div><div class="flex items-center space-x-4"><div class="text-right"><p class="text-[9px] text-stone-300 leading-none mb-1 tracking-[0.2em] uppercase">Balance</p><p class="text-sm font-bold text-stone-700">NT$ 0</p></div><button class="text-stone-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="settings" class="lucide lucide-settings w-6 h-6"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div></header><!--v-if--><main class="flex-grow px-5 pt-6 pb-36"><div class="segmented-control mb-10"><button class="segmented-item active">日常</button><button class="segmented-item">飲料</button><button class="segmented-item">麻將</button></div><!-- VIEW: ADD --><div class="space-y-6"><div class="muji-card p-6 space-y-10 shadow-sm"><!-- 1. 日常 --><div class="space-y-8"><div class="segmented-control"><button class="segmented-item active !text-[#6B7A5F]">支出</button><button class="segmented-item">收入</button></div><div class="space-y-6"><div class="grid grid-cols-2 gap-4"><div><label class="text-[10px] text-stone-300 font-bold uppercase">Date</label><input type="date" class="muji-input-underline"></div><div class="flex flex-col"><label class="text-[10px] text-stone-300 font-bold uppercase mb-2">Category</label><div class="flex flex-wrap gap-2"><button class="cat-btn active">餐飲</button><button class="cat-btn">交通</button><button class="cat-btn">購物</button><button class="cat-btn">娛樂</button><button class="cat-btn">醫療</button><button class="cat-btn">社交</button></div></div></div><div><label class="text-[10px] text-stone-300 font-bold uppercase">Amount</label><input type="number" inputmode="numeric" class="muji-input-underline font-bold text-2xl" placeholder="0"></div><div><label class="text-[10px] text-stone-300 font-bold uppercase">Note</label><input type="text" class="muji-input-underline" placeholder="去哪啦"></div></div><button class="muji-btn-confirm">確認</button><!--v-if--></div><!-- 2. 飲料 --><!--v-if--><!-- 3. 麻將 --><!--v-if--></div></div><!-- VIEW: CALENDAR --><!--v-if--><!-- VIEW: DATA --><!--v-if--></main><!-- Success Modal --><!--v-if--><!-- Settings --><div class="fixed inset-0 modal-overlay flex items-end"><div class="bg-white w-full rounded-t-[3.5rem] p-10 pb-16 space-y-8 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="w-12 h-1 bg-stone-100 rounded-full mx-auto -mt-4 mb-6"></div><div class="space-y-5"><h3 class="text-center font-bold text-stone-700 tracking-widest text-sm uppercase mb-6">Archive Settings</h3><div class="grid grid-cols-1 gap-3"><button class="flex justify-between items-center p-6 bg-stone-50/50 rounded-2xl active:bg-stone-100 transition"><span class="text-sm font-bold text-stone-600 uppercase tracking-widest">歷史帳本切換</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-right" class="lucide lucide-chevron-right w-5 h-5 text-stone-200"><path d="m9 18 6-6-6-6"></path></svg></button><button class="flex justify-between items-center p-6 bg-stone-50/50 rounded-2xl active:bg-stone-100 transition"><span class="text-sm font-bold text-stone-600 uppercase tracking-widest">日常類別管理</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-right" class="lucide lucide-chevron-right w-5 h-5 text-stone-200"><path d="m9 18 6-6-6-6"></path></svg></button><button class="flex justify-between items-center p-6 bg-stone-50/50 rounded-2xl active:bg-stone-100 transition"><span class="text-sm font-bold text-stone-600 uppercase tracking-widest">麻友管理</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-right" class="lucide lucide-chevron-right w-5 h-5 text-stone-200"><path d="m9 18 6-6-6-6"></path></svg></button><button class="flex justify-between items-center p-6 bg-stone-800 text-white rounded-2xl active:opacity-80 transition shadow-lg"><span class="text-sm font-bold uppercase tracking-widest">下載本 App (HTML)</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" class="lucide lucide-download w-5 h-5"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg></button></div><div class="pt-12 border-t border-stone-50"><button class="w-full py-5 text-[11px] text-red-300 tracking-widest uppercase font-bold">Wipe Data</button></div></div><!--v-if--><!--v-if--><!--v-if--><button class="w-full py-5 bg-stone-50 rounded-3xl text-[11px] font-bold text-stone-400 uppercase tracking-widest">Close Menu</button></div></div><!-- Navbar --><nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-stone-100 px-20 py-8 flex justify-between items-center max-w-md mx-auto z-40 rounded-t-[4rem] shadow-2xl"><button class="flex flex-col items-center transition text-stone-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar" class="lucide lucide-calendar w-6 h-6"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg></button><button class="w-16 h-16 bg-stone-800 rounded-full shadow-2xl flex items-center justify-center text-white -mt-20 border-[8px] border-[#F2EFE9] active:scale-90 transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="lucide lucide-plus w-8 h-8"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button><button class="flex flex-col items-center transition text-stone-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pie-chart" class="lucide lucide-pie-chart w-6 h-6"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"></path><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path></svg></button></nav></div>
+<div id="app-error">系統載入中...<br>若長時間沒反應，請嘗試在一般模式開啟。</div>
+
+<div id="app" v-cloak>
+    <!-- Header -->
+    <header class="muji-header sticky top-0 px-6 py-8 flex justify-between items-center border-b border-stone-100">
+        <div class="flex flex-col">
+            <span class="text-xl font-bold logo-font text-[#333]">TINA JOURNAL</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-right">
+                <p class="text-[9px] text-stone-300 leading-none mb-1 tracking-[0.2em] uppercase">Balance</p>
+                <p class="text-sm font-bold text-stone-700">NT$ {{ formatNumber(annualTotal) }}</p>
+            </div>
+            <button @click="openSettings" class="text-stone-300 p-2">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Error Bar -->
+    <div v-if="errorMsg" class="fixed top-28 left-0 right-0 z-[60] px-6">
+        <div class="bg-red-50 text-red-500 text-[11px] py-3 px-4 rounded-xl border border-red-100 shadow-xl flex items-center animate-pulse">
+            <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i> {{ errorMsg }}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow px-5 pt-6 pb-36">
+        
+        <!-- Category Segmented Control -->
+        <div class="segmented-control mb-10">
+            <button v-for="cat in categories" @click="activeCategory = cat.id; errorMsg = ''; isEditing = false" :class="['segmented-item', activeCategory === cat.id ? 'active' : '']">
+                {{ cat.name }}
+            </button>
+        </div>
+
+        <!-- VIEW: ADD -->
+        <div v-if="activeTab === 'add'" class="space-y-6">
+            <div class="muji-card p-6 space-y-10 shadow-sm">
+                <!-- 1. 日常 -->
+                <div v-if="activeCategory === 'daily'" class="space-y-8">
+                    <div class="segmented-control">
+                        <button @click="forms.daily.type = 'exp'; forms.daily.category = dailyCats.exp[0]" :class="['segmented-item', forms.daily.type === 'exp' ? 'active !text-[#6B7A5F]' : '']">支出</button>
+                        <button @click="forms.daily.type = 'inc'; forms.daily.category = dailyCats.inc[0]" :class="['segmented-item', forms.daily.type === 'inc' ? 'active !text-[#B3544B]' : '']">收入</button>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-[10px] text-stone-300 font-bold uppercase">Date</label><input type="date" v-model="forms.daily.date" class="muji-input-underline"></div>
+                            <div class="flex flex-col">
+                                <label class="text-[10px] text-stone-300 font-bold uppercase mb-2">Category</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <button v-for="c in (forms.daily.type === 'exp' ? dailyCats.exp : dailyCats.inc)" @click="forms.daily.category = c" :class="['cat-btn', forms.daily.category === c ? 'active' : '']">{{ c }}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div><label class="text-[10px] text-stone-300 font-bold uppercase">Amount</label><input type="number" inputmode="decimal" v-model="forms.daily.amount" class="muji-input-underline font-bold text-2xl" placeholder="0"></div>
+                        <div><label class="text-[10px] text-stone-300 font-bold uppercase">Note</label><input type="text" v-model="forms.daily.note" class="muji-input-underline" placeholder="去哪啦"></div>
+                    </div>
+                    <button @click="saveDaily" class="muji-btn-confirm">確認</button>
+                </div>
+
+                <!-- 2. 飲料 -->
+                <div v-if="activeCategory === 'drinks'" class="space-y-8">
+                    <div class="grid grid-cols-2 gap-6 items-end">
+                        <div><label class="text-[10px] text-stone-300 font-bold uppercase">Date</label><input type="date" v-model="forms.drinks.date" class="muji-input-underline"></div>
+                        <div class="pb-1">
+                            <label class="text-[10px] text-stone-300 font-bold block mb-3 uppercase">Rating ({{ forms.drinks.rating }})</label>
+                            <div class="flex space-x-1">
+                                <template v-for="i in 5">
+                                    <div class="relative cursor-pointer w-6 h-6 flex items-center justify-center">
+                                        <i data-lucide="star" :class="['w-6 h-6', forms.drinks.rating >= i ? 'text-amber-400 fill-amber-400' : 'text-stone-100']"></i>
+                                        <div class="absolute inset-y-0 left-0 w-1/2 h-full z-10" @click="setStarRating(i - 0.5)"></div>
+                                        <div class="absolute inset-y-0 right-0 w-1/2 h-full z-10" @click="setStarRating(i)"></div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div><label class="text-[10px] text-stone-300 font-bold uppercase">Store</label><input list="stores" v-model="forms.drinks.store" class="muji-input-underline" placeholder="店名"><datalist id="stores"><option v-for="s in history.stores" :value="s"></option></datalist></div>
+                        <div><label class="text-[10px] text-stone-300 font-bold uppercase">Item</label><input list="items" v-model="forms.drinks.item" class="muji-input-underline" placeholder="品項"><datalist id="items"><option v-for="it in history.items" :value="it"></option></datalist></div>
+                    </div>
+                    <div class="space-y-5">
+                        <div class="space-y-2"><label class="text-[10px] text-stone-300 font-bold uppercase">Sugar</label><div class="segmented-control"><button v-for="s in ['無糖', '少糖', '半糖', '正常']" @click="forms.drinks.sugar = s" :class="['segmented-item', forms.drinks.sugar === s ? 'active' : '']">{{ s }}</button></div></div>
+                        <div class="space-y-2"><label class="text-[10px] text-stone-300 font-bold uppercase">Ice</label><div class="segmented-control"><button v-for="i in ['去冰', '少冰', '正常', '熱']" @click="forms.drinks.ice = i" :class="['segmented-item', forms.drinks.ice === i ? 'active' : '']">{{ i }}</button></div></div>
+                    </div>
+                    <div><label class="text-[10px] text-stone-300 font-bold uppercase">Amount</label><input type="number" inputmode="decimal" v-model="forms.drinks.amount" class="muji-input-underline font-bold text-lg" placeholder="0"></div>
+                    <button @click="saveDrink" class="muji-btn-confirm">確認</button>
+                </div>
+
+                <!-- 3. 麻將 -->
+                <div v-if="activeCategory === 'mahjong'" class="space-y-8">
+                    <div><label class="text-[10px] text-stone-300 font-bold uppercase">Date</label><input type="date" v-model="forms.mahjong.date" class="muji-input-underline"></div>
+                    <div class="space-y-4">
+                        <label class="text-[10px] text-stone-300 font-bold uppercase">Friends (Choose 3)</label>
+                        <div class="flex flex-wrap gap-3">
+                            <button v-for="f in history.friends" @click="toggleFriend(f)" :class="['px-5 py-2.5 text-xs rounded-full border transition-all', forms.mahjong.friends.includes(f) ? 'bg-[#7F7161] text-white border-[#7F7161]' : 'bg-white text-stone-300 border-stone-100']">{{ f }}</button>
+                        </div>
+                    </div>
+                    <div class="segmented-control">
+                        <button @click="forms.mahjong.type = 'win'" :class="['segmented-item', forms.mahjong.type === 'win' ? 'active !text-[#B3544B]' : '']">贏錢</button>
+                        <button @click="forms.mahjong.type = 'loss'" :class="['segmented-item', forms.mahjong.type === 'loss' ? 'active !text-[#6B7A5F]' : '']">輸錢</button>
+                    </div>
+                    <div><label class="text-[10px] text-stone-300 font-bold uppercase text-center block">Result</label><input type="number" inputmode="decimal" v-model="forms.mahjong.amount" class="muji-input-underline text-3xl font-bold text-center" placeholder="0"></div>
+                    <button @click="saveMahjong" class="muji-btn-confirm">確認</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: CALENDAR -->
+        <div v-if="activeTab === 'calendar'" class="space-y-6">
+            <div class="muji-card p-6 shadow-sm border-stone-100 flex flex-col space-y-6">
+                <div class="flex justify-between items-center px-2">
+                    <div class="flex items-center space-x-2">
+                        <select v-model="calendarYear" class="text-base font-bold bg-stone-50 px-2 py-1 rounded-lg outline-none">
+                            <option v-for="y in availableYears" :value="y">{{ y }}</option>
+                        </select>
+                        <span class="text-stone-200">/</span>
+                        <select v-model="calendarMonth" class="text-base font-bold bg-stone-50 px-2 py-1 rounded-lg outline-none">
+                            <option v-for="m in 12" :value="m-1">{{ String(m).padStart(2, '0') }}</option>
+                        </select>
+                    </div>
+                    <button @click="goToday" class="w-10 h-10 rounded-full bg-stone-800 text-white text-[11px] flex items-center justify-center font-bold">今</button>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-stone-300 tracking-[0.2em] uppercase border-b pb-4">
+                    <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div class="weekend-day">Sat</div><div class="weekend-day">Sun</div>
+                </div>
+                <div class="grid grid-cols-7 gap-1.5">
+                    <div v-for="day in calendarDays" :key="day.date" @click="selectDate(day)" :class="['calendar-cell border transition-all', day.isToday ? 'bg-stone-800 text-white shadow-lg z-10' : 'bg-stone-50/40 border-transparent', selectedDate === day.date && !day.isToday ? 'ring-2 ring-stone-200 bg-white shadow-sm' : '', !day.currentMonth ? 'opacity-0 pointer-events-none' : '']">
+                        <span class="font-bold" :class="{'weekend-day': (day.dayOfWeek===6 || day.dayOfWeek===0) && !day.isToday}">{{ day.dayNum }}</span>
+                        <div v-if="day.catTotal !== 0" class="text-[10px] font-black mt-2 truncate w-full text-center px-0.5" :class="day.catTotal > 0 ? (day.isToday ? 'text-red-300' : 'text-[#B3544B]') : (day.isToday ? 'text-green-200' : 'text-[#6B7A5F]')">
+                            {{ day.catTotal > 0 ? '+' : '' }}{{ day.catTotal }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="selectedDateRecords.length" class="space-y-3">
+                <p class="px-3 text-[10px] text-stone-300 font-bold tracking-widest uppercase">{{ selectedDate }} ARCHIVE</p>
+                <div v-for="rec in selectedDateRecords" :key="rec.id" class="muji-card p-5 flex justify-between items-center group active:bg-stone-50 transition-colors">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-11 h-11 rounded-full bg-stone-50 flex items-center justify-center text-stone-300"><i :data-lucide="getIcon(rec.mode)" class="w-5 h-5"></i></div>
+                        <div><p class="text-sm font-bold text-stone-700">{{ rec.category }} {{ rec.item || '' }}</p><p class="text-[11px] text-stone-400 font-medium">{{ rec.note || '去哪啦' }}</p></div>
+                    </div>
+                    <div class="text-right">
+                        <p :class="['text-base font-bold', isPositive(rec) ? 'text-[#B3544B]' : 'text-[#6B7A5F]']">{{ isPositive(rec) ? '+' : '-' }}{{ formatNumber(rec.amount) }}</p>
+                        <div class="flex space-x-4 mt-2 justify-end">
+                            <button @click="copyRecord(rec)" class="text-[10px] text-stone-300 font-bold uppercase">Copy</button>
+                            <button @click="editRecord(rec)" class="text-[10px] text-stone-400 font-bold uppercase">Edit</button>
+                            <button @click="deleteRecord(rec.id)" class="text-[10px] text-red-200 font-bold uppercase">Del</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: DATA -->
+        <div v-if="activeTab === 'data'" class="space-y-6">
+            <h2 class="text-center text-[11px] text-stone-300 font-bold tracking-[0.5em] uppercase">{{ currentCategoryName }} ANALYSIS</h2>
+            <!-- Data displays -->
+            <div v-if="activeCategory === 'daily'" class="space-y-5">
+                <div class="muji-card p-8">
+                    <h3 class="text-xs font-bold mb-8 text-stone-600">Expenditure Ratio</h3>
+                    <div class="space-y-6">
+                        <div v-for="(val, cat) in dailyStatsByCategory" :key="cat">
+                            <div class="flex justify-between text-[11px] mb-2 font-bold uppercase tracking-wider"><span>{{ cat }}</span><span>${{ formatNumber(val) }}</span></div>
+                            <div class="w-full bg-stone-50 h-1 rounded-full overflow-hidden"><div class="bg-stone-400 h-1 rounded-full transition-all duration-1000" :style="{width: (val/stats.daily.totalExp * 100) + '%'}"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- More data sections... -->
+            <button @click="exportToExcel" class="w-full py-5 bg-white border border-stone-200 text-stone-300 text-[11px] rounded-full tracking-widest uppercase font-bold shadow-sm active:bg-stone-50">Export Spreadsheet</button>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div v-if="showSuccess" class="fixed inset-0 modal-overlay flex items-center justify-center p-6">
+        <div class="bg-white rounded-[3rem] p-12 text-center shadow-2xl w-full max-w-xs scale-in transform">
+            <div class="w-16 h-16 bg-stone-800 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl"><i data-lucide="check" class="w-8 h-8"></i></div>
+            <p class="font-bold tracking-[0.3em] text-stone-800 text-lg uppercase">新增成功！</p>
+            <p class="text-[10px] text-stone-300 mt-4 font-bold uppercase tracking-tighter">Secured in Ledger</p>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div v-if="showSettings" class="fixed inset-0 modal-overlay flex items-end" @click.self="showSettings = false">
+        <div class="bg-white w-full rounded-t-[3.5rem] p-10 pb-16 space-y-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="w-12 h-1 bg-stone-100 rounded-full mx-auto -mt-4 mb-6"></div>
+            <div v-if="settingsView === 'main'" class="space-y-5">
+                <h3 class="text-center font-bold text-stone-700 tracking-widest text-sm uppercase mb-6">Archive Settings</h3>
+                <div class="grid grid-cols-1 gap-3">
+                    <button @click="settingsView = 'years'" class="flex justify-between items-center p-6 bg-stone-50/50 rounded-2xl"><span class="text-sm font-bold text-stone-600 uppercase tracking-widest">歷史帳本切換</span><i data-lucide="chevron-right" class="w-5 h-5 text-stone-200"></i></button>
+                    <button @click="settingsView = 'cats'" class="flex justify-between items-center p-6 bg-stone-50/50 rounded-2xl"><span class="text-sm font-bold text-stone-600 uppercase tracking-widest">日常類別管理</span><i data-lucide="chevron-right" class="w-5 h-5 text-stone-200"></i></button>
+                    <button @click="settingsView = 'friends'" class="flex justify-between items-center p-6 bg-stone-50/50 rounded-2xl"><span class="text-sm font-bold text-stone-600 uppercase tracking-widest">麻友管理</span><i data-lucide="chevron-right" class="w-5 h-5 text-stone-200"></i></button>
+                </div>
+                <div class="pt-12 border-t border-stone-50"><button @click="clearAllData" class="w-full py-5 text-[11px] text-red-300 tracking-widest uppercase font-bold">Wipe Data</button></div>
+            </div>
+            <!-- Sub-views for Settings (Years, Cats, Friends) go here -->
+            <div v-if="settingsView === 'years'" class="space-y-6">
+                <button @click="settingsView = 'main'" class="flex items-center text-[11px] font-bold text-stone-300 uppercase tracking-widest mb-4"><i data-lucide="chevron-left" class="w-4 h-4 mr-2"></i> Back</button>
+                <div class="grid grid-cols-3 gap-4"><button v-for="y in availableYears" @click="currentYear = y; showSettings = false" :class="['py-4 text-xs font-bold rounded-2xl border transition', currentYear === y ? 'bg-stone-800 text-white border-stone-800 shadow-md' : 'bg-white text-stone-300 border-stone-100']">{{ y }}</button></div>
+            </div>
+            <div v-if="settingsView === 'cats'" class="space-y-6">
+                <button @click="settingsView = 'main'" class="flex items-center text-[11px] font-bold text-stone-300 uppercase tracking-widest mb-4"><i data-lucide="chevron-left" class="w-4 h-4 mr-2"></i> Back</button>
+                <div class="flex flex-wrap gap-3"><span v-for="c in dailyCats.exp" class="flex items-center px-5 py-3 bg-stone-50 text-[11px] font-bold text-stone-500 rounded-full border border-stone-100">{{ c }} <button @click="removeDailyCat(c)" class="ml-3 text-stone-200">×</button></span><button @click="addDailyCatPrompt" class="px-5 py-3 border border-dashed border-stone-200 text-stone-200 text-[11px] font-bold rounded-full">＋ New</button></div>
+            </div>
+            <div v-if="settingsView === 'friends'" class="space-y-6">
+                <button @click="settingsView = 'main'" class="flex items-center text-[11px] font-bold text-stone-300 uppercase tracking-widest mb-4"><i data-lucide="chevron-left" class="w-4 h-4 mr-2"></i> Back</button>
+                <div class="flex flex-wrap gap-3"><span v-for="f in history.friends" class="flex items-center px-5 py-3 bg-stone-50 text-[11px] font-bold text-stone-500 rounded-full border border-stone-100">{{ f }} <button @click="removeFriend(f)" class="ml-3 text-stone-200">×</button></span><button @click="addFriendPrompt" class="px-5 py-3 border border-dashed border-stone-200 text-stone-200 text-[11px] font-bold rounded-full">＋ Add</button></div>
+            </div>
+            <button @click="showSettings = false" class="w-full py-5 bg-stone-50 rounded-3xl text-[11px] font-bold text-stone-400 uppercase tracking-widest">Close Menu</button>
+        </div>
+    </div>
+
+    <!-- Nav Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-stone-100 px-20 py-8 flex justify-between items-center max-w-md mx-auto z-40 rounded-t-[4rem] shadow-2xl">
+        <button @click="activeTab = 'calendar'; errorMsg = ''" :class="['flex flex-col items-center transition', activeTab === 'calendar' ? 'text-stone-800' : 'text-stone-200']"><i data-lucide="calendar" class="w-6 h-6"></i></button>
+        <button @click="prepareAdd" class="w-16 h-16 bg-stone-800 rounded-full shadow-2xl flex items-center justify-center text-white -mt-20 border-[8px] border-[#F2EFE9] active:scale-90 transition"><i data-lucide="plus" class="w-8 h-8"></i></button>
+        <button @click="activeTab = 'data'; errorMsg = ''" :class="['flex flex-col items-center transition', activeTab === 'data' ? 'text-stone-800' : 'text-stone-200']"><i data-lucide="pie-chart" class="w-6 h-6"></i></button>
+    </nav>
+</div>
 
 <script>
-const { createApp, ref, onMounted, computed, watch, nextTick } = Vue;
+window.onload = function() {
+    try {
+        const { createApp, ref, onMounted, computed, watch, nextTick } = Vue;
 
-createApp({
-    setup() {
-        const activeTab = ref('add');
-        const activeCategory = ref('daily');
-        const showSuccess = ref(false);
-        const showSettings = ref(false);
-        const settingsView = ref('main');
-        const isEditing = ref(false);
-        const editingId = ref(null);
-        const currentYear = ref(new Date().getFullYear());
-        const errorMsg = ref('');
-        
-        const getTodayStr = () => {
-            const now = new Date();
-            return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-        };
+        const App = {
+            setup() {
+                const activeTab = ref('add');
+                const activeCategory = ref('daily');
+                const showSuccess = ref(false);
+                const showSettings = ref(false);
+                const settingsView = ref('main');
+                const isEditing = ref(false);
+                const editingId = ref(null);
+                const currentYear = ref(new Date().getFullYear());
+                const errorMsg = ref('');
 
-        // 安全讀取資料功能
-        const safeLoad = (key, fallback) => {
-            try {
-                const data = localStorage.getItem(key);
-                return data ? JSON.parse(data) : fallback;
-            } catch (e) {
-                console.error("Storage error", e);
-                return fallback;
+                const getTodayStr = () => {
+                    const d = new Date();
+                    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+                };
+
+                const safeGet = (key, fallback) => {
+                    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(e) { return fallback; }
+                };
+
+                const records = ref(safeGet('tina_journal_v5', []));
+                const history = ref(safeGet('tina_hist_v5', {"stores":[], "items":[], "friends":["自己", "朋友A", "朋友B"]}));
+                const dailyCats = ref(safeGet('tina_cats_v5', {
+                    exp: ['餐飲', '交通', '購物', '娛樂', '醫療', '社交'],
+                    inc: ['薪水', '獎金', '投資']
+                }));
+
+                const forms = ref({
+                    daily: { date: getTodayStr(), type: 'exp', category: '餐飲', amount: '', note: '' },
+                    drinks: { date: getTodayStr(), rating: 0, store: '', item: '', sugar: '無糖', ice: '去冰', amount: '' },
+                    mahjong: { date: getTodayStr(), friends: [], type: 'win', amount: '' }
+                });
+
+                const categories = [ { id: 'daily', name: '日常' }, { id: 'drinks', name: '飲料' }, { id: 'mahjong', name: '麻將' } ];
+                const calendarYear = ref(new Date().getFullYear());
+                const calendarMonth = ref(new Date().getMonth());
+                const selectedDate = ref(getTodayStr());
+
+                const formatNumber = (num) => Number(num || 0).toLocaleString();
+                const currentCategoryName = computed(() => categories.find(c => c.id === activeCategory.value).name);
+                const isPositive = (rec) => ['inc', 'win'].includes(rec.type);
+                const availableYears = computed(() => {
+                    const y = new Set(records.value.map(r => new Date(r.date).getFullYear()));
+                    y.add(new Date().getFullYear());
+                    return Array.from(y).sort((a,b)=>b-a);
+                });
+
+                const refreshIcons = () => nextTick(() => { if(window.lucide) window.lucide.createIcons(); });
+
+                const validate = (d) => {
+                    errorMsg.value = '';
+                    if(!d.amount || Number(d.amount) <= 0) { errorMsg.value = '金額必須大於 0 哦！'; return false; }
+                    if(activeCategory.value==='daily' && !d.category) { errorMsg.value='類別忘記選了！'; return false; }
+                    if(activeCategory.value==='drinks' && (!d.store || !d.item)) { errorMsg.value='店名與品項都要寫喔！'; return false; }
+                    if(activeCategory.value==='mahjong' && d.friends.length !== 3) { errorMsg.value='麻將要選剛好 3 位朋友！'; return false; }
+                    return true;
+                };
+
+                const commit = (data) => {
+                    if(isEditing.value) {
+                        records.value = records.value.map(r => r.id === editingId.value ? {...data, id: editingId.value} : r);
+                        isEditing.value = false; editingId.value = null;
+                    } else {
+                        records.value.push({...data, id: Date.now()});
+                    }
+                    showSuccess.value = true;
+                    setTimeout(()=> showSuccess.value = false, 1500);
+                    refreshIcons();
+                };
+
+                const saveDaily = () => { if(validate(forms.value.daily)) { commit({...forms.value.daily, mode:'daily'}); forms.value.daily.amount=''; forms.value.daily.note=''; } };
+                const saveDrink = () => { if(validate(forms.value.drinks)) {
+                    commit({...forms.value.drinks, mode:'drinks', category:'飲料'});
+                    if(!history.value.stores.includes(forms.value.drinks.store)) history.value.stores.push(forms.value.drinks.store);
+                    if(!history.value.items.includes(forms.value.drinks.item)) history.value.items.push(forms.value.drinks.item);
+                    forms.value.drinks.amount=''; forms.value.drinks.rating=0;
+                }};
+                const saveMahjong = () => { if(validate(forms.value.mahjong)) { commit({...forms.value.mahjong, mode:'mahjong', category:'麻將'}); forms.value.mahjong.amount=''; } };
+
+                const deleteRecord = (id) => { if(confirm("確定刪除？")) records.value = records.value.filter(r => r.id !== id); };
+                const copyRecord = (rec) => { activeTab.value = 'add'; activeCategory.value = rec.mode; const {id, ...rest} = rec; forms.value[rec.mode] = JSON.parse(JSON.stringify(rest)); isEditing.value = false; refreshIcons(); };
+                const editRecord = (rec) => { activeTab.value = 'add'; activeCategory.value = rec.mode; forms.value[rec.mode] = JSON.parse(JSON.stringify(rec)); isEditing.value = true; editingId.value = rec.id; refreshIcons(); };
+                const cancelEdit = () => { isEditing.value = false; editingId.value = null; resetForms(); };
+                const prepareAdd = () => { activeTab.value = 'add'; isEditing.value = false; resetForms(); errorMsg.value = ''; refreshIcons(); };
+                const resetForms = () => { const t = getTodayStr(); forms.value.daily.date = t; forms.value.drinks.date = t; forms.value.mahjong.date = t; };
+                const goToday = () => { const n = new Date(); calendarYear.value = n.getFullYear(); calendarMonth.value = n.getMonth(); selectedDate.value = getTodayStr(); refreshIcons(); };
+                const openSettings = () => { showSettings.value = true; settingsView.value = 'main'; refreshIcons(); };
+
+                const annualTotal = computed(() => records.value.filter(r => new Date(r.date).getFullYear() === currentYear.value).reduce((s, r) => s + (isPositive(r) ? Number(r.amount) : -Number(r.amount)), 0));
+                const stats = computed(() => {
+                    const cur = records.value.filter(r => new Date(r.date).getFullYear() === calendarYear.value && new Date(r.date).getMonth() === calendarMonth.value);
+                    return { daily: { totalExp: cur.filter(r => r.mode === 'daily' && r.type === 'exp').reduce((s, r) => s + Number(r.amount), 0) }, drinks: { totalCups: records.value.filter(r => r.mode === 'drinks' && new Date(r.date).getFullYear() === calendarYear.value).length } };
+                });
+                const dailyStatsByCategory = computed(() => {
+                    const res = {};
+                    records.value.filter(r => r.mode === 'daily' && r.type === 'exp' && new Date(r.date).getFullYear() === calendarYear.value && new Date(r.date).getMonth() === calendarMonth.value).forEach(r => res[r.category] = (res[r.category] || 0) + Number(r.amount));
+                    return res;
+                });
+                const favoriteDrink = computed(() => {
+                    const d = records.value.filter(r => r.mode === 'drinks' && new Date(r.date).getFullYear() === calendarYear.value);
+                    if(!d.length) return {};
+                    const count = (arr, k) => arr.reduce((a, r) => (a[r[k]] = (a[r[k]] || 0) + 1, a), {});
+                    const fav = (obj) => Object.keys(obj).length ? Object.keys(obj).reduce((a,b) => obj[a] > obj[b] ? a : b) : '-';
+                    return { store: fav(count(d, 'store')), item: fav(count(d, 'item')) };
+                });
+
+                const calendarDays = computed(() => {
+                    const first = new Date(calendarYear.value, calendarMonth.value, 1);
+                    const last = new Date(calendarYear.value, calendarMonth.value + 1, 0);
+                    let days = [];
+                    let start = first.getDay() || 7;
+                    for (let i = 1; i < start; i++) days.push({ currentMonth: false });
+                    for (let i = 1; i <= last.getDate(); i++) {
+                        const dStr = calendarYear.value + '-' + String(calendarMonth.value + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0');
+                        const dayRecs = records.value.filter(r => r.date === dStr && r.mode === activeCategory.value);
+                        const tot = dayRecs.reduce((a, r) => a + (isPositive(r) ? Number(r.amount) : -Number(r.amount)), 0);
+                        days.push({ dayNum: i, currentMonth: true, date: dStr, catTotal: tot, isToday: dStr === getTodayStr(), dayOfWeek: new Date(dStr).getDay() });
+                    }
+                    return days;
+                });
+                const selectedDateRecords = computed(() => records.value.filter(r => r.date === selectedDate.value && r.mode === activeCategory.value));
+                const selectDate = (d) => { if (d.date) selectedDate.value = d.date; refreshIcons(); };
+                const getIcon = (m) => m === 'drinks' ? 'cup-soda' : (m === 'mahjong' ? 'clover' : 'edit-3');
+                const getFriendWinRate = (f) => { const g = records.value.filter(r => r.mode === 'mahjong' && r.friends.includes(f)); return g.length ? Math.round((g.filter(r => r.type === 'win').length / g.length) * 100) : 0; };
+                const setStarRating = (r) => { forms.value.drinks.rating = r; refreshIcons(); };
+                const toggleFriend = (f) => { const i = forms.value.mahjong.friends.indexOf(f); i > -1 ? forms.value.mahjong.friends.splice(i, 1) : (forms.value.mahjong.friends.length < 3 && forms.value.mahjong.friends.push(f)); };
+                const addFriendPrompt = () => { const n = prompt("輸入麻友姓名："); if(n) history.value.friends.push(n); };
+                const removeFriend = (f) => history.value.friends = history.value.friends.filter(i => i !== f);
+                const addDailyCatPrompt = () => { const n = prompt("輸入新分類名稱："); if(n) dailyCats.value.exp.push(n); };
+                const removeDailyCat = (c) => dailyCats.value.exp = dailyCats.value.exp.filter(i => i !== c);
+                const exportToExcel = () => { const ws = XLSX.utils.json_to_sheet(records.value); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "TINA"); XLSX.writeFile(wb, "TINA_JOURNAL.xlsx"); };
+                const clearAllData = () => { if (confirm("確定抹除本地所有資料？")) { localStorage.clear(); location.reload(); } };
+
+                watch([records, history, dailyCats, activeTab], () => {
+                    try {
+                        localStorage.setItem('tina_journal_v5', JSON.stringify(records.value));
+                        localStorage.setItem('tina_hist_v5', JSON.stringify(history.value));
+                        localStorage.setItem('tina_cats_v5', JSON.stringify(dailyCats.value));
+                    } catch(e) {}
+                    refreshIcons();
+                }, { deep: true });
+
+                onMounted(refreshIcons);
+
+                return {
+                    activeTab, activeCategory, categories, showSuccess, showSettings, settingsView, isEditing, currentYear, 
+                    calendarYear, calendarMonth, availableYears, currentCategoryName, errorMsg,
+                    records, history, dailyCats, forms, stats, annualTotal, dailyStatsByCategory, favoriteDrink,
+                    calendarDays, selectedDate, selectedDateRecords,
+                    formatNumber, isPositive, getIcon, saveDaily, saveDrink, saveMahjong, deleteRecord, copyRecord, editRecord, cancelEdit,
+                    prepareAdd, goToday, selectDate, toggleFriend, addFriendPrompt, removeFriend, addDailyCatPrompt, removeDailyCat, 
+                    exportToExcel, clearAllData, openSettings, getFriendWinRate, setStarRating
+                };
             }
         };
 
-        const records = ref(safeLoad('tina_journal_db_v2', []));
-        const history = ref(safeLoad('tina_hist_db_v2', {"stores":[], "items":[], "friends":["自己", "朋友A", "朋友B"]}));
-        const dailyCats = ref(safeLoad('tina_cats_db_v2', {
-            exp: ['餐飲', '交通', '購物', '娛樂', '醫療', '社交'],
-            inc: ['薪水', '獎金', '投資']
-        }));
-
-        const forms = ref({
-            daily: { date: getTodayStr(), type: 'exp', category: '餐飲', amount: '', note: '' },
-            drinks: { date: getTodayStr(), rating: 0, store: '', item: '', sugar: '無糖', ice: '去冰', amount: '' },
-            mahjong: { date: getTodayStr(), friends: [], type: 'win', amount: '' }
-        });
-
-        const categories = [
-            { id: 'daily', name: '日常' },
-            { id: 'drinks', name: '飲料' },
-            { id: 'mahjong', name: '麻將' }
-        ];
-
-        const calendarYear = ref(new Date().getFullYear());
-        const calendarMonth = ref(new Date().getMonth());
-        const selectedDate = ref(getTodayStr());
-
-        const formatNumber = (num) => Number(num || 0).toLocaleString();
-        const currentCategoryName = computed(() => categories.find(c => c.id === activeCategory.value).name);
-        const isPositive = (rec) => ['inc', 'win'].includes(rec.type);
-        const availableYears = computed(() => {
-            const years = new Set(records.value.map(r => new Date(r.date).getFullYear()));
-            years.add(new Date().getFullYear());
-            return Array.from(years).sort((a,b) => b-a);
-        });
-
-        const refreshIcons = () => {
-            nextTick(() => {
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            });
-        };
-
-        const setStarRating = (r) => { 
-            forms.value.drinks.rating = r; 
-            refreshIcons();
-        };
-
-        const validate = (data) => {
-            errorMsg.value = '';
-            if (!data.amount || Number(data.amount) <= 0) {
-                errorMsg.value = '金額必須填寫大於 0 喔！';
-                return false;
-            }
-            if (activeCategory.value === 'daily' && !data.category) {
-                errorMsg.value = '類別忘記選囉！';
-                return false;
-            }
-            if (activeCategory.value === 'drinks' && (!data.store || !data.item)) {
-                errorMsg.value = '店名與飲品都要填寫！';
-                return false;
-            }
-            if (activeCategory.value === 'mahjong' && data.friends.length !== 3) {
-                errorMsg.value = '麻將需要剛好選擇 3 位朋友！';
-                return false;
-            }
-            return true;
-        };
-
-        const commit = (data) => {
-            if (isEditing.value) {
-                records.value = records.value.map(r => r.id === editingId.value ? { ...data, id: editingId.value } : r);
-                isEditing.value = false; editingId.value = null;
-            } else {
-                records.value.push({ ...data, id: Date.now() });
-            }
-            showSuccess.value = true;
-            setTimeout(() => { showSuccess.value = false; }, 1500);
-            refreshIcons();
-        };
-
-        const saveDaily = () => { if(validate(forms.value.daily)) { commit({...forms.value.daily, mode: 'daily'}); forms.value.daily.amount = ''; forms.value.daily.note = ''; } };
-        const saveDrink = () => { if(validate(forms.value.drinks)) { 
-            commit({...forms.value.drinks, mode: 'drinks', category: '飲料'});
-            if(!history.value.stores.includes(forms.value.drinks.store)) history.value.stores.push(forms.value.drinks.store);
-            if(!history.value.items.includes(forms.value.drinks.item)) history.value.items.push(forms.value.drinks.item);
-            forms.value.drinks.amount = ''; forms.value.drinks.rating = 0;
-        }};
-        const saveMahjong = () => { if(validate(forms.value.mahjong)) { commit({...forms.value.mahjong, mode: 'mahjong', category: '麻將'}); forms.value.mahjong.amount = ''; } };
-
-        const deleteRecord = (id) => { if(confirm("確定刪除這筆紀錄？")) records.value = records.value.filter(r => r.id !== id); };
-        const copyRecord = (rec) => { activeTab.value = 'add'; activeCategory.value = rec.mode; const {id, ...rest} = rec; forms.value[rec.mode] = JSON.parse(JSON.stringify(rest)); isEditing.value = false; refreshIcons(); };
-        const editRecord = (rec) => { activeTab.value = 'add'; activeCategory.value = rec.mode; forms.value[rec.mode] = JSON.parse(JSON.stringify(rec)); isEditing.value = true; editingId.value = rec.id; refreshIcons(); };
-        const cancelEdit = () => { isEditing.value = false; editingId.value = null; resetForms(); };
-        const prepareAdd = () => { activeTab.value = 'add'; isEditing.value = false; resetForms(); errorMsg.value = ''; refreshIcons(); };
-        const resetForms = () => { const t = getTodayStr(); forms.value.daily.date = t; forms.value.drinks.date = t; forms.value.mahjong.date = t; };
-        const goToday = () => { const now = new Date(); calendarYear.value = now.getFullYear(); calendarMonth.value = now.getMonth(); selectedDate.value = getTodayStr(); refreshIcons(); };
-        const openSettings = () => { showSettings.value = true; settingsView.value = 'main'; refreshIcons(); };
-
-        const downloadAppFile = () => {
-            const htmlContent = document.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'index.html';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        };
-
-        const annualTotal = computed(() => records.value.filter(r => new Date(r.date).getFullYear() === currentYear.value).reduce((s, r) => s + (isPositive(r) ? Number(r.amount) : -Number(r.amount)), 0));
-        const stats = computed(() => {
-            const cur = records.value.filter(r => new Date(r.date).getFullYear() === calendarYear.value && new Date(r.date).getMonth() === calendarMonth.value);
-            return {
-                daily: { totalExp: cur.filter(r => r.mode === 'daily' && r.type === 'exp').reduce((s, r) => s + Number(r.amount), 0) },
-                drinks: { totalCups: records.value.filter(r => r.mode === 'drinks' && new Date(r.date).getFullYear() === calendarYear.value).length }
-            };
-        });
-        const dailyStatsByCategory = computed(() => {
-            const res = {};
-            records.value.filter(r => r.mode === 'daily' && r.type === 'exp' && new Date(r.date).getFullYear() === calendarYear.value && new Date(r.date).getMonth() === calendarMonth.value).forEach(r => res[r.category] = (res[r.category] || 0) + Number(r.amount));
-            return res;
-        });
-        const favoriteDrink = computed(() => {
-            const d = records.value.filter(r => r.mode === 'drinks' && new Date(r.date).getFullYear() === calendarYear.value);
-            if (!d.length) return {};
-            const count = (arr, k) => arr.reduce((a, r) => (a[r[k]] = (a[r[k]] || 0) + 1, a), {});
-            const fav = (obj) => Object.keys(obj).length ? Object.keys(obj).reduce((a,b) => obj[a] > obj[b] ? a : b) : '-';
-            return { store: fav(count(d, 'store')), item: fav(count(d, 'item')) };
-        });
-
-        const calendarDays = computed(() => {
-            const first = new Date(calendarYear.value, calendarMonth.value, 1);
-            const last = new Date(calendarYear.value, calendarMonth.value + 1, 0);
-            let days = [];
-            let start = first.getDay() || 7;
-            for (let i = 1; i < start; i++) days.push({ currentMonth: false });
-            for (let i = 1; i <= last.getDate(); i++) {
-                const dStr = calendarYear.value + '-' + String(calendarMonth.value + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0');
-                const dayRecs = records.value.filter(r => r.date === dStr && r.mode === activeCategory.value);
-                const tot = dayRecs.reduce((a, r) => a + (isPositive(r) ? Number(r.amount) : -Number(r.amount)), 0);
-                days.push({ dayNum: i, currentMonth: true, date: dStr, catTotal: tot, isToday: dStr === getTodayStr(), dayOfWeek: new Date(dStr).getDay() });
-            }
-            return days;
-        });
-        const selectedDateRecords = computed(() => records.value.filter(r => r.date === selectedDate.value && r.mode === activeCategory.value));
-        const selectDate = (d) => { if (d.date) selectedDate.value = d.date; refreshIcons(); };
-        const getIcon = (m) => m === 'drinks' ? 'cup-soda' : (m === 'mahjong' ? 'clover' : 'edit-3');
-        const getFriendWinRate = (f) => { const g = records.value.filter(r => r.mode === 'mahjong' && r.friends.includes(f)); return g.length ? Math.round((g.filter(r => r.type === 'win').length / g.length) * 100) : 0; };
-        
-        const toggleFriend = (f) => { const i = forms.value.mahjong.friends.indexOf(f); i > -1 ? forms.value.mahjong.friends.splice(i, 1) : (forms.value.mahjong.friends.length < 3 && forms.value.mahjong.friends.push(f)); };
-        const addFriendPrompt = () => { const n = prompt("輸入麻友姓名："); if(n) history.value.friends.push(n); };
-        const removeFriend = (f) => history.value.friends = history.value.friends.filter(i => i !== f);
-        const addDailyCatPrompt = () => { const n = prompt("輸入新分類名稱："); if(n) dailyCats.value.exp.push(n); };
-        const removeDailyCat = (c) => dailyCats.value.exp = dailyCats.value.exp.filter(i => i !== c);
-
-        const exportToExcel = () => {
-            const ws = XLSX.utils.json_to_sheet(records.value);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "TINA_JOURNAL");
-            XLSX.writeFile(wb, "TINA_JOURNAL_" + calendarYear.value + ".xlsx");
-        };
-
-        const clearAllData = () => { if (confirm("確定要重置所有紀錄嗎？")) { localStorage.clear(); location.reload(); } };
-
-        watch([records, history, dailyCats, activeTab], () => {
-            try {
-                localStorage.setItem('tina_journal_db_v2', JSON.stringify(records.value));
-                localStorage.setItem('tina_hist_db_v2', JSON.stringify(history.value));
-                localStorage.setItem('tina_cats_db_v2', JSON.stringify(dailyCats.value));
-            } catch(e) { console.error("Storage save failed", e); }
-            refreshIcons();
-        }, { deep: true });
-
-        onMounted(() => {
-            refreshIcons();
-            console.log("TINA JOURNAL Mounted Successfully");
-        });
-
-        return {
-            activeTab, activeCategory, categories, showSuccess, showSettings, settingsView, isEditing, currentYear, 
-            calendarYear, calendarMonth, availableYears, currentCategoryName, errorMsg,
-            records, history, dailyCats, forms, stats, annualTotal, dailyStatsByCategory, favoriteDrink,
-            calendarDays, selectedDate, selectedDateRecords,
-            formatNumber, isPositive, getIcon, saveDaily, saveDrink, saveMahjong, deleteRecord, copyRecord, editRecord, cancelEdit,
-            prepareAdd, goToday, selectDate, toggleFriend, addFriendPrompt, removeFriend, addDailyCatPrompt, removeDailyCat, 
-            exportToExcel, clearAllData, openSettings, getFriendWinRate, setStarRating, downloadAppFile
-        };
+        createApp(App).mount('#app');
+    } catch (err) {
+        document.getElementById('app-error').style.display = 'block';
+        document.getElementById('app-error').innerText = '啟動失敗：' + err.message;
     }
-}).mount('#app');
+};
 </script>
-
-
-</body></html>
+</body>
+</html>
