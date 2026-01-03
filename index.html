@@ -114,6 +114,9 @@
                 console.warn("Using local storage.", e);
                 db = null;
             }
+        } else {
+            db = null;
+            auth = null;
         }
 
         const { useState, useEffect, useMemo } = React;
@@ -275,6 +278,27 @@
             );
         };
 
+        // --- CONFIRM MODAL COMPONENT (UPDATED: Absolute & Centered) ---
+        const ConfirmModal = ({ isOpen, message, onConfirm, onCancel, isDestructive }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="absolute inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]" onClick={onCancel}></div>
+                    <div className="bg-white rounded-2xl shadow-modal w-full max-w-xs relative z-10 p-6 animate-pop flex flex-col items-center text-center">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${isDestructive ? 'bg-red-50 text-muji-red' : 'bg-gray-50 text-muji-ink'}`}>
+                            {isDestructive ? <Icons.AlertCircle size={24}/> : <Icons.AlertCircle size={24}/>}
+                        </div>
+                        <h3 className="text-lg font-bold text-muji-text mb-2">確認提示</h3>
+                        <p className="text-sm text-gray-500 mb-6 leading-relaxed">{message}</p>
+                        <div className="flex gap-3 w-full">
+                            <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-500 text-sm font-medium hover:bg-gray-50 transition">取消</button>
+                            <button onClick={onConfirm} className={`flex-1 py-2.5 rounded-xl text-white text-sm font-medium shadow-lg transition ${isDestructive ? 'bg-muji-red hover:bg-red-600' : 'bg-muji-ink hover:opacity-90'}`}>確定</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // --- 3. MAIN APP ---
         const App = () => {
             const [currentTab, setCurrentTab] = useState('add');
@@ -284,7 +308,8 @@
             const [records, setRecords] = useState([]);
             const [year, setYear] = useState(new Date().getFullYear());
             const [notification, setNotification] = useState(null); // { message, type }
-            
+            const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, message: '', onConfirm: null, isDestructive: false });
+
             // Edit State
             const [editingRecord, setEditingRecord] = useState(null);
             
@@ -342,17 +367,19 @@
             }, 0), [records]);
 
             // Notification System - New Top Toast Style (Faster, No Modal)
-            const showNotification = (msg, type='success') => {
+            const showNotification = (msg, type='success') => { // type: 'add', 'edit', 'delete', 'error', 'success'
                 setNotification({ msg, type }); 
                 setTimeout(() => setNotification(null), 1500);
             };
+
+            const closeConfirm = () => setConfirmDialog({ ...confirmDialog, isOpen: false });
 
             const handleAddRecord = async (newRecord) => {
                 const recordWithMeta = { ...newRecord, createdAt: new Date().toISOString(), year: year };
                 try {
                     if (db) await db.collection('records').add(recordWithMeta);
                     else setRecords(prev => [...prev, { ...recordWithMeta, id: Date.now().toString() }]);
-                    showNotification("新增成功！");
+                    showNotification("新增成功！", 'add');
                 } catch (e) { showNotification("新增失敗", "error"); }
             };
 
@@ -366,28 +393,43 @@
                         setRecords(prev => prev.map(r => r.id === editingRecord.id ? updatedRecord : r));
                     }
                     setEditingRecord(null);
-                    showNotification("修改成功！");
+                    showNotification("修改成功！", 'edit');
                 } catch (e) { showNotification("修改失敗", "error"); }
             };
 
-            const handleDelete = async (id) => {
-                if(!confirm("確定刪除此紀錄?")) return;
-                if(db) await db.collection('records').doc(id).delete();
-                else setRecords(prev => prev.filter(r => r.id !== id));
+            const handleDelete = (id) => {
+                setConfirmDialog({
+                    isOpen: true,
+                    message: "確定要刪除此筆紀錄嗎？",
+                    isDestructive: true,
+                    onConfirm: async () => {
+                        if(db) await db.collection('records').doc(id).delete();
+                        else setRecords(prev => prev.filter(r => r.id !== id));
+                        closeConfirm();
+                        showNotification("刪除成功！", 'delete');
+                    }
+                });
             };
 
-            const handleClearAllData = async () => {
-                if (!confirm("⚠️ 警告：確定要刪除當年度所有資料嗎？此動作無法復原！")) return;
-                try {
-                    if (db) {
-                        alert("雲端模式暫不支援一鍵刪除，請手動管理。");
-                    } else {
-                        setRecords([]);
-                        localStorage.removeItem(`tina_journal_${year}`);
-                        showNotification("資料已全部清除", "error"); // Use error style to show red check or just alert icon
-                        setShowSettings(false);
+            const handleClearAllData = () => {
+                setConfirmDialog({
+                    isOpen: true,
+                    message: "⚠️ 警告：確定要刪除當年度所有資料嗎？此動作無法復原！",
+                    isDestructive: true,
+                    onConfirm: async () => {
+                        try {
+                            if (db) {
+                                alert("雲端模式暫不支援一鍵刪除，請手動管理。");
+                            } else {
+                                setRecords([]);
+                                localStorage.removeItem(`tina_journal_${year}`);
+                                showNotification("資料已全部清除", "delete");
+                                setShowSettings(false);
+                            }
+                        } catch (e) { showNotification("清除失敗", "error"); }
+                        closeConfirm();
                     }
-                } catch (e) { showNotification("清除失敗", "error"); }
+                });
             };
 
             const exportToExcel = () => {
@@ -405,13 +447,13 @@
                 if (!name.trim()) return;
                 if (categories[type].includes(name)) { showNotification("⚠️ 類別已存在", "error"); return; }
                 setCategories(prev => ({ ...prev, [type]: [...prev[type], name] }));
-                showNotification("已新增類別");
+                showNotification("已新增類別", 'add');
             };
 
             const removeCategory = (type, name) => {
                 if (categories[type].length <= 1) { showNotification("⚠️ 至少保留一個", "error"); return; }
                 setCategories(prev => ({ ...prev, [type]: prev[type].filter(c => c !== name) }));
-                showNotification("已刪除類別");
+                showNotification("已刪除類別", 'delete');
             };
 
             // Mahjong Player Management
@@ -419,12 +461,23 @@
                 if (!name.trim()) return;
                 if (mahjongPlayers.includes(name)) { showNotification("⚠️ 麻友已存在", "error"); return; }
                 setMahjongPlayers(prev => [...prev, name]);
-                showNotification("已新增麻友");
+                showNotification("已新增麻友", 'add');
             };
 
             const removePlayer = (name) => {
                 setMahjongPlayers(prev => prev.filter(p => p !== name));
-                showNotification("已刪除麻友");
+                showNotification("已刪除麻友", 'delete');
+            };
+
+            // Icon helper for notification
+            const getNotificationIcon = (type) => {
+                switch(type) {
+                    case 'add': return <Icons.Check size={32} />; // Add uses Check (Success)
+                    case 'edit': return <Icons.Edit size={32} />;  // Edit uses Edit icon
+                    case 'delete': return <Icons.Trash size={32} />; // Delete uses Trash icon
+                    case 'error': return <Icons.AlertCircle size={32} />;
+                    default: return <Icons.Check size={32} />;
+                }
             };
 
             return (
@@ -458,20 +511,33 @@
                         </div>
                     </header>
 
-                    {/* Notification - Updated to Toast Style */}
+                    {/* Notification - Centered Modal Style */}
                     {notification && (
-                        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[100] animate-fade-in px-4 w-full max-w-sm pointer-events-none">
-                            <div className={`px-6 py-3 rounded-xl shadow-float flex items-center justify-center gap-3 animate-slide-up mx-auto w-max ${notification.type === 'error' ? 'bg-muji-red text-white' : 'bg-muji-ink text-white'}`}>
-                                {notification.type === 'error' ? <Icons.AlertCircle size={20} /> : <Icons.Check size={20} />}
-                                <span className="font-medium tracking-wide text-sm">{notification.msg}</span>
+                        <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
+                            <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
+                            <div className="relative z-10 bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-4 animate-pop min-w-[180px]">
+                                <div className={`p-3 rounded-full ${notification.type === 'error' ? 'bg-red-50 text-muji-red' : 'bg-gray-50 text-muji-ink'}`}>
+                                    {getNotificationIcon(notification.type)}
+                                </div>
+                                <span className="font-bold tracking-widest text-muji-text text-base">{notification.msg}</span>
                             </div>
                         </div>
                     )}
 
-                    {/* Edit Modal */}
+                    {/* Confirm Modal */}
+                    <ConfirmModal 
+                        isOpen={confirmDialog.isOpen} 
+                        message={confirmDialog.message} 
+                        onConfirm={confirmDialog.onConfirm} 
+                        onCancel={closeConfirm} 
+                        isDestructive={confirmDialog.isDestructive} 
+                    />
+
+                    {/* Edit Modal (Use same centering logic) */}
                     {editingRecord && (
-                        <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-[80] flex justify-center items-center p-4 animate-fade-in">
-                            <div className="bg-muji-paper w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-pop">
+                        <div className="absolute inset-0 z-[80] flex justify-center items-center p-4 animate-fade-in">
+                            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={()=>setEditingRecord(null)}></div>
+                            <div className="bg-muji-paper w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-pop relative z-10">
                                 <div className="bg-white p-4 border-b border-gray-100 flex justify-between items-center">
                                     <h3 className="text-lg font-bold text-muji-ink">修改紀錄</h3>
                                     <button onClick={()=>setEditingRecord(null)} className="p-2 text-gray-400 hover:text-gray-600"><Icons.X size={20}/></button>
@@ -485,11 +551,12 @@
                         </div>
                     )}
 
-                    {/* Settings Modal */}
+                    {/* Settings Modal (UPDATED: Centered & Dark Mask) */}
                     {showSettings && (
-                        <div className="absolute inset-0 bg-muji-ink/20 backdrop-blur-[2px] z-[60] flex justify-end animate-fade-in">
-                            <div className="w-full max-w-[20rem] bg-muji-paper h-full shadow-2xl flex flex-col border-l border-white/50 animate-slide-in-right">
-                                <div className="p-6 flex items-center justify-between bg-muji-paper">
+                        <div className="absolute inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
+                            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={()=>setShowSettings(false)}></div>
+                            <div className="bg-muji-paper w-full max-w-sm rounded-3xl shadow-2xl flex flex-col animate-pop relative z-10 max-h-[85%] overflow-hidden">
+                                <div className="p-6 flex items-center justify-between bg-muji-paper border-b border-white/50">
                                     {settingsPage === 'menu' ? (
                                         <h2 className="text-xl font-bold text-muji-text font-sans tracking-wider">設定</h2>
                                     ) : (
@@ -519,7 +586,7 @@
                                         <PlayerSettings players={mahjongPlayers} onAdd={addPlayer} onRemove={removePlayer} />
                                     )}
                                 </div>
-                                <div className="p-6 text-center">
+                                <div className="p-6 text-center border-t border-white/50">
                                     <p className="text-[10px] text-gray-400 font-sans tracking-widest uppercase">
                                         Tina Journal {year} • V1.0 <br/> {db ? 'Cloud Sync' : 'Local Storage'}
                                     </p>
@@ -664,18 +731,14 @@
                         <Decor/>
                         <div className="relative z-10 flex items-center justify-between">
                             <div className="flex-1">
-                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月杯數</p>
-                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{tea.length}</p>
+                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月總花費</p>
+                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-[1px] h-8 bg-white/20"></div>
                                 <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">總花費</p>
-                                    <p className="text-lg font-bold font-sans">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">平均單價</p>
-                                    <p className="text-lg font-bold font-sans">{tea.length ? Math.round(tea.reduce((a,c)=>a+c.amount,0)/tea.length) : 0}</p>
+                                    <p className="text-[9px] opacity-70 mb-0.5">累積杯數</p>
+                                    <p className="text-lg font-bold font-sans">{tea.length} 杯</p>
                                 </div>
                             </div>
                         </div>
@@ -793,8 +856,8 @@
                         <div className="flex-shrink-0"><RatingInput value={data.rating} onChange={v => setData({...data, rating: v})} /></div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">店家</label><input list="shops" value={data.shop} onChange={e=>setData({...data, shop:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text" placeholder="店家"/><datalist id="shops">{shops.map(s=><option key={s} value={s}/>)}</datalist></div>
-                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">品項</label><input list="items" value={data.item} onChange={e=>setData({...data, item:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text" placeholder="品項"/><datalist id="items">{items.map(i=><option key={i} value={i}/>)}</datalist></div>
+                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">店家</label><input list="shops" value={data.shop} onChange={e=>setData({...data, shop:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text bg-transparent" placeholder="店家"/><datalist id="shops">{shops.map(s=><option key={s} value={s}/>)}</datalist></div>
+                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">品項</label><input list="items" value={data.item} onChange={e=>setData({...data, item:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text bg-transparent" placeholder="品項"/><datalist id="items">{items.map(i=><option key={i} value={i}/>)}</datalist></div>
                     </div>
                     <div className="flex gap-2 overflow-x-auto pb-2">{['無糖','微糖','半糖','少糖','全糖'].map(s=><button key={s} onClick={()=>setData({...data, sugar:s})} className={`px-3 py-1 text-xs rounded-full border ${data.sugar===s?'border-muji-ink text-muji-ink bg-gray-100':'border-gray-200 text-gray-400'}`}>{s}</button>)}</div>
                     <div className="flex gap-2 overflow-x-auto pb-2">{['熱','去冰','微冰','少冰','正常'].map(i=><button key={i} onClick={()=>setData({...data, ice:i})} className={`px-3 py-1 text-xs rounded-full border ${data.ice===i?'border-muji-ink text-muji-ink bg-gray-100':'border-gray-200 text-gray-400'}`}>{i}</button>)}</div>
@@ -938,7 +1001,7 @@
                                         <p className="text-xs text-gray-400">
                                             {r.category==='tea'
                                                 ? <span className="flex items-center gap-1">{r.item} <span className="flex">{[...Array(5)].map((_,i) => <Icons.Star key={i} size={8} fill={r.rating >= i+1} half={r.rating === i+0.5} />)}</span></span>
-                                                : r.category==='mahjong'?(r.isWin?'贏':'輸'):r.note}
+                                                : r.category==='mahjong'?(r.players ? r.players.join(' / ') : r.note):r.note}
                                         </p>
                                     </div>
                                 </div>
