@@ -277,7 +277,8 @@
         const SummaryCard = ({ category, records }) => {
             const currentMonth = new Date().getMonth();
             const monthly = records.filter(r => new Date(r.date).getMonth() === currentMonth);
-            const cardClass = "bg-muji-ink text-white p-5 rounded-2xl shadow-float relative overflow-hidden transition-colors duration-300";
+            // Reduced padding from p-5 to p-4
+            const cardClass = "bg-muji-ink text-white p-4 rounded-2xl shadow-float relative overflow-hidden transition-colors duration-300";
             const Decor = () => <div className="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none"/>;
 
             if (category === 'daily') {
@@ -287,9 +288,12 @@
                     <div className={cardClass}>
                         <Decor/>
                         <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex-1"><p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月結餘</p><p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(inc-exp)}</p></div>
+                            <div className="flex-1">
+                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">本月結餘</p>
+                                <p className="text-2xl font-bold font-sans drop-shadow-sm">{formatMoney(inc-exp)}</p>
+                            </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="w-[1px] h-6 bg-white/20"></div>
                                 <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">收</p><p className="text-lg font-bold font-sans">{formatMoney(inc)}</p></div>
                                 <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">支</p><p className="text-lg font-bold font-sans">{formatMoney(exp)}</p></div>
                             </div>
@@ -303,9 +307,12 @@
                      <div className={cardClass}>
                         <Decor/>
                         <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex-1"><p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月總花費</p><p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p></div>
+                            <div className="flex-1">
+                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">本月總花費</p>
+                                <p className="text-2xl font-bold font-sans drop-shadow-sm">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p>
+                            </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="w-[1px] h-6 bg-white/20"></div>
                                 <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">累積杯數</p><p className="text-lg font-bold font-sans">{tea.length} 杯</p></div>
                             </div>
                         </div>
@@ -322,9 +329,12 @@
                     <div className={cardClass}>
                         <Decor/>
                         <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex-1"><p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月淨利</p><p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(net)}</p></div>
+                            <div className="flex-1">
+                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">本月淨利</p>
+                                <p className="text-2xl font-bold font-sans drop-shadow-sm">{formatMoney(net)}</p>
+                            </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="w-[1px] h-6 bg-white/20"></div>
                                 <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝率</p><p className="text-lg font-bold font-sans">{rate}%</p></div>
                                 <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝</p><p className="text-lg font-bold font-sans">{wins}</p></div>
                                 <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">敗</p><p className="text-lg font-bold font-sans">{losses}</p></div>
@@ -517,12 +527,13 @@
                 const dateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const rs = filteredRecords.filter(r=>r.date===dateStr);
                 const hasData = rs.length > 0;
+                const count = rs.length;
                 const total = rs.reduce((a,c) => { 
                     if (c.type === 'income' || c.isWin) return a + Number(c.amount); 
                     if (c.type === 'expense' || (c.category === 'mahjong' && !c.isWin) || c.category === 'tea') return a - Number(c.amount); 
                     return a; 
                 }, 0);
-                return { dateStr, hasData, total };
+                return { dateStr, hasData, total, count };
             };
             const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
             const startDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
@@ -559,7 +570,19 @@
                             {Array.from({length: offset}).map((_,i)=><div key={`empty-${i}`}/>)}
                             {Array.from({length: daysInMonth}).map((_,i)=> {
                                 const day = i+1; const info = getDayInfo(day); const isSel = info.dateStr === selDate;
-                                return ( <div key={day} onClick={()=>setSelDate(info.dateStr)} className={`flex flex-col items-center justify-start pt-1 cursor-pointer h-12 w-full mx-auto rounded-lg relative border transition-all duration-200 ${isSel ? 'border-muji-ink bg-muji-ink/5' : 'border-transparent hover:border-gray-100'}`}><span className={`relative z-10 text-[10px] font-medium leading-none ${isSel?'text-muji-ink font-bold':'text-gray-400'}`}>{day}</span>{info.hasData && (<span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${info.total >= 0 ? 'text-muji-red' : 'text-muji-green'}`}>{info.total === 0 ? '-' : Math.abs(info.total)}</span>)}</div> );
+                                return ( 
+                                    <div key={day} onClick={()=>setSelDate(info.dateStr)} className={`flex flex-col items-center justify-start pt-1 cursor-pointer h-12 w-full mx-auto rounded-lg relative border transition-all duration-200 ${isSel ? 'border-muji-ink bg-muji-ink/5' : 'border-transparent hover:border-gray-100'}`}>
+                                        <span className={`relative z-10 text-[10px] font-medium leading-none ${isSel?'text-muji-ink font-bold':'text-gray-400'}`}>{day}</span>
+                                        {info.hasData && (
+                                            <div className="flex items-center gap-0.5 mt-1 relative z-10">
+                                                <span className="text-[8px] bg-gray-100 text-gray-500 px-1 rounded-full h-3 flex items-center justify-center">{info.count}</span>
+                                                <span className={`text-[10px] font-bold tracking-tight ${info.total >= 0 ? 'text-muji-red' : 'text-muji-green'}`}>
+                                                    {info.total === 0 ? '-' : Math.abs(info.total)}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div> 
+                                );
                             })}
                         </div>
                     </div>
@@ -567,7 +590,7 @@
                         <h3 className="text-xs text-gray-400 uppercase tracking-widest pl-2 mb-2 font-sans">{selDate} • {category==='daily'?'日常':category==='tea'?'手搖':'麻將'}</h3>
                         {selRecords.length === 0 && <div className="text-center py-8 text-gray-300 text-sm italic">本日無紀錄</div>}
                         {selRecords.map(r => (
-                            <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200 group">
+                            <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-1 h-10 rounded-full ${r.category==='tea'?'bg-muji-kraft':(r.type==='income'||(r.category==='mahjong'&&r.isWin)?'bg-muji-red':'bg-muji-green')}`}></div>
                                     <div>
@@ -577,7 +600,10 @@
                                 </div>
                                 <div className="text-right flex items-center gap-3">
                                     <p className={`font-sans font-medium ${(r.category==='daily'&&r.type==='income')||(r.category==='mahjong'&&r.isWin)?'text-muji-red':'text-muji-green'}`}>{formatMoney(r.amount)}</p>
-                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition"><button onClick={()=>onEdit(r)} className="text-gray-300 hover:text-muji-ink p-1"><Icons.Edit size={14}/></button><button onClick={()=>onDelete(r.id)} className="text-gray-300 hover:text-red-400 p-1"><Icons.Trash size={14}/></button></div>
+                                    <div className="flex gap-1 transition">
+                                        <button onClick={()=>onEdit(r)} className="text-gray-300 hover:text-muji-ink p-1"><Icons.Edit size={14}/></button>
+                                        <button onClick={()=>onDelete(r.id)} className="text-gray-300 hover:text-red-400 p-1"><Icons.Trash size={14}/></button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -587,7 +613,7 @@
         };
 
         const StatsView = ({ records, category, categories }) => {
-            const [timeRange, setTimeRange] = useState('year'); // 'month' or 'year'
+            const [timeRange, setTimeRange] = useState('month'); // Changed default to 'month'
             const [dailyType, setDailyType] = useState('expense'); // 'income' or 'expense'
             
             // Tea Filter States
@@ -1249,7 +1275,7 @@
                                 </div>
                                 <div className="p-6 text-center border-t border-white/50">
                                     <p className="text-[10px] text-gray-400 font-sans tracking-widest uppercase">
-                                        Tina Journal {year} • V1.0 <br/> {db ? 'Cloud Sync' : 'Local Storage'}
+                                        Tina Journal {year} • V1.1 <br/> {db ? 'Cloud Sync' : 'Local Storage'}
                                     </p>
                                 </div>
                             </div>
