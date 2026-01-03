@@ -145,7 +145,8 @@
             ArrowLeft: (props) => <IconWrapper {...props}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconWrapper>,
             Download: (props) => <IconWrapper {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></IconWrapper>,
             AlertCircle: (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></IconWrapper>,
-            Edit: (props) => <IconWrapper {...props}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></IconWrapper>
+            Edit: (props) => <IconWrapper {...props}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></IconWrapper>,
+            Users: (props) => <IconWrapper {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconWrapper>
         };
 
         const formatMoney = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
@@ -260,16 +261,25 @@
                 income: ['薪水','獎金','投資']
             });
 
-            // Load Categories
+            // Mahjong Players State
+            const [mahjongPlayers, setMahjongPlayers] = useState(['阿明', '小華', '美美']);
+
+            // Load Data
             useEffect(() => {
                 const savedCats = localStorage.getItem('tina_journal_categories');
                 if (savedCats) { try { setCategories(JSON.parse(savedCats)); } catch(e) {} }
+                const savedPlayers = localStorage.getItem('tina_journal_players');
+                if (savedPlayers) { try { setMahjongPlayers(JSON.parse(savedPlayers)); } catch(e) {} }
             }, []);
 
-            // Save Categories
+            // Save Data
             useEffect(() => {
                 localStorage.setItem('tina_journal_categories', JSON.stringify(categories));
             }, [categories]);
+
+            useEffect(() => {
+                localStorage.setItem('tina_journal_players', JSON.stringify(mahjongPlayers));
+            }, [mahjongPlayers]);
 
             useEffect(() => {
                 if(db) {
@@ -371,6 +381,19 @@
                 showNotification("已刪除類別");
             };
 
+            // Mahjong Player Management
+            const addPlayer = (name) => {
+                if (!name.trim()) return;
+                if (mahjongPlayers.includes(name)) { showNotification("⚠️ 麻友已存在", "error"); return; }
+                setMahjongPlayers(prev => [...prev, name]);
+                showNotification("已新增麻友");
+            };
+
+            const removePlayer = (name) => {
+                setMahjongPlayers(prev => prev.filter(p => p !== name));
+                showNotification("已刪除麻友");
+            };
+
             return (
                 <div className="flex flex-col h-screen max-w-md mx-auto bg-muji-paper shadow-2xl relative text-muji-text overflow-hidden">
                     
@@ -414,7 +437,7 @@
                                 <div className="p-6">
                                     {editingRecord.category === 'daily' && <DailyForm initialData={editingRecord} onSubmit={handleUpdateRecord} categories={categories} isEditing showNotification={showNotification} />}
                                     {editingRecord.category === 'tea' && <TeaForm initialData={editingRecord} onSubmit={handleUpdateRecord} records={records} isEditing showNotification={showNotification} />}
-                                    {editingRecord.category === 'mahjong' && <MahjongForm initialData={editingRecord} onSubmit={handleUpdateRecord} records={records} isEditing showNotification={showNotification} />}
+                                    {editingRecord.category === 'mahjong' && <MahjongForm initialData={editingRecord} onSubmit={handleUpdateRecord} records={records} isEditing showNotification={showNotification} players={mahjongPlayers} />}
                                 </div>
                             </div>
                         </div>
@@ -441,14 +464,17 @@
                                             <div>
                                                 <div className="space-y-1">
                                                     <SettingsItem icon={<Icons.List size={18}/>} label="類別管理" onClick={()=>setSettingsPage('categories')} subLabel="自訂收支項目"/>
-                                                    <div className="h-[1px] bg-gray-200 ml-10"></div>
+                                                    <SettingsItem icon={<Icons.Users size={18}/>} label="麻友管理" onClick={()=>setSettingsPage('players')} subLabel="設定牌咖名單"/>
+                                                    <div className="h-[1px] bg-gray-200 ml-10 my-1"></div>
                                                     <SettingsItem icon={<Icons.Download size={18}/>} label="匯出資料" onClick={exportToExcel} subLabel="下載 CSV 報表"/>
                                                 </div>
                                             </div>
                                             <div className="pt-8"><SettingsItem icon={<Icons.Trash size={18}/>} label="清除所有資料" onClick={handleClearAllData} isDestructive/></div>
                                         </div>
-                                    ) : (
+                                    ) : settingsPage === 'categories' ? (
                                         <CategorySettings categories={categories} onAdd={addCategory} onRemove={removeCategory} />
+                                    ) : (
+                                        <PlayerSettings players={mahjongPlayers} onAdd={addPlayer} onRemove={removePlayer} />
                                     )}
                                 </div>
                                 <div className="p-6 text-center">
@@ -463,7 +489,7 @@
                     {/* Main Content Area */}
                     <main className="flex-1 overflow-y-auto pb-double-nav">
                         <div className="pt-6">
-                            {currentTab === 'add' && <AddView category={currentCategory} onAdd={handleAddRecord} records={records} categories={categories} showNotification={showNotification} />}
+                            {currentTab === 'add' && <AddView category={currentCategory} onAdd={handleAddRecord} records={records} categories={categories} showNotification={showNotification} players={mahjongPlayers} />}
                             {currentTab === 'calendar' && <CalendarView records={records} onDelete={handleDelete} onEdit={setEditingRecord} category={currentCategory} />}
                             {currentTab === 'stats' && <StatsView records={records} category={currentCategory} categories={categories} />}
                         </div>
@@ -509,6 +535,30 @@
             );
         };
 
+        const PlayerSettings = ({ players, onAdd, onRemove }) => {
+            const [newPlayer, setNewPlayer] = useState('');
+            const handleAdd = () => { if(newPlayer.trim()) { onAdd(newPlayer.trim()); setNewPlayer(''); } };
+            return (
+                <div className="space-y-6 animate-fade-in h-full flex flex-col">
+                    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
+                        <input value={newPlayer} onChange={e=>setNewPlayer(e.target.value)} onKeyDown={e=> e.key === 'Enter' && handleAdd()} placeholder="輸入麻友名字..." className="flex-1 min-w-0 bg-transparent px-3 py-2 text-sm text-muji-text outline-none placeholder-gray-300"/>
+                        <button onClick={handleAdd} disabled={!newPlayer.trim()} className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 transition-all"><Icons.Plus size={20}/></button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto pr-1">
+                        <div className="flex flex-wrap gap-2 content-start">
+                            {players.map(p => (
+                                <div key={p} className="group flex items-center gap-2 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm">
+                                    <span className="text-sm text-gray-600 font-medium">{p}</span>
+                                    <button onClick={()=>onRemove(p)} className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button>
+                                </div>
+                            ))}
+                            {players.length === 0 && <div className="w-full text-center py-10 text-gray-300 text-xs tracking-widest">暫無麻友</div>}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const NavBtn = ({ active, onClick, icon, label }) => (
             <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center py-2 transition-all duration-300 group`}><div className={`p-1.5 rounded-xl transition-all duration-300 ${active ? 'text-muji-ink bg-muji-ink/10' : 'text-gray-400 group-hover:text-muji-ink'}`}>{icon}</div><span className={`text-[10px] tracking-widest font-sans font-medium mt-1 ${active ? 'text-muji-ink' : 'text-gray-400'}`}>{label}</span></button>
         );
@@ -521,13 +571,13 @@
             </div>
         );
 
-        const AddView = ({ category, onAdd, records, categories, showNotification }) => (
+        const AddView = ({ category, onAdd, records, categories, showNotification, players }) => (
             <div className="px-6 animate-fade-in">
                 <div className="mb-6"><SummaryCard category={category} records={records} /></div>
                 <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border animate-slide-up mb-6">
                     {category === 'daily' && <DailyForm onAdd={onAdd} categories={categories} showNotification={showNotification} />}
                     {category === 'tea' && <TeaForm onAdd={onAdd} records={records} showNotification={showNotification} />}
-                    {category === 'mahjong' && <MahjongForm onAdd={onAdd} records={records} showNotification={showNotification} />}
+                    {category === 'mahjong' && <MahjongForm onAdd={onAdd} records={records} showNotification={showNotification} players={players} />}
                 </div>
             </div>
         );
@@ -612,14 +662,12 @@
             );
         };
 
-        const MahjongForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification }) => {
+        const MahjongForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification, players }) => {
             const [data, setData] = useState(() => {
-                if (initialData) return { ...initialData, amt: initialData.amount, win: initialData.isWin, newP: '' };
-                return { date: getTodayString(), players: [], win: true, amt: '', newP: '' };
+                if (initialData) return { ...initialData, amt: initialData.amount, win: initialData.isWin };
+                return { date: getTodayString(), players: [], win: true, amt: '' };
             });
-            const allP = useMemo(() => {
-                const s = new Set(records.filter(r=>r.category==='mahjong').flatMap(r=>r.players)); ['阿明','小華','美美'].forEach(x=>s.add(x)); if(data.newP) s.add(data.newP); return [...s];
-            }, [records, data.newP]);
+            
             const toggle = (p) => { if(data.players.includes(p)) setData({...data, players: data.players.filter(x=>x!==p)}); else if(data.players.length < 3) setData({...data, players: [...data.players, p]}); };
             const submit = () => { 
                 if(data.players.length !== 3) return showNotification("麻友請選擇 3 位", "error");
@@ -635,8 +683,13 @@
                         <button onClick={()=>setData({...data, win:false})} className={`flex-1 py-2 text-xs rounded-md transition ${!data.win?'bg-white shadow text-muji-green font-bold':'text-gray-400'}`}>輸</button>
                     </div>
                     <div>
-                        <div className="flex justify-between items-center mb-2"><span className="text-xs uppercase text-gray-400">選擇麻友 ({data.players.length}/3)</span><div className="flex items-center border-b border-gray-200"><input placeholder="輸入名字" value={data.newP} onChange={e=>setData({...data, newP:e.target.value})} className="text-xs w-20 py-1 outline-none bg-transparent text-muji-text"/><Icons.Plus size={12} className="text-gray-400"/></div></div>
-                        <div className="flex flex-wrap gap-2">{allP.map(p => (<button key={p} onClick={()=>toggle(p)} className={`px-3 py-1 text-xs rounded-full border transition ${data.players.includes(p)?'bg-muji-ink text-white border-muji-ink':'bg-white text-gray-500 border-gray-200'}`}>{p}</button>))}</div>
+                        <div className="flex justify-between items-center mb-2"><span className="text-xs uppercase text-gray-400">選擇麻友 ({data.players.length}/3)</span></div>
+                        <div className="flex flex-wrap gap-2">
+                            {players.map(p => (
+                                <button key={p} onClick={()=>toggle(p)} className={`px-3 py-1 text-xs rounded-full border transition ${data.players.includes(p)?'bg-muji-ink text-white border-muji-ink':'bg-white text-gray-500 border-gray-200'}`}>{p}</button>
+                            ))}
+                            {players.length === 0 && <span className="text-xs text-gray-400">請至設定新增麻友</span>}
+                        </div>
                     </div>
                     <div className="relative border-b border-gray-200"><span className={`absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans ${data.win?'text-muji-red':'text-muji-green'}`}>$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className={`w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent ${data.win?'text-muji-red':'text-muji-green'}`}/></div>
                     <button onClick={submit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">{isEditing ? "確認修改" : "儲存戰績"}</button>
