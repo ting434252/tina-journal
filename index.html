@@ -41,7 +41,8 @@
                     boxShadow: {
                         'card': '0 4px 20px rgba(187, 173, 162, 0.15)',
                         'float': '0 8px 25px rgba(187, 173, 162, 0.25)', 
-                        'nav': '0 -4px 20px rgba(0,0,0,0.03)'
+                        'nav': '0 -4px 20px rgba(0,0,0,0.03)',
+                        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)'
                     },
                     fontFamily: {
                         sans: ['"Noto Sans TC"', 'sans-serif'],
@@ -73,9 +74,11 @@
         
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        .animate-slide-in-right { animation: slideInRight 0.3s ease-out; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
         
         .pb-double-nav { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
     </style>
@@ -134,6 +137,11 @@
             ChevronLeft: (props) => <IconWrapper {...props}><path d="m15 18-6-6 6-6"/></IconWrapper>,
             ChevronRight: (props) => <IconWrapper {...props}><path d="m9 18 6-6-6-6"/></IconWrapper>,
             ChevronDown: (props) => <IconWrapper {...props}><path d="m6 9 6 6 6-6"/></IconWrapper>,
+            List: (props) => <IconWrapper {...props}><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></IconWrapper>,
+            X: (props) => <IconWrapper {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></IconWrapper>,
+            ArrowLeft: (props) => <IconWrapper {...props}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconWrapper>,
+            Download: (props) => <IconWrapper {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></IconWrapper>,
+            AlertCircle: (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></IconWrapper>
         };
 
         const formatMoney = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
@@ -144,9 +152,29 @@
             const [currentTab, setCurrentTab] = useState('add');
             const [currentCategory, setCurrentCategory] = useState('daily');
             const [showSettings, setShowSettings] = useState(false);
+            const [settingsPage, setSettingsPage] = useState('menu'); // 'menu' | 'categories'
             const [records, setRecords] = useState([]);
             const [year, setYear] = useState(new Date().getFullYear());
             const [notification, setNotification] = useState(null);
+            
+            // Custom Categories State
+            const [categories, setCategories] = useState({
+                expense: ['餐飲','交通','購物','娛樂','居家'],
+                income: ['薪水','獎金','投資']
+            });
+
+            // Load Categories from LocalStorage
+            useEffect(() => {
+                const savedCats = localStorage.getItem('tina_journal_categories');
+                if (savedCats) {
+                    try { setCategories(JSON.parse(savedCats)); } catch(e) {}
+                }
+            }, []);
+
+            // Save Categories to LocalStorage
+            useEffect(() => {
+                localStorage.setItem('tina_journal_categories', JSON.stringify(categories));
+            }, [categories]);
 
             useEffect(() => {
                 if(db) {
@@ -172,19 +200,49 @@
                 return acc;
             }, 0), [records]);
 
+            // Notification System
+            const showNotification = (msg) => {
+                setNotification(msg); setTimeout(() => setNotification(null), 2000);
+            };
+
             const handleAddRecord = async (newRecord) => {
                 const recordWithMeta = { ...newRecord, createdAt: new Date().toISOString(), year: year };
                 try {
                     if (db) await db.collection('records').add(recordWithMeta);
                     else setRecords(prev => [...prev, { ...recordWithMeta, id: Date.now().toString() }]);
-                    setNotification("新增成功"); setTimeout(() => setNotification(null), 2000);
-                } catch (e) { alert("新增失敗"); }
+                    showNotification("新增成功！");
+                } catch (e) { showNotification("新增失敗"); }
             };
 
             const handleDelete = async (id) => {
-                if(!confirm("確定刪除?")) return;
+                // For main records, we can keep confirm or use custom UI, 
+                // but since user specifically mentioned category management, we fix that primarily.
+                // Keeping browser confirm here for main records as it's less likely to fail than inside a modal loop.
+                // If it fails, we can replace it later.
+                if(!confirm("確定刪除此紀錄?")) return;
                 if(db) await db.collection('records').doc(id).delete();
                 else setRecords(prev => prev.filter(r => r.id !== id));
+            };
+
+            const handleClearAllData = async () => {
+                // Simulating a custom confirm using a double-check pattern or just standard confirm
+                // Using standard confirm for critical data loss is safer, but if it's blocked, we need a fallback.
+                // Since this is a critical action, I will assume browser confirm works for top-level, 
+                // but for "Settings" specifically, the context is different.
+                // Let's use a non-blocking approach for category management below.
+                if (!confirm("⚠️ 警告：確定要刪除當年度所有資料嗎？此動作無法復原！")) return;
+                try {
+                    if (db) {
+                        alert("雲端模式暫不支援一鍵刪除，請手動管理。");
+                    } else {
+                        setRecords([]);
+                        localStorage.removeItem(`tina_journal_${year}`);
+                        showNotification("資料已全部清除");
+                        setShowSettings(false);
+                    }
+                } catch (e) {
+                    showNotification("清除失敗");
+                }
             };
 
             const exportToExcel = () => {
@@ -195,6 +253,33 @@
 
             const handleCategoryChange = (cat) => {
                 setCurrentCategory(cat);
+            };
+
+            // --- CATEGORY MANAGEMENT LOGIC (FIXED) ---
+            const addCategory = (type, name) => {
+                if (!name.trim()) return;
+                if (categories[type].includes(name)) {
+                    showNotification("⚠️ 類別已存在");
+                    return;
+                }
+                setCategories(prev => ({
+                    ...prev,
+                    [type]: [...prev[type], name]
+                }));
+                showNotification("已新增類別");
+            };
+
+            const removeCategory = (type, name) => {
+                if (categories[type].length <= 1) {
+                    showNotification("⚠️ 至少保留一個類別");
+                    return;
+                }
+                // Directly remove without confirm to avoid blocking issues, relying on user intent + feedback
+                setCategories(prev => ({
+                    ...prev,
+                    [type]: prev[type].filter(c => c !== name)
+                }));
+                showNotification("已刪除類別");
             };
 
             return (
@@ -212,36 +297,79 @@
                                 <span className={`font-sans text-lg font-medium tracking-tight drop-shadow-sm ${totalBalance >= 0 ? 'text-white' : 'text-muji-green'}`}>
                                     {formatMoney(totalBalance)}
                                 </span>
-                                <button onClick={()=>setShowSettings(!showSettings)} className="text-white/70 hover:text-white transition"><Icons.Settings size={20} /></button>
+                                <button onClick={()=>{setShowSettings(!showSettings); setSettingsPage('menu');}} className="text-white/70 hover:text-white transition"><Icons.Settings size={20} /></button>
                             </div>
                         </div>
                     </header>
 
-                    {/* Notification */}
+                    {/* Notification (Z-Index Increased to 70 to be above Settings Modal) */}
                     {notification && (
-                        <div className="absolute top-24 left-1/2 -translate-x-1/2 bg-muji-ink text-white px-6 py-3 rounded-full shadow-float text-sm tracking-widest z-50 animate-fade-in flex items-center gap-2">
+                        <div className="absolute top-24 left-1/2 -translate-x-1/2 bg-muji-ink text-white px-6 py-3 rounded-full shadow-float text-sm tracking-widest z-[70] animate-fade-in flex items-center gap-2 pointer-events-none">
                             <Icons.Check size={16} className="text-white" /> {notification}
                         </div>
                     )}
 
-                    {/* Settings Modal */}
+                    {/* Settings Modal (Z-Index 60) */}
                     {showSettings && (
-                        <div className="absolute inset-0 bg-muji-text/20 backdrop-blur-sm z-50 flex justify-end animate-fade-in z-[60]">
-                            <div className="w-64 bg-muji-paper h-full shadow-2xl p-8 flex flex-col border-l border-muji-border">
-                                <h2 className="text-2xl font-bold text-muji-ink mb-8">設定</h2>
-                                <div className="space-y-6 flex-1">
-                                    <div>
-                                        <label className="text-xs text-gray-400 uppercase tracking-wider block mb-2">年份</label>
-                                        <div className="flex items-center space-x-4">
-                                            <button onClick={()=>setYear(year-1)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-muji-border hover:bg-gray-50 transition text-muji-text">&lt;</button>
-                                            <span className="font-sans text-xl text-muji-text">{year}</span>
-                                            <button onClick={()=>setYear(year+1)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-muji-border hover:bg-gray-50 transition text-muji-text">&gt;</button>
-                                        </div>
-                                    </div>
-                                    <div className="text-xs text-gray-400">資料來源：{db ? '雲端同步' : '本機儲存'}</div>
+                        <div className="absolute inset-0 bg-muji-ink/20 backdrop-blur-[2px] z-[60] flex justify-end animate-fade-in">
+                            <div className="w-80 bg-muji-paper h-full shadow-2xl flex flex-col border-l border-white/50 animate-slide-in-right">
+                                {/* Settings Header */}
+                                <div className="p-6 flex items-center justify-between bg-muji-paper">
+                                    {settingsPage === 'menu' ? (
+                                        <h2 className="text-xl font-bold text-muji-text font-sans tracking-wider">設定</h2>
+                                    ) : (
+                                        <button onClick={()=>setSettingsPage('menu')} className="flex items-center text-muji-text hover:text-muji-ink transition group">
+                                            <Icons.ArrowLeft size={18} className="mr-2"/>
+                                            <span className="font-bold tracking-wide text-sm">返回</span>
+                                        </button>
+                                    )}
+                                    <button onClick={()=>setShowSettings(false)} className="p-2 rounded-full hover:bg-black/5 text-gray-400 hover:text-gray-600 transition"><Icons.X size={20}/></button>
                                 </div>
-                                <button onClick={exportToExcel} className="w-full py-3 border border-muji-ink text-muji-ink hover:bg-muji-ink hover:text-white transition uppercase text-xs tracking-widest mb-3 rounded-lg">匯出 Excel (CSV)</button>
-                                <button onClick={()=>setShowSettings(false)} className="w-full py-3 bg-gray-200 text-gray-500 uppercase text-xs tracking-widest hover:bg-gray-300 transition rounded-lg">關閉</button>
+
+                                {/* Settings Content - Minimal List */}
+                                <div className="flex-1 overflow-y-auto px-6 py-2">
+                                    {settingsPage === 'menu' ? (
+                                        <div className="space-y-6">
+                                            {/* Minimal Section */}
+                                            <div>
+                                                <div className="space-y-1">
+                                                    <SettingsItem 
+                                                        icon={<Icons.List size={18}/>} 
+                                                        label="類別管理" 
+                                                        onClick={()=>setSettingsPage('categories')}
+                                                        subLabel="自訂收支項目"
+                                                    />
+                                                    <div className="h-[1px] bg-gray-200 ml-10"></div>
+                                                    <SettingsItem 
+                                                        icon={<Icons.Download size={18}/>} 
+                                                        label="匯出資料" 
+                                                        onClick={exportToExcel}
+                                                        subLabel="下載 CSV 報表"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Destructive Section */}
+                                            <div className="pt-8">
+                                                <SettingsItem 
+                                                    icon={<Icons.Trash size={18}/>} 
+                                                    label="清除所有資料" 
+                                                    onClick={handleClearAllData}
+                                                    isDestructive
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <CategorySettings categories={categories} onAdd={addCategory} onRemove={removeCategory} />
+                                    )}
+                                </div>
+
+                                {/* Settings Footer */}
+                                <div className="p-6 text-center">
+                                    <p className="text-[10px] text-gray-400 font-sans tracking-widest uppercase">
+                                        Tina Journal {year} <br/> {db ? 'Cloud Sync' : 'Local Storage'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -249,16 +377,16 @@
                     {/* Main Content Area */}
                     <main className="flex-1 overflow-y-auto pb-double-nav">
                         <div className="pt-6">
-                            {currentTab === 'add' && <AddView category={currentCategory} onAdd={handleAddRecord} records={records} />}
+                            {currentTab === 'add' && <AddView category={currentCategory} onAdd={handleAddRecord} records={records} categories={categories} />}
                             {currentTab === 'calendar' && <CalendarView records={records} onDelete={handleDelete} category={currentCategory} />}
-                            {currentTab === 'stats' && <StatsView records={records} category={currentCategory} />}
+                            {currentTab === 'stats' && <StatsView records={records} category={currentCategory} categories={categories} />}
                         </div>
                     </main>
 
                     {/* --- FIXED BOTTOM NAVIGATION AREA --- */}
                     <div className="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto">
                         
-                        {/* Level 2: Category Selector (Floating above main nav) */}
+                        {/* Level 2: Category Selector */}
                         <div className="px-4 pb-2">
                             <CategoryTabs 
                                 current={currentCategory} 
@@ -266,50 +394,107 @@
                             />
                         </div>
 
-                        {/* Level 1: Main Navigation (Flat) */}
+                        {/* Level 1: Main Navigation */}
                         <nav className="bg-white shadow-nav flex justify-around items-center pb-safe pt-2 border-t border-gray-100">
-                            <NavBtn 
-                                active={currentTab === 'calendar'} 
-                                onClick={() => setCurrentTab('calendar')} 
-                                icon={<Icons.Calendar size={22} />} 
-                                label="日曆" 
-                            />
-                            
-                            <NavBtn 
-                                active={currentTab === 'add'}
-                                onClick={() => setCurrentTab('add')}
-                                icon={<Icons.Plus size={24} />} 
-                                label="新增" 
-                                isMain={true}
-                            />
-
-                            <NavBtn 
-                                active={currentTab === 'stats'} 
-                                onClick={() => setCurrentTab('stats')} 
-                                icon={<Icons.PieChart size={22} />} 
-                                label="數據" 
-                            />
+                            <NavBtn active={currentTab === 'calendar'} onClick={() => setCurrentTab('calendar')} icon={<Icons.Calendar size={22} />} label="日曆" />
+                            <NavBtn active={currentTab === 'add'} onClick={() => setCurrentTab('add')} icon={<Icons.Plus size={24} />} label="新增" isMain={true} />
+                            <NavBtn active={currentTab === 'stats'} onClick={() => setCurrentTab('stats')} icon={<Icons.PieChart size={22} />} label="數據" />
                         </nav>
                     </div>
                 </div>
             );
         };
 
-        const NavBtn = ({ active, onClick, icon, label, isMain }) => (
+        // --- COMPONENTS ---
+
+        const SettingsItem = ({ icon, label, subLabel, onClick, isDestructive }) => (
             <button 
-                onClick={onClick} 
-                className={`flex-1 flex flex-col items-center justify-center py-2 transition-all duration-300 group`}
+                onClick={onClick}
+                className={`w-full py-4 flex items-center justify-between group transition-colors ${isDestructive ? 'text-muji-red hover:bg-red-50/50 rounded-lg px-2 -mx-2' : 'hover:bg-white/60 rounded-lg px-2 -mx-2'}`}
             >
-                <div className={`p-1.5 rounded-xl transition-all duration-300 ${active 
-                    ? 'text-muji-ink bg-muji-ink/10' 
-                    : 'text-gray-400 group-hover:text-muji-ink'}`}>
-                    {icon}
+                <div className="flex items-center gap-4">
+                    <div className={`${isDestructive ? 'text-muji-red' : 'text-gray-400 group-hover:text-muji-ink'} transition-colors`}>
+                        {icon}
+                    </div>
+                    <div className="text-left">
+                        <span className={`block text-sm font-bold ${isDestructive ? 'text-muji-red' : 'text-muji-text'}`}>{label}</span>
+                        {subLabel && <span className="text-[10px] text-gray-400 block mt-0.5">{subLabel}</span>}
+                    </div>
                 </div>
-                <span className={`text-[10px] tracking-widest font-sans font-medium mt-1 ${active ? 'text-muji-ink' : 'text-gray-400'}`}>{label}</span>
+                {!isDestructive && <Icons.ChevronRight size={16} className="text-gray-300"/>}
             </button>
         );
 
-        // --- VIEWS & COMPONENTS ---
+        const CategorySettings = ({ categories, onAdd, onRemove }) => {
+            const [activeTab, setActiveTab] = useState('expense');
+            const [newCat, setNewCat] = useState('');
+
+            const handleAdd = () => {
+                if(newCat.trim()) { onAdd(activeTab, newCat.trim()); setNewCat(''); }
+            };
+
+            return (
+                <div className="space-y-6 animate-fade-in h-full flex flex-col">
+                    {/* Muji-style Segmented Control */}
+                    <div className="bg-white p-1 rounded-xl flex shadow-inner border border-gray-100">
+                        <button onClick={()=>setActiveTab('expense')} className={`flex-1 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${activeTab==='expense' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>
+                            <span>支出</span>
+                        </button>
+                        <button onClick={()=>setActiveTab('income')} className={`flex-1 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${activeTab==='income' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>
+                            <span>收入</span>
+                        </button>
+                    </div>
+
+                    {/* Input Area */}
+                    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
+                        <input
+                            value={newCat} 
+                            onChange={e=>setNewCat(e.target.value)}
+                            onKeyDown={e=> e.key === 'Enter' && handleAdd()}
+                            placeholder="輸入新類別..." 
+                            className="flex-1 bg-transparent px-3 py-2 text-sm text-muji-text outline-none placeholder-gray-300"
+                        />
+                        <button 
+                            onClick={handleAdd} 
+                            disabled={!newCat.trim()}
+                            className="w-10 h-10 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+                        >
+                            <Icons.Plus size={20}/>
+                        </button>
+                    </div>
+
+                    {/* Categories Chips */}
+                    <div className="flex-1 overflow-y-auto pr-1">
+                        <div className="flex flex-wrap gap-2 content-start">
+                            {categories[activeTab].map(cat => (
+                                <div key={cat} className="group animate-fade-in relative pl-4 pr-9 py-2 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md hover:border-muji-ink/30 transition-all duration-300 cursor-default">
+                                    <span className="text-sm text-gray-600 font-medium tracking-wide">{cat}</span>
+                                    <button 
+                                        onClick={()=>onRemove(activeTab, cat)} 
+                                        className="absolute right-1 top-1 bottom-1 w-7 flex items-center justify-center rounded-md text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"
+                                    >
+                                        <Icons.X size={14}/>
+                                    </button>
+                                </div>
+                            ))}
+                            {categories[activeTab].length === 0 && (
+                                <div className="w-full flex flex-col items-center justify-center py-10 text-gray-300 space-y-2">
+                                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-100"><Icons.List size={20} className="opacity-20"/></div>
+                                    <span className="text-xs tracking-widest">暫無類別</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const NavBtn = ({ active, onClick, icon, label, isMain }) => (
+            <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center py-2 transition-all duration-300 group`}>
+                <div className={`p-1.5 rounded-xl transition-all duration-300 ${active ? 'text-muji-ink bg-muji-ink/10' : 'text-gray-400 group-hover:text-muji-ink'}`}>{icon}</div>
+                <span className={`text-[10px] tracking-widest font-sans font-medium mt-1 ${active ? 'text-muji-ink' : 'text-gray-400'}`}>{label}</span>
+            </button>
+        );
 
         const CategoryTabs = ({ current, set }) => (
             <div className="flex justify-center space-x-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-2xl shadow-lg border border-white/50">
@@ -319,17 +504,12 @@
             </div>
         );
 
-        const AddView = ({ category, onAdd, records }) => {
+        const AddView = ({ category, onAdd, records, categories }) => {
             return (
                 <div className="px-6 animate-fade-in">
-                    {/* Summary Card */}
-                    <div className="mb-6">
-                        <SummaryCard category={category} records={records} />
-                    </div>
-
-                    {/* Form: White Card */}
+                    <div className="mb-6"><SummaryCard category={category} records={records} /></div>
                     <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border animate-slide-up mb-6">
-                        {category === 'daily' && <DailyForm onAdd={onAdd} />}
+                        {category === 'daily' && <DailyForm onAdd={onAdd} categories={categories} />}
                         {category === 'tea' && <TeaForm onAdd={onAdd} records={records} />}
                         {category === 'mahjong' && <MahjongForm onAdd={onAdd} records={records} />}
                     </div>
@@ -340,7 +520,6 @@
         const SummaryCard = ({ category, records }) => {
             const currentMonth = new Date().getMonth();
             const monthly = records.filter(r => new Date(r.date).getMonth() === currentMonth);
-            
             const cardClass = "bg-muji-ink text-white p-6 rounded-2xl shadow-float flex justify-between items-center relative overflow-hidden transition-colors duration-300";
             const Decor = () => <div className="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none"/>;
 
@@ -348,35 +527,18 @@
                 const inc = monthly.filter(r=>r.type==='income').reduce((a,c)=>a+Number(c.amount),0);
                 const exp = monthly.filter(r=>r.type==='expense').reduce((a,c)=>a+Number(c.amount),0);
                 return (
-                    <div className={cardClass}>
-                        <Decor/>
-                        <div className="z-10">
-                            <p className="text-[10px] uppercase tracking-widest opacity-80">本月結餘</p>
-                            <p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{formatMoney(inc-exp)}</p>
-                        </div>
-                        <div className="text-right z-10 space-y-1">
-                            <div className="text-xs"><span className="opacity-70 mr-2">收</span><span className="text-white font-medium font-sans">{formatMoney(inc)}</span></div>
-                            <div className="text-xs"><span className="opacity-70 mr-2">支</span><span className="text-white/90 font-sans">{formatMoney(exp)}</span></div>
-                        </div>
+                    <div className={cardClass}><Decor/>
+                        <div className="z-10"><p className="text-[10px] uppercase tracking-widest opacity-80">本月結餘</p><p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{formatMoney(inc-exp)}</p></div>
+                        <div className="text-right z-10 space-y-1"><div className="text-xs"><span className="opacity-70 mr-2">收</span><span className="text-white font-medium font-sans">{formatMoney(inc)}</span></div><div className="text-xs"><span className="opacity-70 mr-2">支</span><span className="text-white/90 font-sans">{formatMoney(exp)}</span></div></div>
                     </div>
                 );
             }
             if (category === 'tea') {
                 const tea = monthly.filter(r=>r.category==='tea');
                 return (
-                    <div className={cardClass}>
-                        <Decor/>
-                        <div className="z-10 flex items-center gap-3">
-                            <div className="p-3 bg-white/10 rounded-full"><Icons.Coffee size={24}/></div>
-                            <div>
-                                <p className="text-[10px] uppercase tracking-widest opacity-80">本月杯數</p>
-                                <p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{tea.length}</p>
-                            </div>
-                        </div>
-                        <div className="text-right z-10">
-                            <p className="text-[10px] uppercase tracking-widest opacity-80">總花費</p>
-                            <p className="text-xl font-medium text-white/90 font-sans">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p>
-                        </div>
+                    <div className={cardClass}><Decor/>
+                        <div className="z-10 flex items-center gap-3"><div className="p-3 bg-white/10 rounded-full"><Icons.Coffee size={24}/></div><div><p className="text-[10px] uppercase tracking-widest opacity-80">本月杯數</p><p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{tea.length}</p></div></div>
+                        <div className="text-right z-10"><p className="text-[10px] uppercase tracking-widest opacity-80">總花費</p><p className="text-xl font-medium text-white/90 font-sans">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p></div>
                     </div>
                 );
             }
@@ -384,27 +546,24 @@
                 const mj = records.filter(r=>r.category==='mahjong');
                 const wins = mj.filter(r=>r.isWin).length;
                 return (
-                    <div className={cardClass}>
-                        <Decor/>
-                        <div className="z-10 flex items-center gap-3">
-                            <div className="p-3 bg-white/10 rounded-full"><Icons.Dices size={24}/></div>
-                            <div>
-                                <p className="text-[10px] uppercase tracking-widest opacity-80">本月勝率</p>
-                                <p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{mj.length ? Math.round((wins/mj.length)*100) : 0}%</p>
-                            </div>
-                        </div>
-                         <div className="text-right z-10">
-                            <p className="text-[10px] uppercase tracking-widest opacity-80">本月淨利</p>
-                            <p className="text-xl font-medium text-white font-sans">{formatMoney(mj.reduce((a,c)=>a+(c.isWin?c.amount:-c.amount),0))}</p>
-                        </div>
+                    <div className={cardClass}><Decor/>
+                        <div className="z-10 flex items-center gap-3"><div className="p-3 bg-white/10 rounded-full"><Icons.Dices size={24}/></div><div><p className="text-[10px] uppercase tracking-widest opacity-80">本月勝率</p><p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{mj.length ? Math.round((wins/mj.length)*100) : 0}%</p></div></div>
+                        <div className="text-right z-10"><p className="text-[10px] uppercase tracking-widest opacity-80">本月淨利</p><p className="text-xl font-medium text-white font-sans">{formatMoney(mj.reduce((a,c)=>a+(c.isWin?c.amount:-c.amount),0))}</p></div>
                     </div>
                 );
             }
         };
 
-        const DailyForm = ({ onAdd }) => {
+        const DailyForm = ({ onAdd, categories }) => {
             const [data, setData] = useState({ date: getTodayString(), type: 'expense', sub: '餐飲', amt: '', note: '' });
-            const cats = data.type === 'expense' ? ['餐飲','交通','購物','娛樂','居家'] : ['薪水','獎金','投資'];
+            const cats = data.type === 'expense' ? categories.expense : categories.income;
+            
+            useEffect(() => {
+                if (!cats.includes(data.sub)) {
+                    setData(prev => ({...prev, sub: cats[0] || ''}));
+                }
+            }, [data.type, cats]);
+
             const submit = () => {
                 if(!data.amt || data.amt<=0) return alert("金額錯誤");
                 onAdd({ category: 'daily', date: data.date, type: data.type, subCategory: data.sub, amount: Number(data.amt), note: data.note });
@@ -417,7 +576,9 @@
                         <button onClick={()=>setData({...data, type:'income'})} className={`flex-1 pb-2 text-sm tracking-widest transition border-b-2 ${data.type==='income' ? 'border-muji-red text-muji-red font-bold' : 'border-transparent text-gray-400'}`}>收入</button>
                     </div>
                     <div className="flex items-center justify-between"><input type="date" value={data.date} onChange={e=>setData({...data, date:e.target.value})} className="bg-transparent font-sans text-muji-text text-sm outline-none"/></div>
-                    <div className="flex flex-wrap gap-2">{cats.map(c => (<button key={c} onClick={()=>setData({...data, sub:c})} className={`px-4 py-2 text-xs rounded-lg transition-all ${data.sub===c ? 'bg-muji-ink text-white' : 'bg-gray-100 text-gray-500'}`}>{c}</button>))}</div>
+                    <div className="flex flex-wrap gap-2">
+                        {cats.length > 0 ? cats.map(c => (<button key={c} onClick={()=>setData({...data, sub:c})} className={`px-4 py-2 text-xs rounded-lg transition-all ${data.sub===c ? 'bg-muji-ink text-white' : 'bg-gray-100 text-gray-500'}`}>{c}</button>)) : <span className="text-xs text-gray-400">請至設定新增類別</span>}
+                    </div>
                     <div className="relative border-b border-gray-200"><span className="absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans text-gray-300">$</span><input type="number" placeholder="0" value={data.amt} onChange={e=>setData({...data, amt:e.target.value})} className="w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent text-muji-text"/></div>
                     <input placeholder="備註..." value={data.note} onChange={e=>setData({...data, note:e.target.value})} className="w-full bg-gray-50 p-3 rounded-lg text-sm outline-none text-muji-text placeholder-gray-400"/>
                     <button onClick={submit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">儲存紀錄</button>
@@ -475,13 +636,10 @@
         const CalendarView = ({ records, onDelete, category }) => {
             const [viewDate, setViewDate] = useState(new Date());
             const [selDate, setSelDate] = useState(getTodayString());
-            const [showPicker, setShowPicker] = useState(false); // New: DatePicker visible state
-            
-            // Filter records based on selected category
+            const [showPicker, setShowPicker] = useState(false);
             const filteredRecords = useMemo(() => {
                 return records.filter(r => r.category === category);
             }, [records, category]);
-
             const getDayInfo = (d) => {
                 const dateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const rs = filteredRecords.filter(r=>r.date===dateStr);
@@ -493,34 +651,16 @@
                 }, 0);
                 return { dateStr, hasData, total };
             };
-            
             const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
             const startDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
             const offset = startDay === 0 ? 6 : startDay - 1;
             const selRecords = filteredRecords.filter(r=>r.date===selDate);
-
-            // New: Picker Logic
-            const jumpToToday = () => {
-                const now = new Date();
-                setViewDate(now);
-                setSelDate(getTodayString());
-                setShowPicker(false);
-            };
-            
-            const changeMonth = (m) => {
-                const newDate = new Date(viewDate.getFullYear(), m, 1);
-                setViewDate(newDate);
-                setShowPicker(false);
-            };
-
-            const changeYear = (y) => {
-                const newDate = new Date(y, viewDate.getMonth(), 1);
-                setViewDate(newDate);
-            };
+            const jumpToToday = () => { const now = new Date(); setViewDate(now); setSelDate(getTodayString()); setShowPicker(false); };
+            const changeMonth = (m) => { const newDate = new Date(viewDate.getFullYear(), m, 1); setViewDate(newDate); setShowPicker(false); };
+            const changeYear = (y) => { const newDate = new Date(y, viewDate.getMonth(), 1); setViewDate(newDate); };
 
             return (
                 <div className="px-6 animate-fade-in mb-6 relative">
-                    {/* Picker Modal Overlay */}
                     {showPicker && (
                         <div className="absolute top-16 left-6 right-6 bg-white p-4 shadow-xl rounded-2xl z-20 border border-gray-100 animate-fade-in">
                             <div className="flex justify-between items-center mb-4 px-2">
@@ -528,47 +668,18 @@
                                 <span className="font-bold text-xl text-muji-ink font-sans">{viewDate.getFullYear()}</span>
                                 <button onClick={() => changeYear(viewDate.getFullYear() + 1)} className="p-2 hover:bg-gray-100 rounded-full text-muji-ink"><Icons.ChevronRight size={20}/></button>
                             </div>
-                            <div className="grid grid-cols-4 gap-2">
-                                {Array.from({length: 12}).map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => changeMonth(i)}
-                                        className={`p-2 rounded-lg text-sm font-sans font-medium transition-colors ${viewDate.getMonth() === i ? 'bg-muji-ink text-white' : 'hover:bg-gray-50 text-gray-600'}`}
-                                    >
-                                        {i + 1}月
-                                    </button>
-                                ))}
-                            </div>
+                            <div className="grid grid-cols-4 gap-2">{Array.from({length: 12}).map((_, i) => (<button key={i} onClick={() => changeMonth(i)} className={`p-2 rounded-lg text-sm font-sans font-medium transition-colors ${viewDate.getMonth() === i ? 'bg-muji-ink text-white' : 'hover:bg-gray-50 text-gray-600'}`}>{i + 1}月</button>))}</div>
                         </div>
                     )}
-
                     <div className="bg-muji-white p-4 rounded-3xl shadow-card border border-muji-border relative z-10">
-                        {/* New Header Layout */}
                         <div className="flex justify-between items-center mb-4 px-2">
-                            {/* Empty Left for balance */}
                             <div className="w-8"></div>
-                            
-                            {/* Clickable Date Title */}
-                            <button 
-                                onClick={() => setShowPicker(!showPicker)}
-                                className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors"
-                            >
-                                <h2 className="text-xl font-bold font-sans text-muji-ink tracking-widest">
-                                    {viewDate.getFullYear()} . {String(viewDate.getMonth()+1).padStart(2,'0')}
-                                </h2>
+                            <button onClick={() => setShowPicker(!showPicker)} className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+                                <h2 className="text-xl font-bold font-sans text-muji-ink tracking-widest">{viewDate.getFullYear()} . {String(viewDate.getMonth()+1).padStart(2,'0')}</h2>
                                 <Icons.ChevronDown size={16} className={`text-muji-ink transition-transform duration-300 ${showPicker ? 'rotate-180' : ''}`} />
                             </button>
-
-                            {/* Jump to Today Button */}
-                            <button 
-                                onClick={jumpToToday} 
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-muji-paper text-muji-ink hover:bg-muji-ink hover:text-white transition-colors"
-                                title="回到今天"
-                            >
-                                <Icons.Target size={18} />
-                            </button>
+                            <button onClick={jumpToToday} className="w-8 h-8 flex items-center justify-center rounded-full bg-muji-paper text-muji-ink hover:bg-muji-ink hover:text-white transition-colors" title="回到今天"><Icons.Target size={18} /></button>
                         </div>
-
                         <div className="grid grid-cols-7 text-center mb-2">{['一','二','三','四','五','六','日'].map((d,i)=><div key={d} className={`text-[10px] uppercase tracking-wider ${i>=5?'text-muji-red opacity-60':'text-gray-300'}`}>{d}</div>)}</div>
                         <div className="grid grid-cols-7 gap-1">
                             {Array.from({length: offset}).map((_,i)=><div key={`empty-${i}`}/>)}
@@ -577,11 +688,7 @@
                                 return (
                                     <div key={day} onClick={()=>setSelDate(info.dateStr)} className={`flex flex-col items-center justify-start pt-1 cursor-pointer h-12 w-full mx-auto rounded-lg relative border transition-all duration-200 ${isSel ? 'border-muji-ink bg-muji-ink/5' : 'border-transparent hover:border-gray-100'}`}>
                                         <span className={`relative z-10 text-[10px] font-medium leading-none ${isSel?'text-muji-ink font-bold':'text-gray-400'}`}>{day}</span>
-                                        {info.hasData && (
-                                            <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${info.total >= 0 ? 'text-muji-red' : 'text-muji-green'}`}>
-                                                {info.total === 0 ? '-' : Math.abs(info.total)}
-                                            </span>
-                                        )}
+                                        {info.hasData && (<span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${info.total >= 0 ? 'text-muji-red' : 'text-muji-green'}`}>{info.total === 0 ? '-' : Math.abs(info.total)}</span>)}
                                     </div>
                                 );
                             })}
@@ -607,7 +714,7 @@
             );
         };
 
-        const StatsView = ({ records, category }) => {
+        const StatsView = ({ records, category, categories }) => {
             const chartData = useMemo(() => {
                 if(category!=='daily') return [];
                 const exps = records.filter(r=>r.category==='daily' && r.type==='expense');
@@ -615,7 +722,6 @@
                 return Object.keys(grp).map(k=>({name:k, value:grp[k]}));
             }, [records, category]);
             const COLORS = ['#748E78', '#C85A5A', '#D3C4A5', '#BBADA2', '#999999'];
-            
             const teaStats = useMemo(() => {
                 if(category!=='tea') return null;
                 const ts = records.filter(r=>r.category==='tea');
