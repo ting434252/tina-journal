@@ -43,7 +43,8 @@
                         'float': '0 8px 25px rgba(187, 173, 162, 0.25)', 
                         'nav': '0 -4px 20px rgba(0,0,0,0.03)',
                         'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
-                        'modal': '0 20px 50px rgba(0,0,0,0.15)'
+                        'modal': '0 20px 50px rgba(0,0,0,0.15)',
+                        'iphone': '0 0 0 11px #1f1f1f, 0 0 0 13px #191919, 0 0 0 14px #111, 20px 50px 100px -10px rgba(0,0,0,0.5)'
                     },
                     fontFamily: {
                         sans: ['"Noto Sans TC"', 'sans-serif'],
@@ -66,12 +67,20 @@
         
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #F4F3F0;
+            background-color: #333333; /* Darker background for contrast */
             color: #555555;
             -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Changed to flex-start to allow scrolling from top */
+            min-height: 100vh;
+            overflow-y: auto; /* Allow vertical scrolling */
+            padding: 40px 0; /* Add padding to top and bottom */
         }
 
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        ::-webkit-scrollbar { width: 8px; background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
         
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         .animate-slide-up { animation: slideUp 0.3s ease-out; }
@@ -84,6 +93,56 @@
         @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
         .pb-double-nav { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
+
+        /* iPhone 14 Pro Specific Styles */
+        .iphone-frame {
+            width: 393px;
+            height: 852px;
+            background: black;
+            border-radius: 55px;
+            position: relative;
+            box-shadow: 0 0 0 11px #3a3a3a, 0 0 0 13px #191919, 0 0 0 14px #111, 20px 50px 100px -10px rgba(0,0,0,0.5);
+            overflow: hidden;
+            transform-origin: top center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            margin-bottom: 40px;
+        }
+
+        /* Responsive Scaling */
+        @media (max-height: 950px) { .iphone-frame { transform: scale(0.8); } }
+        @media (max-height: 850px) { .iphone-frame { transform: scale(0.7); } }
+        @media (max-height: 750px) { .iphone-frame { transform: scale(0.6); } }
+
+        @media (max-width: 640px) {
+            body { padding: 0; align-items: flex-start; overflow: hidden; }
+            .iphone-frame { transform: scale(1); box-shadow: none; border-radius: 0; width: 100%; height: 100vh; margin: 0; }
+            .dynamic-island, .iphone-buttons { display: none; }
+        }
+
+        .screen-content {
+            background-color: #F4F3F0;
+            width: 100%;
+            height: 100%;
+            border-radius: 45px;
+            overflow: hidden;
+            position: relative;
+        }
+        @media (max-width: 640px) { .screen-content { border-radius: 0; } }
+
+        .dynamic-island {
+            position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 35px; background: black; border-radius: 20px; z-index: 50;
+        }
+        
+        .iphone-buttons div { background: #222; position: absolute; }
+        .btn-left-1 { top: 100px; left: -16px; width: 6px; height: 35px; border-radius: 4px 0 0 4px; }
+        .btn-left-2 { top: 160px; left: -16px; width: 6px; height: 60px; border-radius: 4px 0 0 4px; }
+        .btn-left-3 { top: 235px; left: -16px; width: 6px; height: 60px; border-radius: 4px 0 0 4px; }
+        .btn-right { top: 180px; right: -16px; width: 6px; height: 90px; border-radius: 0 4px 4px 0; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
@@ -122,7 +181,16 @@
         const { useState, useEffect, useMemo } = React;
         const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } = Recharts;
 
-        // --- 2. ICONS ---
+        // --- 2. HELPERS & ICONS ---
+        const formatMoney = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
+        const getTodayString = () => {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
         const IconWrapper = ({ children, size = 24, className = "", ...props }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>{children}</svg>
         );
@@ -156,26 +224,15 @@
             Users: (props) => <IconWrapper {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconWrapper>
         };
 
-        const formatMoney = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
-        const getTodayString = () => {
-            const d = new Date();
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        // --- CUSTOM DATE PICKER COMPONENT ---
+        // --- 3. UI COMPONENTS ---
         const FormDatePicker = ({ value, onChange }) => {
             const [show, setShow] = useState(false);
             const [viewDate, setViewDate] = useState(new Date(value || new Date()));
 
-            useEffect(() => {
-                if (show) setViewDate(new Date(value || new Date()));
-            }, [show, value]);
+            useEffect(() => { if (show) setViewDate(new Date(value || new Date())); }, [show, value]);
 
             const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
-            const startDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay(); // 0=Sun
+            const startDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
             const offset = startDay === 0 ? 6 : startDay - 1; 
             
             const handleDayClick = (day) => {
@@ -183,31 +240,15 @@
                 onChange({ target: { value: dateStr } });
                 setShow(false);
             };
-
-            const changeMonth = (delta) => {
-                setViewDate(new Date(viewDate.setMonth(viewDate.getMonth() + delta)));
-            };
-
-            const jumpToToday = () => {
-                const todayStr = getTodayString();
-                const now = new Date();
-                setViewDate(now);
-                onChange({ target: { value: todayStr } });
-                setShow(false);
-            };
-
+            const changeMonth = (delta) => setViewDate(new Date(viewDate.setMonth(viewDate.getMonth() + delta)));
+            const jumpToToday = () => { setViewDate(new Date()); onChange({ target: { value: getTodayString() } }); setShow(false); };
             const displayDate = value ? value.replace(/-/g, ' . ') : '選擇日期';
 
             return (
                 <div className="relative w-full">
-                    <button 
-                        onClick={() => setShow(!show)} 
-                        className="w-full bg-transparent font-sans text-muji-text text-sm outline-none border-b border-gray-200 py-2 text-left flex justify-between items-center"
-                    >
-                        <span>{displayDate}</span>
-                        <Icons.Calendar size={16} className="text-gray-400" />
+                    <button onClick={() => setShow(!show)} className="w-full bg-transparent font-sans text-muji-text text-sm outline-none border-b border-gray-200 py-2 text-left flex justify-between items-center">
+                        <span>{displayDate}</span><Icons.Calendar size={16} className="text-gray-400" />
                     </button>
-
                     {show && (
                         <>
                             <div className="fixed inset-0 z-40 bg-black/10" onClick={() => setShow(false)}></div>
@@ -218,28 +259,15 @@
                                         <span className="font-bold text-muji-ink text-sm mx-1">{viewDate.getFullYear()} . {String(viewDate.getMonth()+1).padStart(2,'0')}</span>
                                         <button onClick={() => changeMonth(1)} className="p-1 hover:bg-gray-100 rounded-full"><Icons.ChevronRight size={16}/></button>
                                     </div>
-                                    <button onClick={jumpToToday} className="p-1.5 rounded-full bg-muji-paper text-muji-ink hover:bg-muji-ink hover:text-white transition-colors" title="回到今天">
-                                        <Icons.Target size={14}/>
-                                    </button>
+                                    <button onClick={jumpToToday} className="p-1.5 rounded-full bg-muji-paper text-muji-ink hover:bg-muji-ink hover:text-white transition-colors" title="回到今天"><Icons.Target size={14}/></button>
                                 </div>
-                                <div className="grid grid-cols-7 text-center text-[10px] text-gray-400 mb-1">
-                                    <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
-                                </div>
+                                <div className="grid grid-cols-7 text-center text-[10px] text-gray-400 mb-1"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
                                 <div className="grid grid-cols-7 gap-1">
                                     {Array.from({length: offset}).map((_,i)=><div key={`empty-${i}`}/>)}
                                     {Array.from({length: daysInMonth}).map((_, i) => {
                                         const day = i + 1;
                                         const dateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                                        const isSelected = value === dateStr;
-                                        return (
-                                            <button 
-                                                key={day} 
-                                                onClick={() => handleDayClick(day)}
-                                                className={`w-7 h-7 rounded-full text-xs flex items-center justify-center transition-colors ${isSelected ? 'bg-muji-ink text-white shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}
-                                            >
-                                                {day}
-                                            </button>
-                                        );
+                                        return ( <button key={day} onClick={() => handleDayClick(day)} className={`w-7 h-7 rounded-full text-xs flex items-center justify-center transition-colors ${value === dateStr ? 'bg-muji-ink text-white shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>{day}</button> );
                                     })}
                                 </div>
                             </div>
@@ -249,28 +277,13 @@
             );
         };
 
-        // --- CUSTOM RATING COMPONENT ---
         const RatingInput = ({ value = 0, onChange }) => {
-            const handleStarClick = (index) => {
-                let newVal = index;
-                if (value === index) newVal = index - 0.5;
-                else if (value === index - 0.5) newVal = index; 
-                onChange(newVal);
-            };
-
+            const handleStarClick = (index) => onChange(value === index ? index - 0.5 : value === index - 0.5 ? index : index - 0.5);
             return (
                 <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
-                        <button 
-                            key={star} 
-                            onClick={() => handleStarClick(star)}
-                            className="focus:outline-none transition-transform active:scale-90"
-                        >
-                            <Icons.Star 
-                                size={20} 
-                                fill={value >= star - 0.5} 
-                                half={value === star - 0.5} 
-                            />
+                        <button key={star} onClick={() => handleStarClick(star)} className="focus:outline-none transition-transform active:scale-90">
+                            <Icons.Star size={20} fill={value >= star - 0.5} half={value === star - 0.5} />
                         </button>
                     ))}
                     <span className="text-xs text-gray-400 ml-1 font-mono w-6 text-right">{value > 0 ? value : ''}</span>
@@ -278,7 +291,6 @@
             );
         };
 
-        // --- CONFIRM MODAL COMPONENT (UPDATED: Absolute & Centered) ---
         const ConfirmModal = ({ isOpen, message, onConfirm, onCancel, isDestructive }) => {
             if (!isOpen) return null;
             return (
@@ -299,7 +311,371 @@
             );
         };
 
-        // --- 3. MAIN APP ---
+        const StatBox = ({ label, val, icon }) => (
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+                <div><p className="text-[10px] uppercase tracking-widest text-gray-400">{label}</p><p className="text-xl font-medium mt-1 text-muji-text font-sans">{val}</p></div>
+                <div className="text-gray-300">{icon}</div>
+            </div>
+        );
+
+        const SummaryCard = ({ category, records }) => {
+            const currentMonth = new Date().getMonth();
+            const monthly = records.filter(r => new Date(r.date).getMonth() === currentMonth);
+            const cardClass = "bg-muji-ink text-white p-5 rounded-2xl shadow-float relative overflow-hidden transition-colors duration-300";
+            const Decor = () => <div className="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none"/>;
+
+            if (category === 'daily') {
+                const inc = monthly.filter(r=>r.category==='daily' && r.type==='income').reduce((a,c)=>a+Number(c.amount),0);
+                const exp = monthly.filter(r=>r.category==='daily' && r.type==='expense').reduce((a,c)=>a+Number(c.amount),0);
+                return (
+                    <div className={cardClass}>
+                        <Decor/>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex-1"><p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月結餘</p><p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(inc-exp)}</p></div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">收</p><p className="text-lg font-bold font-sans">{formatMoney(inc)}</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">支</p><p className="text-lg font-bold font-sans">{formatMoney(exp)}</p></div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (category === 'tea') {
+                const tea = monthly.filter(r=>r.category==='tea');
+                return (
+                     <div className={cardClass}>
+                        <Decor/>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex-1"><p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月總花費</p><p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p></div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">累積杯數</p><p className="text-lg font-bold font-sans">{tea.length} 杯</p></div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (category === 'mahjong') {
+                const mj = monthly.filter(r => r.category === 'mahjong');
+                const wins = mj.filter(r => r.isWin).length;
+                const losses = mj.length - wins;
+                const net = mj.reduce((a,c) => a + (c.isWin ? c.amount : -c.amount), 0);
+                const rate = mj.length ? Math.round((wins/mj.length)*100) : 0;
+                return (
+                    <div className={cardClass}>
+                        <Decor/>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex-1"><p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月淨利</p><p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(net)}</p></div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝率</p><p className="text-lg font-bold font-sans">{rate}%</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝</p><p className="text-lg font-bold font-sans">{wins}</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">敗</p><p className="text-lg font-bold font-sans">{losses}</p></div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+        };
+
+        const SettingsItem = ({ icon, label, subLabel, onClick, isDestructive }) => (
+            <button onClick={onClick} className={`w-full py-4 flex items-center justify-between group transition-colors ${isDestructive ? 'text-muji-red hover:bg-red-50/50 rounded-lg px-2 -mx-2' : 'hover:bg-white/60 rounded-lg px-2 -mx-2'}`}>
+                <div className="flex items-center gap-4"><div className={`${isDestructive ? 'text-muji-red' : 'text-gray-400 group-hover:text-muji-ink'} transition-colors`}>{icon}</div><div className="text-left"><span className={`block text-sm font-bold ${isDestructive ? 'text-muji-red' : 'text-muji-text'}`}>{label}</span>{subLabel && <span className="text-[10px] text-gray-400 block mt-0.5">{subLabel}</span>}</div></div>
+                {!isDestructive && <Icons.ChevronRight size={16} className="text-gray-300"/>}
+            </button>
+        );
+
+        const CategorySettings = ({ categories, onAdd, onRemove }) => {
+            const [activeTab, setActiveTab] = useState('expense');
+            const [newCat, setNewCat] = useState('');
+            const handleAdd = () => { if(newCat.trim()) { onAdd(activeTab, newCat.trim()); setNewCat(''); } };
+            return (
+                <div className="space-y-6 animate-fade-in h-full flex flex-col">
+                    <div className="bg-white p-1 rounded-xl flex shadow-inner border border-gray-100">
+                        <button onClick={()=>setActiveTab('expense')} className={`flex-1 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 ${activeTab==='expense' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>支出</button>
+                        <button onClick={()=>setActiveTab('income')} className={`flex-1 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 ${activeTab==='income' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>收入</button>
+                    </div>
+                    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
+                        <input value={newCat} onChange={e=>setNewCat(e.target.value)} onKeyDown={e=> e.key === 'Enter' && handleAdd()} placeholder="輸入新類別..." className="flex-1 min-w-0 bg-transparent px-3 py-2 text-sm text-muji-text outline-none placeholder-gray-300"/>
+                        <button onClick={handleAdd} disabled={!newCat.trim()} className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 transition-all"><Icons.Plus size={20}/></button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto pr-1"><div className="flex flex-wrap gap-2 content-start">{categories[activeTab].map(cat => (<div key={cat} className="group flex items-center gap-2 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm"><span className="text-sm text-gray-600 font-medium">{cat}</span><button onClick={()=>onRemove(activeTab, cat)} className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button></div>))}{categories[activeTab].length === 0 && <div className="w-full text-center py-10 text-gray-300 space-y-2"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-100 mx-auto"><Icons.List size={20} className="opacity-20"/></div><span className="text-xs tracking-widest">暫無類別</span></div>}</div></div>
+                </div>
+            );
+        };
+
+        const PlayerSettings = ({ players, onAdd, onRemove }) => {
+            const [newPlayer, setNewPlayer] = useState('');
+            const handleAdd = () => { if(newPlayer.trim()) { onAdd(newPlayer.trim()); setNewPlayer(''); } };
+            return (
+                <div className="space-y-6 animate-fade-in h-full flex flex-col">
+                    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
+                        <input value={newPlayer} onChange={e=>setNewPlayer(e.target.value)} onKeyDown={e=> e.key === 'Enter' && handleAdd()} placeholder="輸入麻友名字..." className="flex-1 min-w-0 bg-transparent px-3 py-2 text-sm text-muji-text outline-none placeholder-gray-300"/>
+                        <button onClick={handleAdd} disabled={!newPlayer.trim()} className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 transition-all"><Icons.Plus size={20}/></button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto pr-1">
+                        <div className="flex flex-wrap gap-2 content-start">
+                            {players.map(p => (
+                                <div key={p} className="group flex items-center gap-2 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm">
+                                    <span className="text-sm text-gray-600 font-medium">{p}</span>
+                                    <button onClick={()=>onRemove(p)} className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button>
+                                </div>
+                            ))}
+                            {players.length === 0 && <div className="w-full text-center py-10 text-gray-300 text-xs tracking-widest">暫無麻友</div>}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const NavBtn = ({ active, onClick, icon, label }) => (
+            <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center py-2 transition-all duration-300 group`}><div className={`p-1.5 rounded-xl transition-all duration-300 ${active ? 'text-muji-ink bg-muji-ink/10' : 'text-gray-400 group-hover:text-muji-ink'}`}>{icon}</div><span className={`text-[10px] tracking-widest font-sans font-medium mt-1 ${active ? 'text-muji-ink' : 'text-gray-400'}`}>{label}</span></button>
+        );
+
+        const CategoryTabs = ({ current, set }) => (
+            <div className="flex justify-center space-x-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-2xl shadow-lg border border-white/50">
+                <button onClick={()=>set('daily')} className={`flex-1 py-2 rounded-xl text-xs tracking-wider transition-all ${current==='daily' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>日常</button>
+                <button onClick={()=>set('tea')} className={`flex-1 py-2 rounded-xl text-xs tracking-wider transition-all ${current==='tea' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>手搖</button>
+                <button onClick={()=>set('mahjong')} className={`flex-1 py-2 rounded-xl text-xs tracking-wider transition-all ${current==='mahjong' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>麻將</button>
+            </div>
+        );
+
+        // --- 4. FORM COMPONENTS ---
+        const DailyForm = ({ onAdd, onSubmit, categories, initialData, isEditing, showNotification }) => {
+            const [data, setData] = useState(() => {
+                if (initialData) return { date: initialData.date, type: initialData.type, sub: initialData.subCategory, amt: initialData.amount, note: initialData.note || '' };
+                return { date: getTodayString(), type: 'expense', sub: '餐飲', amt: '', note: '' };
+            });
+            const cats = data.type === 'expense' ? categories.expense : categories.income;
+            useEffect(() => { if (!isEditing && !cats.includes(data.sub)) setData(prev => ({...prev, sub: cats[0] || ''})); }, [data.type, cats, isEditing]);
+
+            const handleSubmit = () => {
+                if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
+                const payload = { category: 'daily', date: data.date, type: data.type, subCategory: data.sub, amount: Number(data.amt), note: data.note };
+                if (isEditing) onSubmit(payload); else { onAdd(payload); setData({...data, amt: '', note: ''}); }
+            };
+            return (
+                <div className="space-y-6">
+                    <div className="flex border-b border-gray-100 pb-4">
+                        <button onClick={()=>setData({...data, type:'expense'})} className={`flex-1 pb-2 text-sm tracking-widest transition border-b-2 ${data.type==='expense' ? 'border-muji-green text-muji-green font-bold' : 'border-transparent text-gray-400'}`}>支出</button>
+                        <button onClick={()=>setData({...data, type:'income'})} className={`flex-1 pb-2 text-sm tracking-widest transition border-b-2 ${data.type==='income' ? 'border-muji-red text-muji-red font-bold' : 'border-transparent text-gray-400'}`}>收入</button>
+                    </div>
+                    <FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} />
+                    <div className="grid grid-cols-5 gap-2">
+                        {cats.length > 0 ? cats.map(c => (
+                            <button key={c} onClick={()=>setData({...data, sub:c})} className={`py-2 text-xs rounded-lg transition-all w-full truncate ${data.sub===c ? 'bg-muji-ink text-white' : 'bg-gray-100 text-gray-500'}`} title={c}>{c}</button>
+                        )) : <span className="text-xs text-gray-400 col-span-5 text-center">請至設定新增類別</span>}
+                    </div>
+                    <div className="relative border-b border-gray-200"><span className={`absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans ${data.type === 'expense' ? 'text-muji-green' : 'text-muji-red'}`}>$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className={`w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent ${data.type === 'expense' ? 'text-muji-green' : 'text-muji-red'}`}/></div>
+                    <input placeholder="備註..." value={data.note} onChange={e=>setData({...data, note:e.target.value})} className="w-full bg-gray-50 p-3 rounded-lg text-sm outline-none text-muji-text placeholder-gray-400"/>
+                    <button onClick={handleSubmit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">{isEditing ? "確認修改" : "儲存紀錄"}</button>
+                </div>
+            );
+        };
+
+        const TeaForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification }) => {
+            const [data, setData] = useState(() => {
+                if (initialData) return { date: initialData.date, shop: initialData.shop, item: initialData.item, sugar: initialData.sugar, ice: initialData.ice, amt: initialData.amount, rating: initialData.rating || 0 };
+                return { date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '', rating: 0 };
+            });
+            useEffect(() => { if (initialData) setData({ ...initialData, amt: initialData.amount, rating: initialData.rating || 0 }); }, [initialData]);
+            const shops = [...new Set(records.filter(r=>r.category==='tea').map(r=>r.shop))];
+            const items = [...new Set(records.filter(r=>r.category==='tea' && r.shop===data.shop).map(r=>r.item))];
+            const handleSubmit = () => {
+                if(!data.shop) return showNotification("請輸入店家名稱", "error");
+                if(!data.item) return showNotification("請輸入品項名稱", "error");
+                if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
+                const payload = { category: 'tea', ...data, amount: Number(data.amt) };
+                if (isEditing) onSubmit(payload); else { onAdd(payload); setData({...data, amt: '', shop: '', item: '', rating: 0}); }
+            };
+            return (
+                <div className="space-y-5">
+                    <div className="flex gap-4 items-center"><div className="flex-1"><FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} /></div><div className="flex-shrink-0"><RatingInput value={data.rating} onChange={v => setData({...data, rating: v})} /></div></div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">店家</label><input list="shops" value={data.shop} onChange={e=>setData({...data, shop:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text bg-transparent" placeholder="店家"/><datalist id="shops">{shops.map(s=><option key={s} value={s}/>)}</datalist></div>
+                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">品項</label><input list="items" value={data.item} onChange={e=>setData({...data, item:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text bg-transparent" placeholder="品項"/><datalist id="items">{items.map(i=><option key={i} value={i}/>)}</datalist></div>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto pb-2">{['無糖','微糖','半糖','少糖','全糖'].map(s=><button key={s} onClick={()=>setData({...data, sugar:s})} className={`px-3 py-1 text-xs rounded-full border ${data.sugar===s?'border-muji-ink text-muji-ink bg-gray-100':'border-gray-200 text-gray-400'}`}>{s}</button>)}</div>
+                    <div className="flex gap-2 overflow-x-auto pb-2">{['熱','去冰','微冰','少冰','正常'].map(i=><button key={i} onClick={()=>setData({...data, ice:i})} className={`px-3 py-1 text-xs rounded-full border ${data.ice===i?'border-muji-ink text-muji-ink bg-gray-100':'border-gray-200 text-gray-400'}`}>{i}</button>)}</div>
+                    <div className="relative border-b border-gray-200"><span className="absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans text-gray-300">$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className="w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent text-muji-text"/></div>
+                    <button onClick={handleSubmit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">{isEditing ? "確認修改" : "儲存飲料"}</button>
+                </div>
+            );
+        };
+
+        const MahjongForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification, players }) => {
+            const [data, setData] = useState(() => {
+                if (initialData) return { date: initialData.date, players: initialData.players || [], win: initialData.isWin, amt: initialData.amount, newP: '' };
+                return { date: getTodayString(), players: [], win: true, amt: '', newP: '' };
+            });
+            useEffect(() => { if (initialData) setData({ date: initialData.date, players: initialData.players, win: initialData.isWin, amt: initialData.amount, newP: '' }); }, [initialData]);
+            const allP = useMemo(() => {
+                const s = new Set(records.filter(r=>r.category==='mahjong').flatMap(r=>r.players)); ['阿明','小華','美美'].forEach(x=>s.add(x)); if(data.newP) s.add(data.newP); return [...s];
+            }, [records, data.newP]);
+            const toggle = (p) => { if(data.players.includes(p)) setData({...data, players: data.players.filter(x=>x!==p)}); else if(data.players.length < 3) setData({...data, players: [...data.players, p]}); };
+            const submit = () => { 
+                if(data.players.length !== 3) return showNotification("麻友請選擇 3 位", "error");
+                if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
+                const payload = { category: 'mahjong', date: data.date, players: data.players, isWin: data.win, amount: Number(data.amt) }; 
+                if (isEditing) onSubmit(payload); else { onAdd(payload); setData({...data, amt: '', players: []}); } 
+            };
+            return (
+                <div className="space-y-6">
+                    <FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} />
+                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                        <button onClick={()=>setData({...data, win:true})} className={`flex-1 py-2 text-xs rounded-md transition ${data.win?'bg-white shadow text-muji-red font-bold':'text-gray-400'}`}>贏</button>
+                        <button onClick={()=>setData({...data, win:false})} className={`flex-1 py-2 text-xs rounded-md transition ${!data.win?'bg-white shadow text-muji-green font-bold':'text-gray-400'}`}>輸</button>
+                    </div>
+                    <div>
+                        <div className="flex justify-between items-center mb-2"><span className="text-xs uppercase text-gray-400">選擇麻友 ({data.players.length}/3)</span></div>
+                        <div className="flex flex-wrap gap-2">
+                            {players.map(p => ( <button key={p} onClick={()=>toggle(p)} className={`px-3 py-1 text-xs rounded-full border transition ${data.players.includes(p)?'bg-muji-ink text-white border-muji-ink':'bg-white text-gray-500 border-gray-200'}`}>{p}</button> ))}
+                            {players.length === 0 && <span className="text-xs text-gray-400">請至設定新增麻友</span>}
+                        </div>
+                    </div>
+                    <div className="relative border-b border-gray-200"><span className={`absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans ${data.win?'text-muji-red':'text-muji-green'}`}>$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className={`w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent ${data.win?'text-muji-red':'text-muji-green'}`}/></div>
+                    <button onClick={submit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">{isEditing ? "確認修改" : "儲存戰績"}</button>
+                </div>
+            );
+        };
+
+        // --- 5. VIEW COMPONENTS ---
+        const AddView = ({ category, onAdd, records, categories, showNotification, players }) => (
+            <div className="px-6 animate-fade-in">
+                <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border animate-slide-up mb-2">
+                    {category === 'daily' && <DailyForm onAdd={onAdd} categories={categories} showNotification={showNotification} />}
+                    {category === 'tea' && <TeaForm onAdd={onAdd} records={records} showNotification={showNotification} />}
+                    {category === 'mahjong' && <MahjongForm onAdd={onAdd} records={records} showNotification={showNotification} players={players} />}
+                </div>
+            </div>
+        );
+
+        const CalendarView = ({ records, onDelete, onEdit, category }) => {
+            const [viewDate, setViewDate] = useState(new Date());
+            const [selDate, setSelDate] = useState(getTodayString());
+            const [showPicker, setShowPicker] = useState(false);
+            const filteredRecords = useMemo(() => records.filter(r => r.category === category), [records, category]);
+            const getDayInfo = (d) => {
+                const dateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const rs = filteredRecords.filter(r=>r.date===dateStr);
+                const hasData = rs.length > 0;
+                const total = rs.reduce((a,c) => { 
+                    if (c.type === 'income' || c.isWin) return a + Number(c.amount); 
+                    if (c.type === 'expense' || (c.category === 'mahjong' && !c.isWin) || c.category === 'tea') return a - Number(c.amount); 
+                    return a; 
+                }, 0);
+                return { dateStr, hasData, total };
+            };
+            const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+            const startDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
+            const offset = startDay === 0 ? 6 : startDay - 1;
+            const selRecords = filteredRecords.filter(r=>r.date===selDate);
+            const jumpToToday = () => { const now = new Date(); setViewDate(now); setSelDate(getTodayString()); setShowPicker(false); };
+            const changeMonth = (m) => { const newDate = new Date(viewDate.getFullYear(), m, 1); setViewDate(newDate); setShowPicker(false); };
+            const changeYear = (y) => { const newDate = new Date(y, viewDate.getMonth(), 1); setViewDate(newDate); setShowPicker(false); };
+
+            return (
+                <div className="px-6 animate-fade-in mb-6 relative">
+                    <div className="mb-2"><SummaryCard category={category} records={records} /></div>
+                    {showPicker && (
+                        <div className="absolute top-16 left-6 right-6 bg-white p-4 shadow-xl rounded-2xl z-20 border border-gray-100 animate-fade-in">
+                            <div className="flex justify-between items-center mb-4 px-2">
+                                <button onClick={() => changeYear(viewDate.getFullYear() - 1)} className="p-2 hover:bg-gray-100 rounded-full text-muji-ink"><Icons.ChevronLeft size={20}/></button>
+                                <span className="font-bold text-xl text-muji-ink font-sans">{viewDate.getFullYear()}</span>
+                                <button onClick={() => changeYear(viewDate.getFullYear() + 1)} className="p-2 hover:bg-gray-100 rounded-full text-muji-ink"><Icons.ChevronRight size={20}/></button>
+                            </div>
+                            <div className="grid grid-cols-4 gap-2">{Array.from({length: 12}).map((_, i) => (<button key={i} onClick={() => changeMonth(i)} className={`p-2 rounded-lg text-sm font-sans font-medium transition-colors ${viewDate.getMonth() === i ? 'bg-muji-ink text-white' : 'hover:bg-gray-50 text-gray-600'}`}>{i + 1}月</button>))}</div>
+                        </div>
+                    )}
+                    <div className="bg-muji-white p-4 rounded-3xl shadow-card border border-muji-border relative z-10">
+                        <div className="flex justify-between items-center mb-4 px-2">
+                            <div className="w-8"></div>
+                            <button onClick={() => setShowPicker(!showPicker)} className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+                                <h2 className="text-xl font-bold font-sans text-muji-ink tracking-widest">{viewDate.getFullYear()} . {String(viewDate.getMonth()+1).padStart(2,'0')}</h2>
+                                <Icons.ChevronDown size={16} className={`text-muji-ink transition-transform duration-300 ${showPicker ? 'rotate-180' : ''}`} />
+                            </button>
+                            <button onClick={jumpToToday} className="w-8 h-8 flex items-center justify-center rounded-full bg-muji-paper text-muji-ink hover:bg-muji-ink hover:text-white transition-colors" title="回到今天"><Icons.Target size={18} /></button>
+                        </div>
+                        <div className="grid grid-cols-7 text-center mb-2">{['一','二','三','四','五','六','日'].map((d,i)=><div key={d} className={`text-[10px] uppercase tracking-wider ${i>=5?'text-muji-red opacity-60':'text-gray-300'}`}>{d}</div>)}</div>
+                        <div className="grid grid-cols-7 gap-1">
+                            {Array.from({length: offset}).map((_,i)=><div key={`empty-${i}`}/>)}
+                            {Array.from({length: daysInMonth}).map((_,i)=> {
+                                const day = i+1; const info = getDayInfo(day); const isSel = info.dateStr === selDate;
+                                return ( <div key={day} onClick={()=>setSelDate(info.dateStr)} className={`flex flex-col items-center justify-start pt-1 cursor-pointer h-12 w-full mx-auto rounded-lg relative border transition-all duration-200 ${isSel ? 'border-muji-ink bg-muji-ink/5' : 'border-transparent hover:border-gray-100'}`}><span className={`relative z-10 text-[10px] font-medium leading-none ${isSel?'text-muji-ink font-bold':'text-gray-400'}`}>{day}</span>{info.hasData && (<span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${info.total >= 0 ? 'text-muji-red' : 'text-muji-green'}`}>{info.total === 0 ? '-' : Math.abs(info.total)}</span>)}</div> );
+                            })}
+                        </div>
+                    </div>
+                    <div className="mt-6 space-y-3">
+                        <h3 className="text-xs text-gray-400 uppercase tracking-widest pl-2 mb-2 font-sans">{selDate} • {category==='daily'?'日常':category==='tea'?'手搖':'麻將'}</h3>
+                        {selRecords.length === 0 && <div className="text-center py-8 text-gray-300 text-sm italic">本日無紀錄</div>}
+                        {selRecords.map(r => (
+                            <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200 group">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-1 h-10 rounded-full ${r.category==='tea'?'bg-muji-kraft':(r.type==='income'||(r.category==='mahjong'&&r.isWin)?'bg-muji-red':'bg-muji-green')}`}></div>
+                                    <div>
+                                        <p className="font-medium text-muji-text text-sm">{r.category==='daily'?r.subCategory:r.category==='tea'?r.shop:'麻將'}</p>
+                                        <p className="text-xs text-gray-400">{r.category==='tea' ? <span className="flex items-center gap-1">{r.item} <span className="flex">{[...Array(5)].map((_,i) => <Icons.Star key={i} size={8} fill={r.rating >= i+1} half={r.rating === i+0.5} />)}</span></span> : r.category==='mahjong'?(r.players ? r.players.join(' / ') : r.note):r.note}</p>
+                                    </div>
+                                </div>
+                                <div className="text-right flex items-center gap-3">
+                                    <p className={`font-sans font-medium ${(r.category==='daily'&&r.type==='income')||(r.category==='mahjong'&&r.isWin)?'text-muji-red':'text-muji-green'}`}>{formatMoney(r.amount)}</p>
+                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition"><button onClick={()=>onEdit(r)} className="text-gray-300 hover:text-muji-ink p-1"><Icons.Edit size={14}/></button><button onClick={()=>onDelete(r.id)} className="text-gray-300 hover:text-red-400 p-1"><Icons.Trash size={14}/></button></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const StatsView = ({ records, category, categories }) => {
+            const chartData = useMemo(() => {
+                if(category!=='daily') return [];
+                const exps = records.filter(r=>r.category==='daily' && r.type==='expense');
+                const grp = exps.reduce((a,c) => { a[c.subCategory]=(a[c.subCategory]||0)+Number(c.amount); return a; }, {});
+                return Object.keys(grp).map(k=>({name:k, value:grp[k]}));
+            }, [records, category]);
+            const COLORS = ['#748E78', '#C85A5A', '#D3C4A5', '#BBADA2', '#999999'];
+            const teaStats = useMemo(() => {
+                if(category!=='tea') return null;
+                const ts = records.filter(r=>r.category==='tea');
+                if(!ts.length) return { shop:'-', item:'-', cups:0 };
+                const sc={}, ic={}; ts.forEach(t => { sc[t.shop]=(sc[t.shop]||0)+1; ic[t.item]=(ic[t.item]||0)+1; });
+                return { shop: Object.keys(sc).reduce((a,b)=>sc[a]>sc[b]?a:b), item: Object.keys(ic).reduce((a,b)=>ic[a]>ic[b]?a:b), cups: ts.length };
+            }, [records, category]);
+
+            return (
+                <div className="px-6 animate-fade-in mb-6">
+                    {category === 'daily' && (
+                        <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border">
+                            <h3 className="text-center text-sm tracking-widest uppercase mb-4 text-gray-400">支出類別分析</h3>
+                            {chartData.length > 0 ? (
+                                <div className="h-64"><ResponsiveContainer><PieChart><Pie data={chartData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">{chartData.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip formatter={(v)=>formatMoney(v)}/><Legend/></PieChart></ResponsiveContainer></div>
+                            ) : <div className="text-center py-10 text-gray-300">無數據</div>}
+                        </div>
+                    )}
+                    {category === 'tea' && (
+                        <div className="space-y-4">
+                            <StatBox label="最常去" val={teaStats ? teaStats.shop : '-'} icon={<Icons.Coffee size={20}/>} />
+                            <StatBox label="必點" val={teaStats ? teaStats.item : '-'} icon={<Icons.Star size={20}/>} />
+                            <StatBox label="總杯數" val={teaStats ? teaStats.cups : 0} icon={<Icons.Coins size={20}/>} />
+                        </div>
+                    )}
+                    {category === 'mahjong' && (
+                        <div className="bg-muji-ink text-white p-8 rounded-3xl shadow-float text-center">
+                            <h3 className="text-sm tracking-widest uppercase opacity-80 mb-6">年度戰績總覽</h3>
+                             <div className="flex justify-between items-end">
+                                 <div><p className="text-3xl font-bold font-sans text-white/90">{records.filter(r=>r.category==='mahjong'&&r.isWin).length}</p><p className="text-[10px] uppercase mt-1">勝場</p></div>
+                                 <div><p className="text-3xl font-bold font-sans text-white/90">{records.filter(r=>r.category==='mahjong'&&!r.isWin).length}</p><p className="text-[10px] uppercase mt-1">敗場</p></div>
+                             </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- 6. MAIN APP ---
         const App = () => {
             const [currentTab, setCurrentTab] = useState('add');
             const [currentCategory, setCurrentCategory] = useState('daily');
@@ -307,22 +683,17 @@
             const [settingsPage, setSettingsPage] = useState('menu');
             const [records, setRecords] = useState([]);
             const [year, setYear] = useState(new Date().getFullYear());
-            const [notification, setNotification] = useState(null); // { message, type }
+            const [notification, setNotification] = useState(null); 
             const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, message: '', onConfirm: null, isDestructive: false });
-
-            // Edit State
             const [editingRecord, setEditingRecord] = useState(null);
             
-            // Custom Categories State
             const [categories, setCategories] = useState({
                 expense: ['餐飲','交通','購物','娛樂','居家'],
                 income: ['薪水','獎金','投資']
             });
 
-            // Mahjong Players State
             const [mahjongPlayers, setMahjongPlayers] = useState(['阿明', '小華', '美美']);
 
-            // Load Data
             useEffect(() => {
                 const savedCats = localStorage.getItem('tina_journal_categories');
                 if (savedCats) { try { setCategories(JSON.parse(savedCats)); } catch(e) {} }
@@ -330,7 +701,6 @@
                 if (savedPlayers) { try { setMahjongPlayers(JSON.parse(savedPlayers)); } catch(e) {} }
             }, []);
 
-            // Save Data
             useEffect(() => {
                 localStorage.setItem('tina_journal_categories', JSON.stringify(categories));
             }, [categories]);
@@ -356,18 +726,14 @@
                 if(!db) localStorage.setItem(`tina_journal_${year}`, JSON.stringify(records));
             }, [records, year]);
 
-            // Total Balance Logic Change: Only count 'daily'
             const totalBalance = useMemo(() => records.reduce((acc, curr) => {
-                // Only count Daily records for Total Balance
                 if (curr.category !== 'daily') return acc;
-                
                 if (curr.type === 'income') return acc + Number(curr.amount);
                 if (curr.type === 'expense') return acc - Number(curr.amount);
                 return acc;
             }, 0), [records]);
 
-            // Notification System - New Top Toast Style (Faster, No Modal)
-            const showNotification = (msg, type='success') => { // type: 'add', 'edit', 'delete', 'error', 'success'
+            const showNotification = (msg, type='success') => { 
                 setNotification({ msg, type }); 
                 setTimeout(() => setNotification(null), 1500);
             };
@@ -442,7 +808,6 @@
                 setCurrentCategory(cat);
             };
 
-            // Category Management
             const addCategory = (type, name) => {
                 if (!name.trim()) return;
                 if (categories[type].includes(name)) { showNotification("⚠️ 類別已存在", "error"); return; }
@@ -456,7 +821,6 @@
                 showNotification("已刪除類別", 'delete');
             };
 
-            // Mahjong Player Management
             const addPlayer = (name) => {
                 if (!name.trim()) return;
                 if (mahjongPlayers.includes(name)) { showNotification("⚠️ 麻友已存在", "error"); return; }
@@ -469,610 +833,154 @@
                 showNotification("已刪除麻友", 'delete');
             };
 
-            // Icon helper for notification
             const getNotificationIcon = (type) => {
                 switch(type) {
-                    case 'add': return <Icons.Check size={32} />; // Add uses Check (Success)
-                    case 'edit': return <Icons.Edit size={32} />;  // Edit uses Edit icon
-                    case 'delete': return <Icons.Trash size={32} />; // Delete uses Trash icon
+                    case 'add': return <Icons.Check size={32} />;
+                    case 'edit': return <Icons.Edit size={32} />;
+                    case 'delete': return <Icons.Trash size={32} />;
                     case 'error': return <Icons.AlertCircle size={32} />;
                     default: return <Icons.Check size={32} />;
                 }
             };
 
             return (
-                <div className="flex flex-col h-screen max-w-md mx-auto bg-muji-paper shadow-2xl relative text-muji-text overflow-hidden">
-                    {/* SVG Definitions for Half Star */}
-                    <svg width="0" height="0" className="absolute">
-                      <defs>
-                        <linearGradient id="half-ink" x1="0" x2="100%" y1="0" y2="0">
-                          <stop offset="50%" stopColor="#BBADA2" />
-                          <stop offset="50%" stopColor="transparent" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                <div className="iphone-frame">
+                    <div className="dynamic-island"></div>
+                    <div className="iphone-buttons">
+                        <div className="btn-left-1"></div>
+                        <div className="btn-left-2"></div>
+                        <div className="btn-left-3"></div>
+                        <div className="btn-right"></div>
+                    </div>
+                    
+                    <div className="screen-content hide-scrollbar">
+                        <div className="flex flex-col h-full bg-muji-paper relative text-muji-text overflow-hidden">
+                            <svg width="0" height="0" className="absolute">
+                              <defs>
+                                <linearGradient id="half-ink" x1="0" x2="100%" y1="0" y2="0">
+                                  <stop offset="50%" stopColor="#BBADA2" />
+                                  <stop offset="50%" stopColor="transparent" />
+                                </linearGradient>
+                              </defs>
+                            </svg>
 
-                    {/* Header */}
-                    <header className="px-6 py-3 bg-muji-ink text-white flex justify-between items-center shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
-                        <div>
-                            <h1 className="font-sans font-bold text-3xl tracking-widest text-white leading-none drop-shadow-sm">TINA</h1>
-                            <p className="text-[10px] tracking-[0.3em] text-white/80 mt-2 uppercase border-l-2 border-white/50 pl-2 font-sans">Journal</p>
-                        </div>
-                        
-                        {/* Right Side: Assets + Settings - Separated for alignment */}
-                        <div className="flex items-center gap-4">
-                            <div className="flex flex-col items-end">
-                                <p className="text-[10px] text-white/80 uppercase tracking-widest mb-0.5 font-sans">總資產</p>
-                                <span className={`font-sans text-lg font-medium tracking-tight drop-shadow-sm leading-none ${totalBalance >= 0 ? 'text-white' : 'text-muji-green'}`}>
-                                    {formatMoney(totalBalance)}
-                                </span>
-                            </div>
-                            <button onClick={()=>{setShowSettings(!showSettings); setSettingsPage('menu');}} className="text-white/70 hover:text-white transition p-1"><Icons.Settings size={22} /></button>
-                        </div>
-                    </header>
-
-                    {/* Notification - Centered Modal Style */}
-                    {notification && (
-                        <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
-                            <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
-                            <div className="relative z-10 bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-4 animate-pop min-w-[180px]">
-                                <div className={`p-3 rounded-full ${notification.type === 'error' ? 'bg-red-50 text-muji-red' : 'bg-gray-50 text-muji-ink'}`}>
-                                    {getNotificationIcon(notification.type)}
+                            <header className="px-6 pt-12 pb-3 bg-muji-ink text-white flex justify-between items-center shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
+                                <div>
+                                    <h1 className="font-sans font-bold text-3xl tracking-widest text-white leading-none drop-shadow-sm">TINA</h1>
+                                    <p className="text-[10px] tracking-[0.3em] text-white/80 mt-2 uppercase border-l-2 border-white/50 pl-2 font-sans">Journal</p>
                                 </div>
-                                <span className="font-bold tracking-widest text-muji-text text-base">{notification.msg}</span>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Confirm Modal */}
-                    <ConfirmModal 
-                        isOpen={confirmDialog.isOpen} 
-                        message={confirmDialog.message} 
-                        onConfirm={confirmDialog.onConfirm} 
-                        onCancel={closeConfirm} 
-                        isDestructive={confirmDialog.isDestructive} 
-                    />
-
-                    {/* Edit Modal (Use same centering logic) */}
-                    {editingRecord && (
-                        <div className="absolute inset-0 z-[80] flex justify-center items-center p-4 animate-fade-in">
-                            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={()=>setEditingRecord(null)}></div>
-                            <div className="bg-muji-paper w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-pop relative z-10">
-                                <div className="bg-white p-4 border-b border-gray-100 flex justify-between items-center">
-                                    <h3 className="text-lg font-bold text-muji-ink">修改紀錄</h3>
-                                    <button onClick={()=>setEditingRecord(null)} className="p-2 text-gray-400 hover:text-gray-600"><Icons.X size={20}/></button>
-                                </div>
-                                <div className="p-6">
-                                    {editingRecord.category === 'daily' && <DailyForm initialData={editingRecord} onSubmit={handleUpdateRecord} categories={categories} isEditing showNotification={showNotification} />}
-                                    {editingRecord.category === 'tea' && <TeaForm initialData={editingRecord} onSubmit={handleUpdateRecord} records={records} isEditing showNotification={showNotification} />}
-                                    {editingRecord.category === 'mahjong' && <MahjongForm initialData={editingRecord} onSubmit={handleUpdateRecord} records={records} isEditing showNotification={showNotification} players={mahjongPlayers} />}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Settings Modal (UPDATED: Centered & Dark Mask) */}
-                    {showSettings && (
-                        <div className="absolute inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
-                            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={()=>setShowSettings(false)}></div>
-                            <div className="bg-muji-paper w-full max-w-sm rounded-3xl shadow-2xl flex flex-col animate-pop relative z-10 max-h-[85%] overflow-hidden">
-                                <div className="p-6 flex items-center justify-between bg-muji-paper border-b border-white/50">
-                                    {settingsPage === 'menu' ? (
-                                        <h2 className="text-xl font-bold text-muji-text font-sans tracking-wider">設定</h2>
-                                    ) : (
-                                        <button onClick={()=>setSettingsPage('menu')} className="flex items-center text-muji-text hover:text-muji-ink transition group">
-                                            <Icons.ArrowLeft size={18} className="mr-2"/>
-                                            <span className="font-bold tracking-wide text-sm">返回</span>
-                                        </button>
-                                    )}
-                                    <button onClick={()=>setShowSettings(false)} className="p-2 rounded-full hover:bg-black/5 text-gray-400 hover:text-gray-600 transition"><Icons.X size={20}/></button>
-                                </div>
-                                <div className="flex-1 overflow-y-auto px-6 py-2">
-                                    {settingsPage === 'menu' ? (
-                                        <div className="space-y-6">
-                                            <div>
-                                                <div className="space-y-1">
-                                                    <SettingsItem icon={<Icons.List size={18}/>} label="類別管理" onClick={()=>setSettingsPage('categories')} subLabel="自訂收支項目"/>
-                                                    <SettingsItem icon={<Icons.Users size={18}/>} label="麻友管理" onClick={()=>setSettingsPage('players')} subLabel="設定牌咖名單"/>
-                                                    <div className="h-[1px] bg-gray-200 ml-10 my-1"></div>
-                                                    <SettingsItem icon={<Icons.Download size={18}/>} label="匯出資料" onClick={exportToExcel} subLabel="下載 CSV 報表"/>
-                                                </div>
-                                            </div>
-                                            <div className="pt-8"><SettingsItem icon={<Icons.Trash size={18}/>} label="清除所有資料" onClick={handleClearAllData} isDestructive/></div>
-                                        </div>
-                                    ) : settingsPage === 'categories' ? (
-                                        <CategorySettings categories={categories} onAdd={addCategory} onRemove={removeCategory} />
-                                    ) : (
-                                        <PlayerSettings players={mahjongPlayers} onAdd={addPlayer} onRemove={removePlayer} />
-                                    )}
-                                </div>
-                                <div className="p-6 text-center border-t border-white/50">
-                                    <p className="text-[10px] text-gray-400 font-sans tracking-widest uppercase">
-                                        Tina Journal {year} • V1.0 <br/> {db ? 'Cloud Sync' : 'Local Storage'}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Main Content Area */}
-                    <main className="flex-1 overflow-y-auto pb-double-nav">
-                        <div className="pt-2">
-                            {/* Summary Card now in CalendarView only */}
-                            {currentTab === 'add' && <AddView category={currentCategory} onAdd={handleAddRecord} records={records} categories={categories} showNotification={showNotification} players={mahjongPlayers} />}
-                            {currentTab === 'calendar' && <CalendarView records={records} onDelete={handleDelete} onEdit={setEditingRecord} category={currentCategory} />}
-                            {currentTab === 'stats' && <StatsView records={records} category={currentCategory} categories={categories} />}
-                        </div>
-                    </main>
-
-                    {/* Footer Nav */}
-                    <div className="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto">
-                        <div className="px-4 pb-2"><CategoryTabs current={currentCategory} set={handleCategoryChange} /></div>
-                        <nav className="bg-white shadow-nav flex justify-around items-center pb-safe pt-2 border-t border-gray-100">
-                            <NavBtn active={currentTab === 'calendar'} onClick={() => setCurrentTab('calendar')} icon={<Icons.Calendar size={22} />} label="日曆" />
-                            <NavBtn active={currentTab === 'add'} onClick={() => setCurrentTab('add')} icon={<Icons.Plus size={24} />} label="新增" isMain={true} />
-                            <NavBtn active={currentTab === 'stats'} onClick={() => setCurrentTab('stats')} icon={<Icons.PieChart size={22} />} label="數據" />
-                        </nav>
-                    </div>
-                </div>
-            );
-        };
-
-        // --- COMPONENTS ---
-        const SettingsItem = ({ icon, label, subLabel, onClick, isDestructive }) => (
-            <button onClick={onClick} className={`w-full py-4 flex items-center justify-between group transition-colors ${isDestructive ? 'text-muji-red hover:bg-red-50/50 rounded-lg px-2 -mx-2' : 'hover:bg-white/60 rounded-lg px-2 -mx-2'}`}>
-                <div className="flex items-center gap-4"><div className={`${isDestructive ? 'text-muji-red' : 'text-gray-400 group-hover:text-muji-ink'} transition-colors`}>{icon}</div><div className="text-left"><span className={`block text-sm font-bold ${isDestructive ? 'text-muji-red' : 'text-muji-text'}`}>{label}</span>{subLabel && <span className="text-[10px] text-gray-400 block mt-0.5">{subLabel}</span>}</div></div>
-                {!isDestructive && <Icons.ChevronRight size={16} className="text-gray-300"/>}
-            </button>
-        );
-
-        const CategorySettings = ({ categories, onAdd, onRemove }) => {
-            const [activeTab, setActiveTab] = useState('expense');
-            const [newCat, setNewCat] = useState('');
-            const handleAdd = () => { if(newCat.trim()) { onAdd(activeTab, newCat.trim()); setNewCat(''); } };
-            return (
-                <div className="space-y-6 animate-fade-in h-full flex flex-col">
-                    <div className="bg-white p-1 rounded-xl flex shadow-inner border border-gray-100">
-                        <button onClick={()=>setActiveTab('expense')} className={`flex-1 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 ${activeTab==='expense' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>支出</button>
-                        <button onClick={()=>setActiveTab('income')} className={`flex-1 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 ${activeTab==='income' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>收入</button>
-                    </div>
-                    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
-                        <input value={newCat} onChange={e=>setNewCat(e.target.value)} onKeyDown={e=> e.key === 'Enter' && handleAdd()} placeholder="輸入新類別..." className="flex-1 min-w-0 bg-transparent px-3 py-2 text-sm text-muji-text outline-none placeholder-gray-300"/>
-                        <button onClick={handleAdd} disabled={!newCat.trim()} className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 transition-all"><Icons.Plus size={20}/></button>
-                    </div>
-                    <div className="flex-1 overflow-y-auto pr-1"><div className="flex flex-wrap gap-2 content-start">{categories[activeTab].map(cat => (<div key={cat} className="group flex items-center gap-2 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm"><span className="text-sm text-gray-600 font-medium">{cat}</span><button onClick={()=>onRemove(activeTab, cat)} className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button></div>))}{categories[activeTab].length === 0 && <div className="w-full text-center py-10 text-gray-300 space-y-2"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-100 mx-auto"><Icons.List size={20} className="opacity-20"/></div><span className="text-xs tracking-widest">暫無類別</span></div>}</div></div>
-                </div>
-            );
-        };
-
-        const PlayerSettings = ({ players, onAdd, onRemove }) => {
-            const [newPlayer, setNewPlayer] = useState('');
-            const handleAdd = () => { if(newPlayer.trim()) { onAdd(newPlayer.trim()); setNewPlayer(''); } };
-            return (
-                <div className="space-y-6 animate-fade-in h-full flex flex-col">
-                    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
-                        <input value={newPlayer} onChange={e=>setNewPlayer(e.target.value)} onKeyDown={e=> e.key === 'Enter' && handleAdd()} placeholder="輸入麻友名字..." className="flex-1 min-w-0 bg-transparent px-3 py-2 text-sm text-muji-text outline-none placeholder-gray-300"/>
-                        <button onClick={handleAdd} disabled={!newPlayer.trim()} className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 transition-all"><Icons.Plus size={20}/></button>
-                    </div>
-                    <div className="flex-1 overflow-y-auto pr-1">
-                        <div className="flex flex-wrap gap-2 content-start">
-                            {players.map(p => (
-                                <div key={p} className="group flex items-center gap-2 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm">
-                                    <span className="text-sm text-gray-600 font-medium">{p}</span>
-                                    <button onClick={()=>onRemove(p)} className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button>
-                                </div>
-                            ))}
-                            {players.length === 0 && <div className="w-full text-center py-10 text-gray-300 text-xs tracking-widest">暫無麻友</div>}
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const NavBtn = ({ active, onClick, icon, label }) => (
-            <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center py-2 transition-all duration-300 group`}><div className={`p-1.5 rounded-xl transition-all duration-300 ${active ? 'text-muji-ink bg-muji-ink/10' : 'text-gray-400 group-hover:text-muji-ink'}`}>{icon}</div><span className={`text-[10px] tracking-widest font-sans font-medium mt-1 ${active ? 'text-muji-ink' : 'text-gray-400'}`}>{label}</span></button>
-        );
-
-        const CategoryTabs = ({ current, set }) => (
-            <div className="flex justify-center space-x-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-2xl shadow-lg border border-white/50">
-                <button onClick={()=>set('daily')} className={`flex-1 py-2 rounded-xl text-xs tracking-wider transition-all ${current==='daily' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>日常</button>
-                <button onClick={()=>set('tea')} className={`flex-1 py-2 rounded-xl text-xs tracking-wider transition-all ${current==='tea' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>手搖</button>
-                <button onClick={()=>set('mahjong')} className={`flex-1 py-2 rounded-xl text-xs tracking-wider transition-all ${current==='mahjong' ? 'bg-muji-ink text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'}`}>麻將</button>
-            </div>
-        );
-
-        const AddView = ({ category, onAdd, records, categories, showNotification, players }) => (
-            <div className="px-6 animate-fade-in">
-                {/* Summary Card REMOVED from AddView */}
-                <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border animate-slide-up mb-2">
-                    {category === 'daily' && <DailyForm onAdd={onAdd} categories={categories} showNotification={showNotification} />}
-                    {category === 'tea' && <TeaForm onAdd={onAdd} records={records} showNotification={showNotification} />}
-                    {category === 'mahjong' && <MahjongForm onAdd={onAdd} records={records} showNotification={showNotification} players={players} />}
-                </div>
-            </div>
-        );
-
-        const SummaryCard = ({ category, records }) => {
-            const currentMonth = new Date().getMonth();
-            const monthly = records.filter(r => new Date(r.date).getMonth() === currentMonth);
-            const cardClass = "bg-muji-ink text-white p-5 rounded-2xl shadow-float relative overflow-hidden transition-colors duration-300";
-            const Decor = () => <div className="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none"/>;
-
-            if (category === 'daily') {
-                const inc = monthly.filter(r=>r.category==='daily' && r.type==='income').reduce((a,c)=>a+Number(c.amount),0);
-                const exp = monthly.filter(r=>r.category==='daily' && r.type==='expense').reduce((a,c)=>a+Number(c.amount),0);
-                return (
-                    <div className={cardClass}>
-                        <Decor/>
-                        <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex-1">
-                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月結餘</p>
-                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(inc-exp)}</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-[1px] h-8 bg-white/20"></div>
-                                <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">收</p>
-                                    <p className="text-lg font-bold font-sans">{formatMoney(inc)}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">支</p>
-                                    <p className="text-lg font-bold font-sans">{formatMoney(exp)}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-            if (category === 'tea') {
-                const tea = monthly.filter(r=>r.category==='tea');
-                return (
-                     <div className={cardClass}>
-                        <Decor/>
-                        <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex-1">
-                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月總花費</p>
-                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-[1px] h-8 bg-white/20"></div>
-                                <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">累積杯數</p>
-                                    <p className="text-lg font-bold font-sans">{tea.length} 杯</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-            if (category === 'mahjong') {
-                const mj = monthly.filter(r => r.category === 'mahjong');
-                const wins = mj.filter(r => r.isWin).length;
-                const losses = mj.length - wins;
-                const net = mj.reduce((a,c) => a + (c.isWin ? c.amount : -c.amount), 0);
-                const rate = mj.length ? Math.round((wins/mj.length)*100) : 0;
-                
-                return (
-                    <div className={cardClass}>
-                        <Decor/>
-                        <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex-1">
-                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月淨利</p>
-                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(net)}</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-3">
-                                <div className="w-[1px] h-8 bg-white/20"></div>
-                                <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">勝率</p>
-                                    <p className="text-lg font-bold font-sans">{rate}%</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">勝</p>
-                                    <p className="text-lg font-bold font-sans">{wins}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-[9px] opacity-70 mb-0.5">敗</p>
-                                    <p className="text-lg font-bold font-sans">{losses}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-        };
-
-        // Form Components - Updated to accept initialData and isEditing
-        const DailyForm = ({ onAdd, onSubmit, categories, initialData, isEditing, showNotification }) => {
-            const [data, setData] = useState(() => {
-                if (initialData) {
-                    return {
-                        date: initialData.date,
-                        type: initialData.type,
-                        sub: initialData.subCategory,
-                        amt: initialData.amount,
-                        note: initialData.note || ''
-                    };
-                }
-                return { date: getTodayString(), type: 'expense', sub: '餐飲', amt: '', note: '' };
-            });
-            const cats = data.type === 'expense' ? categories.expense : categories.income;
-            
-            useEffect(() => {
-                if (!isEditing && !cats.includes(data.sub)) setData(prev => ({...prev, sub: cats[0] || ''}));
-            }, [data.type, cats, isEditing]);
-
-            const handleSubmit = () => {
-                if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
-                const payload = { category: 'daily', date: data.date, type: data.type, subCategory: data.sub, amount: Number(data.amt), note: data.note };
-                if (isEditing) onSubmit(payload);
-                else { onAdd(payload); setData({...data, amt: '', note: ''}); }
-            };
-            return (
-                <div className="space-y-6">
-                    <div className="flex border-b border-gray-100 pb-4">
-                        <button onClick={()=>setData({...data, type:'expense'})} className={`flex-1 pb-2 text-sm tracking-widest transition border-b-2 ${data.type==='expense' ? 'border-muji-green text-muji-green font-bold' : 'border-transparent text-gray-400'}`}>支出</button>
-                        <button onClick={()=>setData({...data, type:'income'})} className={`flex-1 pb-2 text-sm tracking-widest transition border-b-2 ${data.type==='income' ? 'border-muji-red text-muji-red font-bold' : 'border-transparent text-gray-400'}`}>收入</button>
-                    </div>
-                    <FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} />
-                    <div className="flex flex-wrap gap-2">{cats.length > 0 ? cats.map(c => (<button key={c} onClick={()=>setData({...data, sub:c})} className={`px-4 py-2 text-xs rounded-lg transition-all ${data.sub===c ? 'bg-muji-ink text-white' : 'bg-gray-100 text-gray-500'}`}>{c}</button>)) : <span className="text-xs text-gray-400">請至設定新增類別</span>}</div>
-                    <div className="relative border-b border-gray-200"><span className={`absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans ${data.type === 'expense' ? 'text-muji-green' : 'text-muji-red'}`}>$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className={`w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent ${data.type === 'expense' ? 'text-muji-green' : 'text-muji-red'}`}/></div>
-                    <input placeholder="備註..." value={data.note} onChange={e=>setData({...data, note:e.target.value})} className="w-full bg-gray-50 p-3 rounded-lg text-sm outline-none text-muji-text placeholder-gray-400"/>
-                    <button onClick={handleSubmit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">{isEditing ? "確認修改" : "儲存紀錄"}</button>
-                </div>
-            );
-        };
-
-        const TeaForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification }) => {
-            const [data, setData] = useState(() => {
-                if (initialData) {
-                    return {
-                        date: initialData.date,
-                        shop: initialData.shop,
-                        item: initialData.item,
-                        sugar: initialData.sugar,
-                        ice: initialData.ice,
-                        amt: initialData.amount,
-                        rating: initialData.rating || 0
-                    };
-                }
-                return { date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '', rating: 0 };
-            });
-            useEffect(() => { if (initialData) setData({ ...initialData, amt: initialData.amount, rating: initialData.rating || 0 }); }, [initialData]);
-            const shops = [...new Set(records.filter(r=>r.category==='tea').map(r=>r.shop))];
-            const items = [...new Set(records.filter(r=>r.category==='tea' && r.shop===data.shop).map(r=>r.item))];
-            const handleSubmit = () => {
-                if(!data.shop) return showNotification("請輸入店家名稱", "error");
-                if(!data.item) return showNotification("請輸入品項名稱", "error");
-                if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
-                const payload = { category: 'tea', ...data, amount: Number(data.amt) };
-                if (isEditing) onSubmit(payload);
-                else { onAdd(payload); setData({...data, amt: '', shop: '', item: '', rating: 0}); }
-            };
-            return (
-                <div className="space-y-5">
-                    <div className="flex gap-4 items-center">
-                        <div className="flex-1"><FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} /></div>
-                        <div className="flex-shrink-0"><RatingInput value={data.rating} onChange={v => setData({...data, rating: v})} /></div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">店家</label><input list="shops" value={data.shop} onChange={e=>setData({...data, shop:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text bg-transparent" placeholder="店家"/><datalist id="shops">{shops.map(s=><option key={s} value={s}/>)}</datalist></div>
-                        <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">品項</label><input list="items" value={data.item} onChange={e=>setData({...data, item:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text bg-transparent" placeholder="品項"/><datalist id="items">{items.map(i=><option key={i} value={i}/>)}</datalist></div>
-                    </div>
-                    <div className="flex gap-2 overflow-x-auto pb-2">{['無糖','微糖','半糖','少糖','全糖'].map(s=><button key={s} onClick={()=>setData({...data, sugar:s})} className={`px-3 py-1 text-xs rounded-full border ${data.sugar===s?'border-muji-ink text-muji-ink bg-gray-100':'border-gray-200 text-gray-400'}`}>{s}</button>)}</div>
-                    <div className="flex gap-2 overflow-x-auto pb-2">{['熱','去冰','微冰','少冰','正常'].map(i=><button key={i} onClick={()=>setData({...data, ice:i})} className={`px-3 py-1 text-xs rounded-full border ${data.ice===i?'border-muji-ink text-muji-ink bg-gray-100':'border-gray-200 text-gray-400'}`}>{i}</button>)}</div>
-                    <div className="relative border-b border-gray-200"><span className="absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans text-gray-300">$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className="w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent text-muji-text"/></div>
-                    <button onClick={handleSubmit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">{isEditing ? "確認修改" : "儲存飲料"}</button>
-                </div>
-            );
-        };
-
-        const MahjongForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification, players }) => {
-            const [data, setData] = useState(() => {
-                if (initialData) {
-                    return {
-                        date: initialData.date,
-                        players: initialData.players || [],
-                        win: initialData.isWin,
-                        amt: initialData.amount,
-                        newP: ''
-                    };
-                }
-                return { date: getTodayString(), players: [], win: true, amt: '', newP: '' };
-            });
-
-            useEffect(() => {
-                if (initialData) {
-                    setData({
-                        date: initialData.date,
-                        players: initialData.players,
-                        win: initialData.isWin,
-                        amt: initialData.amount,
-                        newP: ''
-                    });
-                }
-            }, [initialData]);
-
-            const allP = useMemo(() => {
-                const s = new Set(records.filter(r=>r.category==='mahjong').flatMap(r=>r.players)); ['阿明','小華','美美'].forEach(x=>s.add(x)); if(data.newP) s.add(data.newP); return [...s];
-            }, [records, data.newP]);
-            const toggle = (p) => { if(data.players.includes(p)) setData({...data, players: data.players.filter(x=>x!==p)}); else if(data.players.length < 3) setData({...data, players: [...data.players, p]}); };
-            const submit = () => { 
-                if(data.players.length !== 3) return showNotification("麻友請選擇 3 位", "error");
-                if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
-                const payload = { category: 'mahjong', date: data.date, players: data.players, isWin: data.win, amount: Number(data.amt) }; 
-                if (isEditing) onSubmit(payload); else { onAdd(payload); setData({...data, amt: '', players: []}); } 
-            };
-            return (
-                <div className="space-y-6">
-                    <FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} />
-                    <div className="flex bg-gray-100 p-1 rounded-lg">
-                        <button onClick={()=>setData({...data, win:true})} className={`flex-1 py-2 text-xs rounded-md transition ${data.win?'bg-white shadow text-muji-red font-bold':'text-gray-400'}`}>贏</button>
-                        <button onClick={()=>setData({...data, win:false})} className={`flex-1 py-2 text-xs rounded-md transition ${!data.win?'bg-white shadow text-muji-green font-bold':'text-gray-400'}`}>輸</button>
-                    </div>
-                    <div>
-                        <div className="flex justify-between items-center mb-2"><span className="text-xs uppercase text-gray-400">選擇麻友 ({data.players.length}/3)</span></div>
-                        <div className="flex flex-wrap gap-2">
-                            {players.map(p => (
-                                <button key={p} onClick={()=>toggle(p)} className={`px-3 py-1 text-xs rounded-full border transition ${data.players.includes(p)?'bg-muji-ink text-white border-muji-ink':'bg-white text-gray-500 border-gray-200'}`}>{p}</button>
-                            ))}
-                            {players.length === 0 && <span className="text-xs text-gray-400">請至設定新增麻友</span>}
-                        </div>
-                    </div>
-                    <div className="relative border-b border-gray-200"><span className={`absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans ${data.win?'text-muji-red':'text-muji-green'}`}>$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className={`w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent ${data.win?'text-muji-red':'text-muji-green'}`}/></div>
-                    <button onClick={submit} className="w-full py-4 bg-muji-ink text-white rounded-xl shadow-lg hover:opacity-90 transition tracking-widest uppercase text-xs">{isEditing ? "確認修改" : "儲存戰績"}</button>
-                </div>
-            );
-        };
-
-        const CalendarView = ({ records, onDelete, onEdit, category }) => {
-            const [viewDate, setViewDate] = useState(new Date());
-            const [selDate, setSelDate] = useState(getTodayString());
-            const [showPicker, setShowPicker] = useState(false);
-            const filteredRecords = useMemo(() => {
-                return records.filter(r => r.category === category);
-            }, [records, category]);
-            const getDayInfo = (d) => {
-                const dateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                const rs = filteredRecords.filter(r=>r.date===dateStr);
-                const hasData = rs.length > 0;
-                const total = rs.reduce((a,c) => { 
-                    if (c.type === 'income' || c.isWin) return a + Number(c.amount); 
-                    if (c.type === 'expense' || (c.category === 'mahjong' && !c.isWin) || c.category === 'tea') return a - Number(c.amount); 
-                    return a; 
-                }, 0);
-                return { dateStr, hasData, total };
-            };
-            const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
-            const startDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
-            const offset = startDay === 0 ? 6 : startDay - 1;
-            const selRecords = filteredRecords.filter(r=>r.date===selDate);
-            const jumpToToday = () => { const now = new Date(); setViewDate(now); setSelDate(getTodayString()); setShowPicker(false); };
-            const changeMonth = (m) => { const newDate = new Date(viewDate.getFullYear(), m, 1); setViewDate(newDate); setShowPicker(false); };
-            const changeYear = (y) => { const newDate = new Date(y, viewDate.getMonth(), 1); setViewDate(newDate); setShowPicker(false); };
-
-            return (
-                <div className="px-6 animate-fade-in mb-6 relative">
-                    {/* Summary Card MOVED HERE */}
-                    <div className="mb-2"><SummaryCard category={category} records={records} /></div>
-
-                    {showPicker && (
-                        <div className="absolute top-16 left-6 right-6 bg-white p-4 shadow-xl rounded-2xl z-20 border border-gray-100 animate-fade-in">
-                            <div className="flex justify-between items-center mb-4 px-2">
-                                <button onClick={() => changeYear(viewDate.getFullYear() - 1)} className="p-2 hover:bg-gray-100 rounded-full text-muji-ink"><Icons.ChevronLeft size={20}/></button>
-                                <span className="font-bold text-xl text-muji-ink font-sans">{viewDate.getFullYear()}</span>
-                                <button onClick={() => changeYear(viewDate.getFullYear() + 1)} className="p-2 hover:bg-gray-100 rounded-full text-muji-ink"><Icons.ChevronRight size={20}/></button>
-                            </div>
-                            <div className="grid grid-cols-4 gap-2">{Array.from({length: 12}).map((_, i) => (<button key={i} onClick={() => changeMonth(i)} className={`p-2 rounded-lg text-sm font-sans font-medium transition-colors ${viewDate.getMonth() === i ? 'bg-muji-ink text-white' : 'hover:bg-gray-50 text-gray-600'}`}>{i + 1}月</button>))}</div>
-                        </div>
-                    )}
-                    <div className="bg-muji-white p-4 rounded-3xl shadow-card border border-muji-border relative z-10">
-                        <div className="flex justify-between items-center mb-4 px-2">
-                            <div className="w-8"></div>
-                            <button onClick={() => setShowPicker(!showPicker)} className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors">
-                                <h2 className="text-xl font-bold font-sans text-muji-ink tracking-widest">{viewDate.getFullYear()} . {String(viewDate.getMonth()+1).padStart(2,'0')}</h2>
-                                <Icons.ChevronDown size={16} className={`text-muji-ink transition-transform duration-300 ${showPicker ? 'rotate-180' : ''}`} />
-                            </button>
-                            <button onClick={jumpToToday} className="w-8 h-8 flex items-center justify-center rounded-full bg-muji-paper text-muji-ink hover:bg-muji-ink hover:text-white transition-colors" title="回到今天"><Icons.Target size={18} /></button>
-                        </div>
-                        <div className="grid grid-cols-7 text-center mb-2">{['一','二','三','四','五','六','日'].map((d,i)=><div key={d} className={`text-[10px] uppercase tracking-wider ${i>=5?'text-muji-red opacity-60':'text-gray-300'}`}>{d}</div>)}</div>
-                        <div className="grid grid-cols-7 gap-1">
-                            {Array.from({length: offset}).map((_,i)=><div key={`empty-${i}`}/>)}
-                            {Array.from({length: daysInMonth}).map((_,i)=> {
-                                const day = i+1; const info = getDayInfo(day); const isSel = info.dateStr === selDate;
-                                return (
-                                    <div key={day} onClick={()=>setSelDate(info.dateStr)} className={`flex flex-col items-center justify-start pt-1 cursor-pointer h-12 w-full mx-auto rounded-lg relative border transition-all duration-200 ${isSel ? 'border-muji-ink bg-muji-ink/5' : 'border-transparent hover:border-gray-100'}`}>
-                                        <span className={`relative z-10 text-[10px] font-medium leading-none ${isSel?'text-muji-ink font-bold':'text-gray-400'}`}>{day}</span>
-                                        {info.hasData && (<span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${info.total >= 0 ? 'text-muji-red' : 'text-muji-green'}`}>{info.total === 0 ? '-' : Math.abs(info.total)}</span>)}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                    <div className="mt-6 space-y-3">
-                        <h3 className="text-xs text-gray-400 uppercase tracking-widest pl-2 mb-2 font-sans">{selDate} • {category==='daily'?'日常':category==='tea'?'手搖':'麻將'}</h3>
-                        {selRecords.length === 0 && <div className="text-center py-8 text-gray-300 text-sm italic">本日無紀錄</div>}
-                        {selRecords.map(r => (
-                            <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200 group">
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-1 h-10 rounded-full ${r.category==='tea'?'bg-muji-kraft':(r.type==='income'||(r.category==='mahjong'&&r.isWin)?'bg-muji-red':'bg-muji-green')}`}></div>
-                                    <div>
-                                        <p className="font-medium text-muji-text text-sm">{r.category==='daily'?r.subCategory:r.category==='tea'?r.shop:'麻將'}</p>
-                                        <p className="text-xs text-gray-400">
-                                            {r.category==='tea'
-                                                ? <span className="flex items-center gap-1">{r.item} <span className="flex">{[...Array(5)].map((_,i) => <Icons.Star key={i} size={8} fill={r.rating >= i+1} half={r.rating === i+0.5} />)}</span></span>
-                                                : r.category==='mahjong'?(r.players ? r.players.join(' / ') : r.note):r.note}
-                                        </p>
+                                    <div className="flex flex-col items-end">
+                                        <p className="text-[10px] text-white/80 uppercase tracking-widest mb-0.5 font-sans">總資產</p>
+                                        <span className={`font-sans text-lg font-medium tracking-tight drop-shadow-sm leading-none ${totalBalance >= 0 ? 'text-white' : 'text-muji-green'}`}>
+                                            {formatMoney(totalBalance)}
+                                        </span>
+                                    </div>
+                                    <button onClick={()=>{setShowSettings(!showSettings); setSettingsPage('menu');}} className="text-white/70 hover:text-white transition p-1"><Icons.Settings size={22} /></button>
+                                </div>
+                            </header>
+
+                            {notification && (
+                                <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
+                                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
+                                    <div className="relative z-10 bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-4 animate-pop min-w-[180px]">
+                                        <div className={`p-3 rounded-full ${notification.type === 'error' ? 'bg-red-50 text-muji-red' : 'bg-gray-50 text-muji-ink'}`}>
+                                            {getNotificationIcon(notification.type)}
+                                        </div>
+                                        <span className="font-bold tracking-widest text-muji-text text-base">{notification.msg}</span>
                                     </div>
                                 </div>
-                                <div className="text-right flex items-center gap-3">
-                                    <p className={`font-sans font-medium ${(r.category==='daily'&&r.type==='income')||(r.category==='mahjong'&&r.isWin)?'text-muji-red':'text-muji-green'}`}>{formatMoney(r.amount)}</p>
-                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                                        <button onClick={()=>onEdit(r)} className="text-gray-300 hover:text-muji-ink p-1"><Icons.Edit size={14}/></button>
-                                        <button onClick={()=>onDelete(r.id)} className="text-gray-300 hover:text-red-400 p-1"><Icons.Trash size={14}/></button>
+                            )}
+
+                            <ConfirmModal 
+                                isOpen={confirmDialog.isOpen} 
+                                message={confirmDialog.message} 
+                                onConfirm={confirmDialog.onConfirm} 
+                                onCancel={closeConfirm} 
+                                isDestructive={confirmDialog.isDestructive} 
+                            />
+
+                            {editingRecord && (
+                                <div className="absolute inset-0 z-[80] flex justify-center items-center p-4 animate-fade-in">
+                                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={()=>setEditingRecord(null)}></div>
+                                    <div className="bg-muji-paper w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-pop relative z-10">
+                                        <div className="bg-white p-4 border-b border-gray-100 flex justify-between items-center">
+                                            <h3 className="text-lg font-bold text-muji-ink">修改紀錄</h3>
+                                            <button onClick={()=>setEditingRecord(null)} className="p-2 text-gray-400 hover:text-gray-600"><Icons.X size={20}/></button>
+                                        </div>
+                                        <div className="p-6">
+                                            {editingRecord.category === 'daily' && <DailyForm initialData={editingRecord} onSubmit={handleUpdateRecord} categories={categories} isEditing showNotification={showNotification} />}
+                                            {editingRecord.category === 'tea' && <TeaForm initialData={editingRecord} onSubmit={handleUpdateRecord} records={records} isEditing showNotification={showNotification} />}
+                                            {editingRecord.category === 'mahjong' && <MahjongForm initialData={editingRecord} onSubmit={handleUpdateRecord} records={records} isEditing showNotification={showNotification} players={mahjongPlayers} />}
+                                        </div>
                                     </div>
                                 </div>
+                            )}
+
+                            {showSettings && (
+                                <div className="absolute inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
+                                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={()=>setShowSettings(false)}></div>
+                                    <div className="bg-muji-paper w-full max-w-sm rounded-3xl shadow-2xl flex flex-col animate-pop relative z-10 max-h-[85%] overflow-hidden">
+                                        <div className="p-6 flex items-center justify-between bg-muji-paper border-b border-white/50">
+                                            {settingsPage === 'menu' ? (
+                                                <h2 className="text-xl font-bold text-muji-text font-sans tracking-wider">設定</h2>
+                                            ) : (
+                                                <button onClick={()=>setSettingsPage('menu')} className="flex items-center text-muji-text hover:text-muji-ink transition group">
+                                                    <Icons.ArrowLeft size={18} className="mr-2"/>
+                                                    <span className="font-bold tracking-wide text-sm">返回</span>
+                                                </button>
+                                            )}
+                                            <button onClick={()=>setShowSettings(false)} className="p-2 rounded-full hover:bg-black/5 text-gray-400 hover:text-gray-600 transition"><Icons.X size={20}/></button>
+                                        </div>
+                                        <div className="flex-1 overflow-y-auto px-6 py-2">
+                                            {settingsPage === 'menu' ? (
+                                                <div className="space-y-6">
+                                                    <div>
+                                                        <div className="space-y-1">
+                                                            <SettingsItem icon={<Icons.List size={18}/>} label="類別管理" onClick={()=>setSettingsPage('categories')} subLabel="自訂收支項目"/>
+                                                            <SettingsItem icon={<Icons.Users size={18}/>} label="麻友管理" onClick={()=>setSettingsPage('players')} subLabel="設定牌咖名單"/>
+                                                            <div className="h-[1px] bg-gray-200 ml-10 my-1"></div>
+                                                            <SettingsItem icon={<Icons.Download size={18}/>} label="匯出資料" onClick={exportToExcel} subLabel="下載 CSV 報表"/>
+                                                        </div>
+                                                    </div>
+                                                    <div className="pt-8"><SettingsItem icon={<Icons.Trash size={18}/>} label="清除所有資料" onClick={handleClearAllData} isDestructive/></div>
+                                                </div>
+                                            ) : settingsPage === 'categories' ? (
+                                                <CategorySettings categories={categories} onAdd={addCategory} onRemove={removeCategory} />
+                                            ) : (
+                                                <PlayerSettings players={mahjongPlayers} onAdd={addPlayer} onRemove={removePlayer} />
+                                            )}
+                                        </div>
+                                        <div className="p-6 text-center border-t border-white/50">
+                                            <p className="text-[10px] text-gray-400 font-sans tracking-widest uppercase">
+                                                Tina Journal {year} • V1.0 <br/> {db ? 'Cloud Sync' : 'Local Storage'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <main className="flex-1 overflow-y-auto pb-double-nav hide-scrollbar">
+                                <div className="pt-2">
+                                    {currentTab === 'add' && <AddView category={currentCategory} onAdd={handleAddRecord} records={records} categories={categories} showNotification={showNotification} players={mahjongPlayers} />}
+                                    {currentTab === 'calendar' && <CalendarView records={records} onDelete={handleDelete} onEdit={setEditingRecord} category={currentCategory} />}
+                                    {currentTab === 'stats' && <StatsView records={records} category={currentCategory} categories={categories} />}
+                                </div>
+                            </main>
+
+                            <div className="fixed bottom-0 left-0 right-0 z-50 w-full">
+                                <div className="px-4 pb-2"><CategoryTabs current={currentCategory} set={handleCategoryChange} /></div>
+                                <nav className="bg-white shadow-nav flex justify-around items-center pb-safe pt-2 border-t border-gray-100">
+                                    <NavBtn active={currentTab === 'calendar'} onClick={() => setCurrentTab('calendar')} icon={<Icons.Calendar size={22} />} label="日曆" />
+                                    <NavBtn active={currentTab === 'add'} onClick={() => setCurrentTab('add')} icon={<Icons.Plus size={24} />} label="新增" isMain={true} />
+                                    <NavBtn active={currentTab === 'stats'} onClick={() => setCurrentTab('stats')} icon={<Icons.PieChart size={22} />} label="數據" />
+                                </nav>
                             </div>
-                        ))}
+                        </div>
                     </div>
                 </div>
             );
         };
-
-        const StatsView = ({ records, category, categories }) => {
-            const chartData = useMemo(() => {
-                if(category!=='daily') return [];
-                const exps = records.filter(r=>r.category==='daily' && r.type==='expense');
-                const grp = exps.reduce((a,c) => { a[c.subCategory]=(a[c.subCategory]||0)+Number(c.amount); return a; }, {});
-                return Object.keys(grp).map(k=>({name:k, value:grp[k]}));
-            }, [records, category]);
-            const COLORS = ['#748E78', '#C85A5A', '#D3C4A5', '#BBADA2', '#999999'];
-            const teaStats = useMemo(() => {
-                if(category!=='tea') return null;
-                const ts = records.filter(r=>r.category==='tea');
-                if(!ts.length) return { shop:'-', item:'-', cups:0 };
-                const sc={}, ic={}; ts.forEach(t => { sc[t.shop]=(sc[t.shop]||0)+1; ic[t.item]=(ic[t.item]||0)+1; });
-                return { shop: Object.keys(sc).reduce((a,b)=>sc[a]>sc[b]?a:b), item: Object.keys(ic).reduce((a,b)=>ic[a]>ic[b]?a:b), cups: ts.length };
-            }, [records, category]);
-
-            return (
-                <div className="px-6 animate-fade-in mb-6">
-                    {category === 'daily' && (
-                        <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border">
-                            <h3 className="text-center text-sm tracking-widest uppercase mb-4 text-gray-400">支出類別分析</h3>
-                            {chartData.length > 0 ? (
-                                <div className="h-64">
-                                    <ResponsiveContainer><PieChart><Pie data={chartData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">{chartData.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip formatter={(v)=>formatMoney(v)}/><Legend/></PieChart></ResponsiveContainer>
-                                </div>
-                            ) : <div className="text-center py-10 text-gray-300">無數據</div>}
-                        </div>
-                    )}
-                    {category === 'tea' && (
-                        <div className="space-y-4">
-                            <StatBox label="最常去" val={teaStats ? teaStats.shop : '-'} icon={<Icons.Coffee size={20}/>} />
-                            <StatBox label="必點" val={teaStats ? teaStats.item : '-'} icon={<Icons.Star size={20}/>} />
-                            <StatBox label="總杯數" val={teaStats ? teaStats.cups : 0} icon={<Icons.Coins size={20}/>} />
-                        </div>
-                    )}
-                    {category === 'mahjong' && (
-                        <div className="bg-muji-ink text-white p-8 rounded-3xl shadow-float text-center">
-                            <h3 className="text-sm tracking-widest uppercase opacity-80 mb-6">年度戰績總覽</h3>
-                             <div className="flex justify-between items-end">
-                                 <div><p className="text-3xl font-bold font-sans text-white/90">{records.filter(r=>r.category==='mahjong'&&r.isWin).length}</p><p className="text-[10px] uppercase mt-1">勝場</p></div>
-                                 <div><p className="text-3xl font-bold font-sans text-white/90">{records.filter(r=>r.category==='mahjong'&&!r.isWin).length}</p><p className="text-[10px] uppercase mt-1">敗場</p></div>
-                             </div>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const StatBox = ({ label, val, icon }) => (
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div><p className="text-[10px] uppercase tracking-widest text-gray-400">{label}</p><p className="text-xl font-medium mt-1 text-muji-text font-sans">{val}</p></div>
-                <div className="text-gray-300">{icon}</div>
-            </div>
-        );
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
