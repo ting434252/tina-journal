@@ -103,21 +103,35 @@
             position: relative;
             box-shadow: 0 0 0 11px #3a3a3a, 0 0 0 13px #191919, 0 0 0 14px #111, 20px 50px 100px -10px rgba(0,0,0,0.5);
             overflow: hidden;
-            transform-origin: top center;
-            transform: scale(0.9);
+            transform-origin: top center; /* Scale from top to avoid jumping */
+            transform: scale(0.9); /* Default scale */
             transition: transform 0.3s ease;
-            margin-bottom: 40px;
+            margin-bottom: 40px; /* Space at bottom for scrolling */
         }
 
-        /* Responsive Scaling */
-        @media (max-height: 950px) { .iphone-frame { transform: scale(0.8); } }
-        @media (max-height: 850px) { .iphone-frame { transform: scale(0.7); } }
-        @media (max-height: 750px) { .iphone-frame { transform: scale(0.6); } }
+        /* Responsive Scaling for smaller screens */
+        @media (max-height: 950px) {
+            .iphone-frame { transform: scale(0.8); }
+        }
+        @media (max-height: 850px) {
+            .iphone-frame { transform: scale(0.7); }
+        }
+        @media (max-height: 750px) {
+            .iphone-frame { transform: scale(0.6); }
+        }
 
         @media (max-width: 640px) {
             body { padding: 0; align-items: flex-start; overflow: hidden; }
-            .iphone-frame { transform: scale(1); box-shadow: none; border-radius: 0; width: 100%; height: 100vh; margin: 0; }
-            .dynamic-island, .iphone-buttons { display: none; }
+            .iphone-frame {
+                transform: scale(1);
+                box-shadow: none;
+                border-radius: 0;
+                width: 100%;
+                height: 100vh;
+                margin: 0;
+            }
+            .dynamic-island { display: none; }
+            .iphone-buttons { display: none; }
         }
 
         .screen-content {
@@ -128,19 +142,30 @@
             overflow: hidden;
             position: relative;
         }
-        @media (max-width: 640px) { .screen-content { border-radius: 0; } }
+        @media (max-width: 640px) {
+            .screen-content { border-radius: 0; }
+        }
 
         .dynamic-island {
-            position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
-            width: 120px; height: 35px; background: black; border-radius: 20px; z-index: 50;
+            position: absolute;
+            top: 11px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: black;
+            border-radius: 20px;
+            z-index: 50;
+            transition: all 0.3s ease;
         }
         
-        .iphone-buttons div { background: #222; position: absolute; }
-        .btn-left-1 { top: 100px; left: -16px; width: 6px; height: 35px; border-radius: 4px 0 0 4px; }
-        .btn-left-2 { top: 160px; left: -16px; width: 6px; height: 60px; border-radius: 4px 0 0 4px; }
-        .btn-left-3 { top: 235px; left: -16px; width: 6px; height: 60px; border-radius: 4px 0 0 4px; }
-        .btn-right { top: 180px; right: -16px; width: 6px; height: 90px; border-radius: 0 4px 4px 0; }
+        /* Side Buttons */
+        .btn-left-1 { position: absolute; top: 100px; left: -16px; width: 6px; height: 35px; background: #222; border-radius: 4px 0 0 4px; }
+        .btn-left-2 { position: absolute; top: 160px; left: -16px; width: 6px; height: 60px; background: #222; border-radius: 4px 0 0 4px; }
+        .btn-left-3 { position: absolute; top: 235px; left: -16px; width: 6px; height: 60px; background: #222; border-radius: 4px 0 0 4px; }
+        .btn-right { position: absolute; top: 180px; right: -16px; width: 6px; height: 90px; background: #222; border-radius: 0 4px 4px 0; }
 
+        /* Hide scrollbar within screen */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -193,6 +218,21 @@
 
         const IconWrapper = ({ children, size = 24, className = "", ...props }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>{children}</svg>
+        );
+
+        // --- NEW LOGO COMPONENT ---
+        const TinaLogo = ({ className = "" }) => (
+            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+                {/* Notebook Outline */}
+                <rect x="8" y="6" width="24" height="28" rx="3" stroke="currentColor" strokeWidth="2.5"/>
+                {/* Binding Line */}
+                <path d="M13 6V34" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.5"/>
+                {/* Stylized T / Balance Scale */}
+                <path d="M18 16H28" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M23 16V24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                {/* Coin Dot Accent (Muji Red) */}
+                <circle cx="28" cy="28" r="3" fill="#C85A5A" stroke="none" />
+            </svg>
         );
 
         const Icons = {
@@ -487,7 +527,8 @@
                 if(!data.item) return showNotification("請輸入品項名稱", "error");
                 if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
                 const payload = { category: 'tea', ...data, amount: Number(data.amt) };
-                if (isEditing) onSubmit(payload); else { onAdd(payload); setData({...data, amt: '', shop: '', item: '', rating: 0}); }
+                if (isEditing) onSubmit(payload);
+                else { onAdd(payload); setData({...data, amt: '', shop: '', item: '', rating: 0}); }
             };
             return (
                 <div className="space-y-5">
@@ -865,9 +906,14 @@
                             </svg>
 
                             <header className="px-6 pt-12 pb-3 bg-muji-ink text-white flex justify-between items-center shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
-                                <div>
-                                    <h1 className="font-sans font-bold text-3xl tracking-widest text-white leading-none drop-shadow-sm">TINA</h1>
-                                    <p className="text-[10px] tracking-[0.3em] text-white/80 mt-2 uppercase border-l-2 border-white/50 pl-2 font-sans">Journal</p>
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-white/10 p-1.5 rounded-xl shadow-inner backdrop-blur-sm border border-white/20">
+                                        <TinaLogo className="text-white w-8 h-8 drop-shadow-sm" />
+                                    </div>
+                                    <div>
+                                        <h1 className="font-sans font-bold text-3xl tracking-widest text-white leading-none drop-shadow-sm">TINA</h1>
+                                        <p className="text-[10px] tracking-[0.3em] text-white/80 mt-1 uppercase border-l-2 border-white/50 pl-2 font-sans">Journal</p>
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="flex flex-col items-end">
@@ -884,7 +930,11 @@
                                 <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
                                     <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
                                     <div className="relative z-10 bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-4 animate-pop min-w-[180px]">
-                                        <div className={`p-3 rounded-full ${notification.type === 'error' ? 'bg-red-50 text-muji-red' : 'bg-gray-50 text-muji-ink'}`}>
+                                        <div className={`p-3 rounded-full ${
+                                            notification.type === 'add' ? 'bg-[#748E78]/10 text-muji-green' :
+                                            (notification.type === 'delete' || notification.type === 'error') ? 'bg-[#C85A5A]/10 text-muji-red' :
+                                            'bg-muji-ink/10 text-muji-ink'
+                                        }`}>
                                             {getNotificationIcon(notification.type)}
                                         </div>
                                         <span className="font-bold tracking-widest text-muji-text text-base">{notification.msg}</span>
