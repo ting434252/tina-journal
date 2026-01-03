@@ -249,17 +249,9 @@
         // --- CUSTOM RATING COMPONENT ---
         const RatingInput = ({ value = 0, onChange }) => {
             const handleStarClick = (index) => {
-                // If clicking the current value, reset to 0 (optional, but good for UX)
-                // Logic: 
-                // Click star 3. 
-                // If val is 3 -> 2.5
-                // If val is 2.5 -> 3
-                // Else -> 3
                 let newVal = index;
                 if (value === index) newVal = index - 0.5;
-                else if (value === index - 0.5) newVal = index; // Toggle full
-                // If user clicks a different star, default to full star
-                
+                else if (value === index - 0.5) newVal = index; 
                 onChange(newVal);
             };
 
@@ -349,7 +341,7 @@
                 return acc;
             }, 0), [records]);
 
-            // Notification System - New Top Toast Style (Faster, No Modal)
+            // Notification System - New Centered Modal for Success
             const showNotification = (msg, type='success') => {
                 setNotification({ msg, type }); 
                 setTimeout(() => setNotification(null), 1500);
@@ -392,7 +384,7 @@
                     } else {
                         setRecords([]);
                         localStorage.removeItem(`tina_journal_${year}`);
-                        showNotification("資料已全部清除");
+                        showNotification("資料已全部清除", "error"); // Use error style to show red check or just alert icon
                         setShowSettings(false);
                     }
                 } catch (e) { showNotification("清除失敗", "error"); }
@@ -466,13 +458,20 @@
                         </div>
                     </header>
 
-                    {/* Notification - Updated to Toast Style */}
+                    {/* Notification - Differentiated Style */}
                     {notification && (
-                        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[100] animate-fade-in px-4 w-full max-w-sm pointer-events-none">
-                            <div className={`px-6 py-3 rounded-xl shadow-float flex items-center justify-center gap-3 animate-slide-up mx-auto w-max ${notification.type === 'error' ? 'bg-muji-red text-white' : 'bg-muji-ink text-white'}`}>
-                                {notification.type === 'error' ? <Icons.AlertCircle size={20} /> : <Icons.Check size={20} />}
-                                <span className="font-medium tracking-wide text-sm">{notification.msg}</span>
-                            </div>
+                        <div className={`fixed inset-0 z-[100] flex items-center justify-center pointer-events-none ${notification.type === 'success' ? 'bg-black/40 backdrop-blur-[1px] pointer-events-auto' : ''}`}>
+                             {notification.type === 'success' ? (
+                                 <div className="bg-white text-muji-text px-8 py-6 rounded-2xl shadow-modal flex flex-col items-center gap-3 animate-pop min-w-[200px]">
+                                     <div className="p-3 bg-muji-paper rounded-full text-muji-green"><Icons.Check size={32} /></div>
+                                     <span className="font-medium tracking-wide text-lg text-center">{notification.msg}</span>
+                                 </div>
+                             ) : (
+                                <div className="absolute top-24 left-1/2 -translate-x-1/2 bg-muji-red text-white px-6 py-3 rounded-xl shadow-float flex items-center justify-center gap-3 animate-slide-up mx-auto w-max max-w-sm pointer-events-none">
+                                    <Icons.AlertCircle size={20} />
+                                    <span className="font-medium tracking-wide text-sm">{notification.msg}</span>
+                                </div>
+                             )}
                         </div>
                     )}
 
@@ -656,7 +655,18 @@
 
         // Form Components - Updated to accept initialData and isEditing
         const DailyForm = ({ onAdd, onSubmit, categories, initialData, isEditing, showNotification }) => {
-            const [data, setData] = useState(initialData || { date: getTodayString(), type: 'expense', sub: '餐飲', amt: '', note: '' });
+            const [data, setData] = useState(() => {
+                if (initialData) {
+                    return {
+                        date: initialData.date,
+                        type: initialData.type,
+                        sub: initialData.subCategory,
+                        amt: initialData.amount,
+                        note: initialData.note || ''
+                    };
+                }
+                return { date: getTodayString(), type: 'expense', sub: '餐飲', amt: '', note: '' };
+            });
             const cats = data.type === 'expense' ? categories.expense : categories.income;
             
             useEffect(() => {
@@ -685,7 +695,20 @@
         };
 
         const TeaForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification }) => {
-            const [data, setData] = useState({ date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '', rating: 0 });
+            const [data, setData] = useState(() => {
+                if (initialData) {
+                    return {
+                        date: initialData.date,
+                        shop: initialData.shop,
+                        item: initialData.item,
+                        sugar: initialData.sugar,
+                        ice: initialData.ice,
+                        amt: initialData.amount,
+                        rating: initialData.rating || 0
+                    };
+                }
+                return { date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '', rating: 0 };
+            });
             useEffect(() => { if (initialData) setData({ ...initialData, amt: initialData.amount, rating: initialData.rating || 0 }); }, [initialData]);
             const shops = [...new Set(records.filter(r=>r.category==='tea').map(r=>r.shop))];
             const items = [...new Set(records.filter(r=>r.category==='tea' && r.shop===data.shop).map(r=>r.item))];
@@ -717,9 +740,30 @@
 
         const MahjongForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification, players }) => {
             const [data, setData] = useState(() => {
-                if (initialData) return { ...initialData, amt: initialData.amount, win: initialData.isWin, newP: '' };
+                if (initialData) {
+                    return {
+                        date: initialData.date,
+                        players: initialData.players || [],
+                        win: initialData.isWin,
+                        amt: initialData.amount,
+                        newP: ''
+                    };
+                }
                 return { date: getTodayString(), players: [], win: true, amt: '', newP: '' };
             });
+
+            useEffect(() => {
+                if (initialData) {
+                    setData({
+                        date: initialData.date,
+                        players: initialData.players,
+                        win: initialData.isWin,
+                        amt: initialData.amount,
+                        newP: ''
+                    });
+                }
+            }, [initialData]);
+
             const allP = useMemo(() => {
                 const s = new Set(records.filter(r=>r.category==='mahjong').flatMap(r=>r.players)); ['阿明','小華','美美'].forEach(x=>s.add(x)); if(data.newP) s.add(data.newP); return [...s];
             }, [records, data.newP]);
@@ -819,7 +863,7 @@
                         {selRecords.map(r => (
                             <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200 group">
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-1 h-10 rounded-full ${r.category==='tea'?'bg-muji-kraft':(r.type==='income'||r.isWin?'bg-muji-red':'bg-muji-green')}`}></div>
+                                    <div className={`w-1 h-10 rounded-full ${r.category==='tea'?'bg-muji-kraft':(r.type==='income'||(r.category==='mahjong'&&r.isWin)?'bg-muji-red':'bg-muji-green')}`}></div>
                                     <div>
                                         <p className="font-medium text-muji-text text-sm">{r.category==='daily'?r.subCategory:r.category==='tea'?r.shop:'麻將'}</p>
                                         <p className="text-xs text-gray-400">
@@ -830,7 +874,7 @@
                                     </div>
                                 </div>
                                 <div className="text-right flex items-center gap-3">
-                                    <p className={`font-sans font-medium ${r.type==='expense'||!r.isWin||r.category==='tea'?'text-muji-green':'text-muji-red'}`}>{formatMoney(r.amount)}</p>
+                                    <p className={`font-sans font-medium ${(r.category==='daily'&&r.type==='income')||(r.category==='mahjong'&&r.isWin)?'text-muji-red':'text-muji-green'}`}>{formatMoney(r.amount)}</p>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
                                         <button onClick={()=>onEdit(r)} className="text-gray-300 hover:text-muji-ink p-1"><Icons.Edit size={14}/></button>
                                         <button onClick={()=>onDelete(r.id)} className="text-gray-300 hover:text-red-400 p-1"><Icons.Trash size={14}/></button>
