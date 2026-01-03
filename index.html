@@ -129,7 +129,11 @@
             Plus: (props) => <IconWrapper {...props}><path d="M5 12h14"/><path d="M12 5v14"/></IconWrapper>,
             PieChart: (props) => <IconWrapper {...props}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></IconWrapper>,
             Settings: (props) => <IconWrapper {...props}><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></IconWrapper>,
-            Star: ({fill, ...props}) => <IconWrapper {...props} className={fill ? "fill-muji-ink text-muji-ink" : "text-gray-300"}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></IconWrapper>,
+            Star: ({fill, half, ...props}) => (
+                <IconWrapper {...props} className={fill ? "text-muji-ink" : "text-gray-300"} style={fill && half ? { fill: 'url(#half-ink)' } : (fill ? { fill: 'currentColor' } : {})}>
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </IconWrapper>
+            ),
             Trash: (props) => <IconWrapper {...props}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></IconWrapper>,
             Check: (props) => <IconWrapper {...props}><polyline points="20 6 9 17 4 12"/></IconWrapper>,
             Coffee: (props) => <IconWrapper {...props}><path d="M10 2v2"/><path d="M14 2v2"/><path d="M6 2v2"/><path d="M17 8v5.8c0 1.5-1 2.8-2.5 3.2"/><path d="M2.5 8h13.3c1.1 0 2 .9 2 2v2c0 2.2-1.8 4-4 4H6c-2.2 0-4-1.8-4-4V10c0-1.1.9-2 2-2Z"/></IconWrapper>,
@@ -192,7 +196,7 @@
             const displayDate = value ? value.replace(/-/g, ' . ') : '選擇日期';
 
             return (
-                <div className="relative">
+                <div className="relative w-full">
                     <button 
                         onClick={() => setShow(!show)} 
                         className="w-full bg-transparent font-sans text-muji-text text-sm outline-none border-b border-gray-200 py-2 text-left flex justify-between items-center"
@@ -238,6 +242,43 @@
                             </div>
                         </>
                     )}
+                </div>
+            );
+        };
+
+        // --- CUSTOM RATING COMPONENT ---
+        const RatingInput = ({ value = 0, onChange }) => {
+            const handleStarClick = (index) => {
+                // If clicking the current value, reset to 0 (optional, but good for UX)
+                // Logic: 
+                // Click star 3. 
+                // If val is 3 -> 2.5
+                // If val is 2.5 -> 3
+                // Else -> 3
+                let newVal = index;
+                if (value === index) newVal = index - 0.5;
+                else if (value === index - 0.5) newVal = index; // Toggle full
+                // If user clicks a different star, default to full star
+                
+                onChange(newVal);
+            };
+
+            return (
+                <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <button 
+                            key={star} 
+                            onClick={() => handleStarClick(star)}
+                            className="focus:outline-none transition-transform active:scale-90"
+                        >
+                            <Icons.Star 
+                                size={20} 
+                                fill={value >= star - 0.5} 
+                                half={value === star - 0.5} 
+                            />
+                        </button>
+                    ))}
+                    <span className="text-xs text-gray-400 ml-1 font-mono w-6 text-right">{value > 0 ? value : ''}</span>
                 </div>
             );
         };
@@ -358,7 +399,7 @@
             };
 
             const exportToExcel = () => {
-                const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + "日期,類別,項目,金額\n" + records.map(e => `${e.date},${e.category},${e.subCategory||e.shop||'麻將'},${e.amount}`).join("\n");
+                const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + "日期,類別,項目,金額,評分\n" + records.map(e => `${e.date},${e.category},${e.subCategory||e.shop||'麻將'},${e.amount},${e.rating || ''}`).join("\n");
                 const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `tina_journal_${year}.csv`);
                 document.body.appendChild(link); link.click();
             };
@@ -396,7 +437,16 @@
 
             return (
                 <div className="flex flex-col h-screen max-w-md mx-auto bg-muji-paper shadow-2xl relative text-muji-text overflow-hidden">
-                    
+                    {/* SVG Definitions for Half Star */}
+                    <svg width="0" height="0" className="absolute">
+                      <defs>
+                        <linearGradient id="half-ink" x1="0" x2="100%" y1="0" y2="0">
+                          <stop offset="50%" stopColor="#BBADA2" />
+                          <stop offset="50%" stopColor="transparent" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+
                     {/* Header */}
                     <header className="px-6 py-4 bg-muji-ink text-white flex justify-between items-center shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
                         <div>
@@ -635,8 +685,8 @@
         };
 
         const TeaForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification }) => {
-            const [data, setData] = useState({ date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '' });
-            useEffect(() => { if (initialData) setData({ ...initialData, amt: initialData.amount }); }, [initialData]);
+            const [data, setData] = useState({ date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '', rating: 0 });
+            useEffect(() => { if (initialData) setData({ ...initialData, amt: initialData.amount, rating: initialData.rating || 0 }); }, [initialData]);
             const shops = [...new Set(records.filter(r=>r.category==='tea').map(r=>r.shop))];
             const items = [...new Set(records.filter(r=>r.category==='tea' && r.shop===data.shop).map(r=>r.item))];
             const handleSubmit = () => {
@@ -645,11 +695,14 @@
                 if(!data.amt || Number(data.amt) <= 0) return showNotification("請輸入有效金額", "error");
                 const payload = { category: 'tea', ...data, amount: Number(data.amt) };
                 if (isEditing) onSubmit(payload);
-                else { onAdd(payload); setData({...data, amt: '', shop: '', item: ''}); }
+                else { onAdd(payload); setData({...data, amt: '', shop: '', item: '', rating: 0}); }
             };
             return (
                 <div className="space-y-5">
-                    <FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} />
+                    <div className="flex gap-4 items-center">
+                        <div className="flex-1"><FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} /></div>
+                        <div className="flex-shrink-0"><RatingInput value={data.rating} onChange={v => setData({...data, rating: v})} /></div>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">店家</label><input list="shops" value={data.shop} onChange={e=>setData({...data, shop:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text" placeholder="店家"/><datalist id="shops">{shops.map(s=><option key={s} value={s}/>)}</datalist></div>
                         <div className="space-y-1"><label className="text-[10px] text-gray-400 uppercase">品項</label><input list="items" value={data.item} onChange={e=>setData({...data, item:e.target.value})} className="w-full border-b border-gray-200 py-2 outline-none text-sm text-muji-text" placeholder="品項"/><datalist id="items">{items.map(i=><option key={i} value={i}/>)}</datalist></div>
@@ -664,10 +717,12 @@
 
         const MahjongForm = ({ onAdd, onSubmit, records, initialData, isEditing, showNotification, players }) => {
             const [data, setData] = useState(() => {
-                if (initialData) return { ...initialData, amt: initialData.amount, win: initialData.isWin };
-                return { date: getTodayString(), players: [], win: true, amt: '' };
+                if (initialData) return { ...initialData, amt: initialData.amount, win: initialData.isWin, newP: '' };
+                return { date: getTodayString(), players: [], win: true, amt: '', newP: '' };
             });
-            
+            const allP = useMemo(() => {
+                const s = new Set(records.filter(r=>r.category==='mahjong').flatMap(r=>r.players)); ['阿明','小華','美美'].forEach(x=>s.add(x)); if(data.newP) s.add(data.newP); return [...s];
+            }, [records, data.newP]);
             const toggle = (p) => { if(data.players.includes(p)) setData({...data, players: data.players.filter(x=>x!==p)}); else if(data.players.length < 3) setData({...data, players: [...data.players, p]}); };
             const submit = () => { 
                 if(data.players.length !== 3) return showNotification("麻友請選擇 3 位", "error");
@@ -765,7 +820,14 @@
                             <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200 group">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-1 h-10 rounded-full ${r.category==='tea'?'bg-muji-kraft':(r.type==='income'||r.isWin?'bg-muji-red':'bg-muji-green')}`}></div>
-                                    <div><p className="font-medium text-muji-text text-sm">{r.category==='daily'?r.subCategory:r.category==='tea'?r.shop:'麻將'}</p><p className="text-xs text-gray-400">{r.category==='tea'?`${r.item} ${r.sugar}`:r.category==='mahjong'?(r.isWin?'贏':'輸'):r.note}</p></div>
+                                    <div>
+                                        <p className="font-medium text-muji-text text-sm">{r.category==='daily'?r.subCategory:r.category==='tea'?r.shop:'麻將'}</p>
+                                        <p className="text-xs text-gray-400">
+                                            {r.category==='tea'
+                                                ? <span className="flex items-center gap-1">{r.item} <span className="flex">{[...Array(5)].map((_,i) => <Icons.Star key={i} size={8} fill={r.rating >= i+1} half={r.rating === i+0.5} />)}</span></span>
+                                                : r.category==='mahjong'?(r.isWin?'贏':'輸'):r.note}
+                                        </p>
+                                    </div>
                                 </div>
                                 <div className="text-right flex items-center gap-3">
                                     <p className={`font-sans font-medium ${r.type==='expense'||!r.isWin||r.category==='tea'?'text-muji-green':'text-muji-red'}`}>{formatMoney(r.amount)}</p>
