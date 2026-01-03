@@ -177,7 +177,9 @@
             AlertCircle: (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></IconWrapper>,
             Edit: (props) => <IconWrapper {...props}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></IconWrapper>,
             Users: (props) => <IconWrapper {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconWrapper>,
-            Filter: (props) => <IconWrapper {...props}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></IconWrapper>
+            Filter: (props) => <IconWrapper {...props}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></IconWrapper>,
+            ArrowUp: (props) => <IconWrapper {...props}><path d="m18 15-6-6-6 6"/><path d="M12 9v12"/></IconWrapper>,
+            ArrowDown: (props) => <IconWrapper {...props}><path d="m6 9 6 6 6-6"/><path d="M12 3v12"/></IconWrapper>
         };
 
         // --- 3. UI COMPONENTS ---
@@ -277,7 +279,6 @@
         const SummaryCard = ({ category, records }) => {
             const currentMonth = new Date().getMonth();
             const monthly = records.filter(r => new Date(r.date).getMonth() === currentMonth);
-            // Reduced padding from p-5 to p-4
             const cardClass = "bg-muji-ink text-white p-4 rounded-2xl shadow-float relative overflow-hidden transition-colors duration-300";
             const Decor = () => <div className="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none"/>;
 
@@ -289,13 +290,13 @@
                         <Decor/>
                         <div className="relative z-10 flex items-center justify-between">
                             <div className="flex-1">
-                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">本月結餘</p>
+                                <p className="text-[9px] uppercase tracking-widest opacity-80 mb-0.5">本月結餘</p>
                                 <p className="text-2xl font-bold font-sans drop-shadow-sm">{formatMoney(inc-exp)}</p>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-[1px] h-6 bg-white/20"></div>
-                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">收</p><p className="text-lg font-bold font-sans">{formatMoney(inc)}</p></div>
-                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">支</p><p className="text-lg font-bold font-sans">{formatMoney(exp)}</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">收</p><p className="text-base font-bold font-sans">{formatMoney(inc)}</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">支</p><p className="text-base font-bold font-sans">{formatMoney(exp)}</p></div>
                             </div>
                         </div>
                     </div>
@@ -308,12 +309,12 @@
                         <Decor/>
                         <div className="relative z-10 flex items-center justify-between">
                             <div className="flex-1">
-                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">本月總花費</p>
+                                <p className="text-[9px] uppercase tracking-widest opacity-80 mb-0.5">本月總花費</p>
                                 <p className="text-2xl font-bold font-sans drop-shadow-sm">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-[1px] h-6 bg-white/20"></div>
-                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">累積杯數</p><p className="text-lg font-bold font-sans">{tea.length} 杯</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">累積杯數</p><p className="text-base font-bold font-sans">{tea.length} 杯</p></div>
                             </div>
                         </div>
                     </div>
@@ -330,14 +331,14 @@
                         <Decor/>
                         <div className="relative z-10 flex items-center justify-between">
                             <div className="flex-1">
-                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">本月淨利</p>
+                                <p className="text-[9px] uppercase tracking-widest opacity-80 mb-0.5">本月淨利</p>
                                 <p className="text-2xl font-bold font-sans drop-shadow-sm">{formatMoney(net)}</p>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-[1px] h-6 bg-white/20"></div>
-                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝率</p><p className="text-lg font-bold font-sans">{rate}%</p></div>
-                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝</p><p className="text-lg font-bold font-sans">{wins}</p></div>
-                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">敗</p><p className="text-lg font-bold font-sans">{losses}</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝率</p><p className="text-base font-bold font-sans">{rate}%</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">勝</p><p className="text-base font-bold font-sans">{wins}</p></div>
+                                <div className="text-center"><p className="text-[9px] opacity-70 mb-0.5">敗</p><p className="text-base font-bold font-sans">{losses}</p></div>
                             </div>
                         </div>
                     </div>
@@ -352,10 +353,21 @@
             </button>
         );
 
-        const CategorySettings = ({ categories, onAdd, onRemove }) => {
+        const CategorySettings = ({ categories, onAdd, onRemove, setCategories }) => {
             const [activeTab, setActiveTab] = useState('expense');
             const [newCat, setNewCat] = useState('');
             const handleAdd = () => { if(newCat.trim()) { onAdd(activeTab, newCat.trim()); setNewCat(''); } };
+            
+            const moveItem = (index, direction) => {
+                const list = [...categories[activeTab]];
+                if (direction === -1 && index > 0) {
+                    [list[index], list[index-1]] = [list[index-1], list[index]];
+                } else if (direction === 1 && index < list.length - 1) {
+                    [list[index], list[index+1]] = [list[index+1], list[index]];
+                }
+                setCategories(prev => ({...prev, [activeTab]: list}));
+            };
+
             return (
                 <div className="space-y-6 animate-fade-in h-full flex flex-col">
                     <div className="bg-white p-1 rounded-xl flex shadow-inner border border-gray-100">
@@ -366,14 +378,40 @@
                         <input value={newCat} onChange={e=>setNewCat(e.target.value)} onKeyDown={e=> e.key === 'Enter' && handleAdd()} placeholder="輸入新類別..." className="flex-1 min-w-0 bg-transparent px-3 py-2 text-sm text-muji-text outline-none placeholder-gray-300"/>
                         <button onClick={handleAdd} disabled={!newCat.trim()} className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 transition-all"><Icons.Plus size={20}/></button>
                     </div>
-                    <div className="flex-1 overflow-y-auto pr-1"><div className="flex flex-wrap gap-2 content-start">{categories[activeTab].map(cat => (<div key={cat} className="group flex items-center gap-2 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm"><span className="text-sm text-gray-600 font-medium">{cat}</span><button onClick={()=>onRemove(activeTab, cat)} className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button></div>))}{categories[activeTab].length === 0 && <div className="w-full text-center py-10 text-gray-300 space-y-2"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-100 mx-auto"><Icons.List size={20} className="opacity-20"/></div><span className="text-xs tracking-widest">暫無類別</span></div>}</div></div>
+                    <div className="flex-1 overflow-y-auto pr-1">
+                        <div className="flex flex-col gap-2 content-start">
+                            {categories[activeTab].map((cat, index) => (
+                                <div key={cat} className="group flex items-center justify-between bg-white border border-gray-100 px-4 py-3 rounded-xl shadow-sm">
+                                    <span className="text-sm text-gray-600 font-medium">{cat}</span>
+                                    <div className="flex items-center gap-1">
+                                        <button onClick={()=>moveItem(index, -1)} disabled={index===0} className="p-1 text-gray-300 hover:text-muji-ink disabled:opacity-30"><Icons.ArrowUp size={14}/></button>
+                                        <button onClick={()=>moveItem(index, 1)} disabled={index===categories[activeTab].length-1} className="p-1 text-gray-300 hover:text-muji-ink disabled:opacity-30"><Icons.ArrowDown size={14}/></button>
+                                        <div className="w-[1px] h-4 bg-gray-200 mx-1"></div>
+                                        <button onClick={()=>onRemove(activeTab, cat)} className="w-6 h-6 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button>
+                                    </div>
+                                </div>
+                            ))}
+                            {categories[activeTab].length === 0 && <div className="w-full text-center py-10 text-gray-300 space-y-2"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-100 mx-auto"><Icons.List size={20} className="opacity-20"/></div><span className="text-xs tracking-widest">暫無類別</span></div>}
+                        </div>
+                    </div>
                 </div>
             );
         };
 
-        const PlayerSettings = ({ players, onAdd, onRemove }) => {
+        const PlayerSettings = ({ players, onAdd, onRemove, setPlayers }) => {
             const [newPlayer, setNewPlayer] = useState('');
             const handleAdd = () => { if(newPlayer.trim()) { onAdd(newPlayer.trim()); setNewPlayer(''); } };
+            
+            const moveItem = (index, direction) => {
+                const list = [...players];
+                if (direction === -1 && index > 0) {
+                    [list[index], list[index-1]] = [list[index-1], list[index]];
+                } else if (direction === 1 && index < list.length - 1) {
+                    [list[index], list[index+1]] = [list[index+1], list[index]];
+                }
+                setPlayers(list);
+            };
+
             return (
                 <div className="space-y-6 animate-fade-in h-full flex flex-col">
                     <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
@@ -381,14 +419,18 @@
                         <button onClick={handleAdd} disabled={!newPlayer.trim()} className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-muji-paper text-muji-ink rounded-lg hover:bg-muji-ink hover:text-white disabled:opacity-50 transition-all"><Icons.Plus size={20}/></button>
                     </div>
                     <div className="flex-1 overflow-y-auto pr-1">
-                        <div className="flex flex-wrap gap-2 content-start">
-                            {players.map(p => (
-                                <div key={p} className="group flex items-center gap-2 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm">
-                                    <span className="text-sm text-gray-600 font-medium">{p}</span>
-                                    <button onClick={()=>onRemove(p)} className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"><Icons.X size={14}/></button>
+                        <div className="grid grid-cols-3 gap-2 content-start">
+                            {players.map((p, index) => (
+                                <div key={p} className="group relative bg-white border border-gray-100 px-2 py-3 rounded-xl shadow-sm text-center flex flex-col items-center justify-between min-h-[80px]">
+                                    <span className="text-sm text-gray-600 font-medium break-all">{p}</span>
+                                    <div className="flex items-center justify-center gap-1 mt-2 w-full">
+                                        <button onClick={()=>moveItem(index, -1)} disabled={index===0} className="text-gray-300 hover:text-muji-ink disabled:opacity-30"><Icons.ArrowLeft size={12}/></button>
+                                         <button onClick={()=>onRemove(p)} className="text-gray-300 hover:text-red-400 hover:bg-red-50 rounded-full p-0.5 transition-colors"><Icons.X size={12}/></button>
+                                        <button onClick={()=>moveItem(index, 1)} disabled={index===players.length-1} className="text-gray-300 hover:text-muji-ink disabled:opacity-30"><Icons.ArrowUp size={12} className="rotate-90"/></button>
+                                    </div>
                                 </div>
                             ))}
-                            {players.length === 0 && <div className="w-full text-center py-10 text-gray-300 text-xs tracking-widest">暫無麻友</div>}
+                            {players.length === 0 && <div className="col-span-3 w-full text-center py-10 text-gray-300 text-xs tracking-widest">暫無麻友</div>}
                         </div>
                     </div>
                 </div>
@@ -590,7 +632,7 @@
                         <h3 className="text-xs text-gray-400 uppercase tracking-widest pl-2 mb-2 font-sans">{selDate} • {category==='daily'?'日常':category==='tea'?'手搖':'麻將'}</h3>
                         {selRecords.length === 0 && <div className="text-center py-8 text-gray-300 text-sm italic">本日無紀錄</div>}
                         {selRecords.map(r => (
-                            <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200">
+                            <div key={r.id} className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between animate-slide-up border border-transparent hover:border-gray-200 group">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-1 h-10 rounded-full ${r.category==='tea'?'bg-muji-kraft':(r.type==='income'||(r.category==='mahjong'&&r.isWin)?'bg-muji-red':'bg-muji-green')}`}></div>
                                     <div>
@@ -600,7 +642,7 @@
                                 </div>
                                 <div className="text-right flex items-center gap-3">
                                     <p className={`font-sans font-medium ${(r.category==='daily'&&r.type==='income')||(r.category==='mahjong'&&r.isWin)?'text-muji-red':'text-muji-green'}`}>{formatMoney(r.amount)}</p>
-                                    <div className="flex gap-1 transition">
+                                    <div className="flex gap-1">
                                         <button onClick={()=>onEdit(r)} className="text-gray-300 hover:text-muji-ink p-1"><Icons.Edit size={14}/></button>
                                         <button onClick={()=>onDelete(r.id)} className="text-gray-300 hover:text-red-400 p-1"><Icons.Trash size={14}/></button>
                                     </div>
@@ -645,7 +687,14 @@
                 
                 // Pie Chart Data (Expenses/Income by Category)
                 const grp = relevantRecords.reduce((a,c) => { a[c.subCategory] = (a[c.subCategory]||0) + Number(c.amount); return a; }, {});
-                const chartData = Object.keys(grp).map(k => ({ name: k, value: grp[k] }));
+                
+                // Calculate percentages for custom legend
+                const totalAmount = Object.values(grp).reduce((a, b) => a + b, 0);
+                const chartData = Object.keys(grp).map(k => ({ 
+                    name: k, 
+                    value: grp[k],
+                    percent: totalAmount ? Math.round((grp[k] / totalAmount) * 100) : 0
+                })).sort((a, b) => b.value - a.value);
                 
                 // Aggregate category totals for list
                 const categoryTotals = Object.keys(grp)
@@ -772,7 +821,7 @@
                     {category === 'daily' && dailyStats && (
                         <>
                             {/* Income/Expense Toggle */}
-                            <div className="flex justify-center mb-2">
+                            <div className="flex justify-center mb-1">
                                 <div className="bg-gray-100 p-1 rounded-lg flex text-xs">
                                     <button onClick={() => setDailyType('expense')} className={`px-4 py-1.5 rounded-md transition-all ${dailyType === 'expense' ? 'bg-white shadow text-muji-green font-bold' : 'text-gray-400'}`}>支出分析</button>
                                     <button onClick={() => setDailyType('income')} className={`px-4 py-1.5 rounded-md transition-all ${dailyType === 'income' ? 'bg-white shadow text-muji-red font-bold' : 'text-gray-400'}`}>收入分析</button>
@@ -805,11 +854,37 @@
                                 </div>
                             </div>
 
-                            {/* Category Pie */}
+                            {/* Category Pie & Legend */}
                             <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border">
                                 <h3 className="text-center text-xs tracking-widest uppercase mb-4 text-gray-400">{dailyType === 'expense' ? '支出' : '收入'}類別佔比</h3>
                                 {dailyStats.chartData.length > 0 ? (
-                                    <div className="h-64"><ResponsiveContainer><PieChart><Pie data={dailyStats.chartData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">{dailyStats.chartData.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip formatter={(v)=>formatMoney(v)}/><Legend/></PieChart></ResponsiveContainer></div>
+                                    <div className="flex flex-col items-center">
+                                        <div className="h-48 w-full">
+                                            <ResponsiveContainer>
+                                                <PieChart>
+                                                    <Pie data={dailyStats.chartData} innerRadius={50} outerRadius={70} paddingAngle={5} dataKey="value">
+                                                        {dailyStats.chartData.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}
+                                                    </Pie>
+                                                    <Tooltip formatter={(v)=>formatMoney(v)}/>
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                        {/* Custom List Legend */}
+                                        <div className="w-full space-y-2 mt-2">
+                                            {dailyStats.chartData.map((entry, index) => (
+                                                <div key={index} className="flex justify-between items-center text-xs">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-3 h-3 rounded-full" style={{backgroundColor: COLORS[index % COLORS.length]}}></div>
+                                                        <span className="text-gray-600">{entry.name}</span>
+                                                    </div>
+                                                    <div className="flex gap-3">
+                                                        <span className="font-medium text-muji-text">{formatMoney(entry.value)}</span>
+                                                        <span className="text-gray-400 w-8 text-right">{entry.percent}%</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 ) : <div className="text-center py-10 text-gray-300">無數據</div>}
                             </div>
 
@@ -1268,14 +1343,14 @@
                                             <div className="pt-8"><SettingsItem icon={<Icons.Trash size={18}/>} label="清除所有資料" onClick={handleClearAllData} isDestructive/></div>
                                         </div>
                                     ) : settingsPage === 'categories' ? (
-                                        <CategorySettings categories={categories} onAdd={addCategory} onRemove={removeCategory} />
+                                        <CategorySettings categories={categories} onAdd={addCategory} onRemove={removeCategory} setCategories={setCategories} />
                                     ) : (
-                                        <PlayerSettings players={mahjongPlayers} onAdd={addPlayer} onRemove={removePlayer} />
+                                        <PlayerSettings players={mahjongPlayers} onAdd={addPlayer} onRemove={removePlayer} setPlayers={setMahjongPlayers} />
                                     )}
                                 </div>
                                 <div className="p-6 text-center border-t border-white/50">
                                     <p className="text-[10px] text-gray-400 font-sans tracking-widest uppercase">
-                                        Tina Journal {year} • V1.1 <br/> {db ? 'Cloud Sync' : 'Local Storage'}
+                                        Tina Journal {year} • V1.0 <br/> {db ? 'Cloud Sync' : 'Local Storage'}
                                     </p>
                                 </div>
                             </div>
