@@ -341,7 +341,7 @@
                 return acc;
             }, 0), [records]);
 
-            // Notification System - New Centered Modal for Success
+            // Notification System - New Top Toast Style (Faster, No Modal)
             const showNotification = (msg, type='success') => {
                 setNotification({ msg, type }); 
                 setTimeout(() => setNotification(null), 1500);
@@ -440,7 +440,7 @@
                     </svg>
 
                     {/* Header */}
-                    <header className="px-6 py-4 bg-muji-ink text-white flex justify-between items-center shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
+                    <header className="px-6 py-3 bg-muji-ink text-white flex justify-between items-center shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
                         <div>
                             <h1 className="font-sans font-bold text-3xl tracking-widest text-white leading-none drop-shadow-sm">TINA</h1>
                             <p className="text-[10px] tracking-[0.3em] text-white/80 mt-2 uppercase border-l-2 border-white/50 pl-2 font-sans">Journal</p>
@@ -458,20 +458,13 @@
                         </div>
                     </header>
 
-                    {/* Notification - Differentiated Style */}
+                    {/* Notification - Updated to Toast Style */}
                     {notification && (
-                        <div className={`fixed inset-0 z-[100] flex items-center justify-center pointer-events-none ${notification.type === 'success' ? 'bg-black/40 backdrop-blur-[1px] pointer-events-auto' : ''}`}>
-                             {notification.type === 'success' ? (
-                                 <div className="bg-white text-muji-text px-8 py-6 rounded-2xl shadow-modal flex flex-col items-center gap-3 animate-pop min-w-[200px]">
-                                     <div className="p-3 bg-muji-paper rounded-full text-muji-green"><Icons.Check size={32} /></div>
-                                     <span className="font-medium tracking-wide text-lg text-center">{notification.msg}</span>
-                                 </div>
-                             ) : (
-                                <div className="absolute top-24 left-1/2 -translate-x-1/2 bg-muji-red text-white px-6 py-3 rounded-xl shadow-float flex items-center justify-center gap-3 animate-slide-up mx-auto w-max max-w-sm pointer-events-none">
-                                    <Icons.AlertCircle size={20} />
-                                    <span className="font-medium tracking-wide text-sm">{notification.msg}</span>
-                                </div>
-                             )}
+                        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[100] animate-fade-in px-4 w-full max-w-sm pointer-events-none">
+                            <div className={`px-6 py-3 rounded-xl shadow-float flex items-center justify-center gap-3 animate-slide-up mx-auto w-max ${notification.type === 'error' ? 'bg-muji-red text-white' : 'bg-muji-ink text-white'}`}>
+                                {notification.type === 'error' ? <Icons.AlertCircle size={20} /> : <Icons.Check size={20} />}
+                                <span className="font-medium tracking-wide text-sm">{notification.msg}</span>
+                            </div>
                         </div>
                     )}
 
@@ -537,7 +530,8 @@
 
                     {/* Main Content Area */}
                     <main className="flex-1 overflow-y-auto pb-double-nav">
-                        <div className="pt-6">
+                        <div className="pt-2">
+                            {/* Summary Card now in CalendarView only */}
                             {currentTab === 'add' && <AddView category={currentCategory} onAdd={handleAddRecord} records={records} categories={categories} showNotification={showNotification} players={mahjongPlayers} />}
                             {currentTab === 'calendar' && <CalendarView records={records} onDelete={handleDelete} onEdit={setEditingRecord} category={currentCategory} />}
                             {currentTab === 'stats' && <StatsView records={records} category={currentCategory} categories={categories} />}
@@ -622,8 +616,8 @@
 
         const AddView = ({ category, onAdd, records, categories, showNotification, players }) => (
             <div className="px-6 animate-fade-in">
-                <div className="mb-6"><SummaryCard category={category} records={records} /></div>
-                <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border animate-slide-up mb-6">
+                {/* Summary Card REMOVED from AddView */}
+                <div className="bg-muji-white p-6 rounded-3xl shadow-card border border-muji-border animate-slide-up mb-2">
                     {category === 'daily' && <DailyForm onAdd={onAdd} categories={categories} showNotification={showNotification} />}
                     {category === 'tea' && <TeaForm onAdd={onAdd} records={records} showNotification={showNotification} />}
                     {category === 'mahjong' && <MahjongForm onAdd={onAdd} records={records} showNotification={showNotification} players={players} />}
@@ -634,22 +628,94 @@
         const SummaryCard = ({ category, records }) => {
             const currentMonth = new Date().getMonth();
             const monthly = records.filter(r => new Date(r.date).getMonth() === currentMonth);
-            const cardClass = "bg-muji-ink text-white p-6 rounded-2xl shadow-float flex justify-between items-center relative overflow-hidden transition-colors duration-300";
+            const cardClass = "bg-muji-ink text-white p-5 rounded-2xl shadow-float relative overflow-hidden transition-colors duration-300";
             const Decor = () => <div className="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none"/>;
 
             if (category === 'daily') {
                 const inc = monthly.filter(r=>r.category==='daily' && r.type==='income').reduce((a,c)=>a+Number(c.amount),0);
                 const exp = monthly.filter(r=>r.category==='daily' && r.type==='expense').reduce((a,c)=>a+Number(c.amount),0);
-                return (<div className={cardClass}><Decor/><div className="z-10"><p className="text-[10px] uppercase tracking-widest opacity-80">本月結餘</p><p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{formatMoney(inc-exp)}</p></div><div className="text-right z-10 space-y-1"><div className="text-xs"><span className="opacity-70 mr-2">收</span><span className="text-white font-medium font-sans">{formatMoney(inc)}</span></div><div className="text-xs"><span className="opacity-70 mr-2">支</span><span className="text-white/90 font-sans">{formatMoney(exp)}</span></div></div></div>);
+                return (
+                    <div className={cardClass}>
+                        <Decor/>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex-1">
+                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月結餘</p>
+                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(inc-exp)}</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="text-center">
+                                    <p className="text-[9px] opacity-70 mb-0.5">收</p>
+                                    <p className="text-lg font-bold font-sans">{formatMoney(inc)}</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-[9px] opacity-70 mb-0.5">支</p>
+                                    <p className="text-lg font-bold font-sans">{formatMoney(exp)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
             }
             if (category === 'tea') {
                 const tea = monthly.filter(r=>r.category==='tea');
-                return (<div className={cardClass}><Decor/><div className="z-10 flex items-center gap-3"><div className="p-3 bg-white/10 rounded-full"><Icons.Coffee size={24}/></div><div><p className="text-[10px] uppercase tracking-widest opacity-80">本月杯數</p><p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{tea.length}</p></div></div><div className="text-right z-10"><p className="text-[10px] uppercase tracking-widest opacity-80">總花費</p><p className="text-xl font-medium text-white/90 font-sans">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p></div></div>);
+                return (
+                     <div className={cardClass}>
+                        <Decor/>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex-1">
+                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月杯數</p>
+                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{tea.length}</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="text-center">
+                                    <p className="text-[9px] opacity-70 mb-0.5">總花費</p>
+                                    <p className="text-lg font-bold font-sans">{formatMoney(tea.reduce((a,c)=>a+c.amount,0))}</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-[9px] opacity-70 mb-0.5">平均單價</p>
+                                    <p className="text-lg font-bold font-sans">{tea.length ? Math.round(tea.reduce((a,c)=>a+c.amount,0)/tea.length) : 0}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
             }
             if (category === 'mahjong') {
-                const mj = records.filter(r=>r.category==='mahjong');
-                const wins = mj.filter(r=>r.isWin).length;
-                return (<div className={cardClass}><Decor/><div className="z-10 flex items-center gap-3"><div className="p-3 bg-white/10 rounded-full"><Icons.Dices size={24}/></div><div><p className="text-[10px] uppercase tracking-widest opacity-80">本月勝率</p><p className="text-3xl font-bold mt-1 drop-shadow-sm font-sans">{mj.length ? Math.round((wins/mj.length)*100) : 0}%</p></div></div><div className="text-right z-10"><p className="text-[10px] uppercase tracking-widest opacity-80">本月淨利</p><p className="text-xl font-medium text-white font-sans">{formatMoney(mj.reduce((a,c)=>a+(c.isWin?c.amount:-c.amount),0))}</p></div></div>);
+                const mj = monthly.filter(r => r.category === 'mahjong');
+                const wins = mj.filter(r => r.isWin).length;
+                const losses = mj.length - wins;
+                const net = mj.reduce((a,c) => a + (c.isWin ? c.amount : -c.amount), 0);
+                const rate = mj.length ? Math.round((wins/mj.length)*100) : 0;
+                
+                return (
+                    <div className={cardClass}>
+                        <Decor/>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex-1">
+                                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">本月淨利</p>
+                                <p className="text-3xl font-bold font-sans drop-shadow-sm">{formatMoney(net)}</p>
+                            </div>
+                            
+                            <div className="flex items-center gap-3">
+                                <div className="w-[1px] h-8 bg-white/20"></div>
+                                <div className="text-center">
+                                    <p className="text-[9px] opacity-70 mb-0.5">勝率</p>
+                                    <p className="text-lg font-bold font-sans">{rate}%</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-[9px] opacity-70 mb-0.5">勝</p>
+                                    <p className="text-lg font-bold font-sans">{wins}</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-[9px] opacity-70 mb-0.5">敗</p>
+                                    <p className="text-lg font-bold font-sans">{losses}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
             }
         };
 
@@ -820,10 +886,13 @@
             const selRecords = filteredRecords.filter(r=>r.date===selDate);
             const jumpToToday = () => { const now = new Date(); setViewDate(now); setSelDate(getTodayString()); setShowPicker(false); };
             const changeMonth = (m) => { const newDate = new Date(viewDate.getFullYear(), m, 1); setViewDate(newDate); setShowPicker(false); };
-            const changeYear = (y) => { const newDate = new Date(y, viewDate.getMonth(), 1); setViewDate(newDate); };
+            const changeYear = (y) => { const newDate = new Date(y, viewDate.getMonth(), 1); setViewDate(newDate); setShowPicker(false); };
 
             return (
                 <div className="px-6 animate-fade-in mb-6 relative">
+                    {/* Summary Card MOVED HERE */}
+                    <div className="mb-2"><SummaryCard category={category} records={records} /></div>
+
                     {showPicker && (
                         <div className="absolute top-16 left-6 right-6 bg-white p-4 shadow-xl rounded-2xl z-20 border border-gray-100 animate-fade-in">
                             <div className="flex justify-between items-center mb-4 px-2">
