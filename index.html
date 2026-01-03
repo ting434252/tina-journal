@@ -149,7 +149,15 @@
         };
 
         const formatMoney = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
-        const getTodayString = () => new Date().toISOString().split('T')[0];
+        
+        // Improved local date string function (prevents UTC issues)
+        const getTodayString = () => {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
 
         // --- CUSTOM DATE PICKER COMPONENT ---
         const FormDatePicker = ({ value, onChange }) => {
@@ -162,17 +170,24 @@
 
             const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
             const startDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay(); // 0=Sun
-            const offset = startDay === 0 ? 6 : startDay - 1; // Mon start adjusted? Wait, standard is Sun=0. Let's align with CalendarView: Mon-Sun
-            // CalendarView: "一","二"... offset = startDay===0 ? 6 : startDay - 1;
+            const offset = startDay === 0 ? 6 : startDay - 1; 
             
             const handleDayClick = (day) => {
                 const dateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                onChange({ target: { value: dateStr } }); // Mock event for compatibility
+                onChange({ target: { value: dateStr } });
                 setShow(false);
             };
 
             const changeMonth = (delta) => {
                 setViewDate(new Date(viewDate.setMonth(viewDate.getMonth() + delta)));
+            };
+
+            const jumpToToday = () => {
+                const todayStr = getTodayString();
+                const now = new Date();
+                setViewDate(now);
+                onChange({ target: { value: todayStr } });
+                setShow(false);
             };
 
             const displayDate = value ? value.replace(/-/g, ' . ') : '選擇日期';
@@ -192,9 +207,14 @@
                             <div className="fixed inset-0 z-40 bg-black/10" onClick={() => setShow(false)}></div>
                             <div className="absolute top-full left-0 mt-2 bg-white p-4 rounded-xl shadow-xl z-50 w-64 border border-gray-100 animate-pop">
                                 <div className="flex justify-between items-center mb-3">
-                                    <button onClick={() => changeMonth(-1)} className="p-1 hover:bg-gray-100 rounded-full"><Icons.ChevronLeft size={16}/></button>
-                                    <span className="font-bold text-muji-ink text-sm">{viewDate.getFullYear()} . {String(viewDate.getMonth()+1).padStart(2,'0')}</span>
-                                    <button onClick={() => changeMonth(1)} className="p-1 hover:bg-gray-100 rounded-full"><Icons.ChevronRight size={16}/></button>
+                                    <div className="flex items-center">
+                                        <button onClick={() => changeMonth(-1)} className="p-1 hover:bg-gray-100 rounded-full"><Icons.ChevronLeft size={16}/></button>
+                                        <span className="font-bold text-muji-ink text-sm mx-1">{viewDate.getFullYear()} . {String(viewDate.getMonth()+1).padStart(2,'0')}</span>
+                                        <button onClick={() => changeMonth(1)} className="p-1 hover:bg-gray-100 rounded-full"><Icons.ChevronRight size={16}/></button>
+                                    </div>
+                                    <button onClick={jumpToToday} className="p-1.5 rounded-full bg-muji-paper text-muji-ink hover:bg-muji-ink hover:text-white transition-colors" title="回到今天">
+                                        <Icons.Target size={14}/>
+                                    </button>
                                 </div>
                                 <div className="grid grid-cols-7 text-center text-[10px] text-gray-400 mb-1">
                                     <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
@@ -355,7 +375,7 @@
                 <div className="flex flex-col h-screen max-w-md mx-auto bg-muji-paper shadow-2xl relative text-muji-text overflow-hidden">
                     
                     {/* Header */}
-                    <header className="px-6 py-6 bg-muji-ink text-white flex justify-between items-end shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
+                    <header className="px-6 py-4 bg-muji-ink text-white flex justify-between items-center shadow-md relative z-10 transition-colors duration-300 flex-shrink-0">
                         <div>
                             <h1 className="font-sans font-bold text-3xl tracking-widest text-white leading-none drop-shadow-sm">TINA</h1>
                             <p className="text-[10px] tracking-[0.3em] text-white/80 mt-2 uppercase border-l-2 border-white/50 pl-2 font-sans">Journal</p>
@@ -551,7 +571,7 @@
                         <button onClick={()=>setData({...data, type:'expense'})} className={`flex-1 pb-2 text-sm tracking-widest transition border-b-2 ${data.type==='expense' ? 'border-muji-green text-muji-green font-bold' : 'border-transparent text-gray-400'}`}>支出</button>
                         <button onClick={()=>setData({...data, type:'income'})} className={`flex-1 pb-2 text-sm tracking-widest transition border-b-2 ${data.type==='income' ? 'border-muji-red text-muji-red font-bold' : 'border-transparent text-gray-400'}`}>收入</button>
                     </div>
-                    <div className="flex items-center justify-between"><FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} /></div>
+                    <FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} />
                     <div className="flex flex-wrap gap-2">{cats.length > 0 ? cats.map(c => (<button key={c} onClick={()=>setData({...data, sub:c})} className={`px-4 py-2 text-xs rounded-lg transition-all ${data.sub===c ? 'bg-muji-ink text-white' : 'bg-gray-100 text-gray-500'}`}>{c}</button>)) : <span className="text-xs text-gray-400">請至設定新增類別</span>}</div>
                     <div className="relative border-b border-gray-200"><span className="absolute left-0 top-1/2 -translate-y-1/2 text-xl font-sans text-gray-300">$</span><input type="number" inputMode="numeric" min="0" placeholder="0" value={data.amt} onChange={e => {const val = e.target.value; if (val === '' || (Number(val) >= 0 && !val.includes('-'))) setData({...data, amt: val});}} onKeyDown={e => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} className="w-full pl-6 py-2 text-4xl font-sans font-bold text-right outline-none bg-transparent text-muji-text"/></div>
                     <input placeholder="備註..." value={data.note} onChange={e=>setData({...data, note:e.target.value})} className="w-full bg-gray-50 p-3 rounded-lg text-sm outline-none text-muji-text placeholder-gray-400"/>
@@ -561,7 +581,10 @@
         };
 
         const TeaForm = ({ onAdd, onSubmit, records, initialData, isEditing }) => {
-            const [data, setData] = useState(initialData || { date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '' });
+            const [data, setData] = useState(() => {
+                if (initialData) return { ...initialData, amt: initialData.amount };
+                return { date: getTodayString(), shop: '', item: '', sugar: '半糖', ice: '少冰', amt: '' };
+            });
             const shops = [...new Set(records.filter(r=>r.category==='tea').map(r=>r.shop))];
             const items = [...new Set(records.filter(r=>r.category==='tea' && r.shop===data.shop).map(r=>r.item))];
             const handleSubmit = () => {
@@ -586,14 +609,18 @@
         };
 
         const MahjongForm = ({ onAdd, onSubmit, records, initialData, isEditing }) => {
-            const [data, setData] = useState(initialData || { date: getTodayString(), players: [], win: true, amt: '', newP: '' });
+            const [data, setData] = useState(() => {
+                if (initialData) return { ...initialData, amt: initialData.amount, win: initialData.isWin, newP: '' };
+                return { date: getTodayString(), players: [], win: true, amt: '', newP: '' };
+            });
             const allP = useMemo(() => {
                 const s = new Set(records.filter(r=>r.category==='mahjong').flatMap(r=>r.players)); ['阿明','小華','美美'].forEach(x=>s.add(x)); if(data.newP) s.add(data.newP); return [...s];
             }, [records, data.newP]);
             const toggle = (p) => { if(data.players.includes(p)) setData({...data, players: data.players.filter(x=>x!==p)}); else if(data.players.length < 3) setData({...data, players: [...data.players, p]}); };
-            const submit = () => { if(data.players.length !== 3 || !data.amt) return alert("資料錯誤"); onAdd({ category: 'mahjong', date: data.date, players: data.players, isWin: data.win, amount: Number(data.amt) }); setData({...data, amt: '', players: []}); };
+            const submit = () => { if(data.players.length !== 3 || !data.amt) return alert("資料錯誤"); const payload = { category: 'mahjong', date: data.date, players: data.players, isWin: data.win, amount: Number(data.amt) }; if (isEditing) onSubmit(payload); else { onAdd(payload); setData({...data, amt: '', players: []}); } };
             return (
                 <div className="space-y-6">
+                    <FormDatePicker value={data.date} onChange={e=>setData({...data, date:e.target.value})} />
                     <div className="flex bg-gray-100 p-1 rounded-lg">
                         <button onClick={()=>setData({...data, win:true})} className={`flex-1 py-2 text-xs rounded-md transition ${data.win?'bg-white shadow text-muji-red font-bold':'text-gray-400'}`}>贏</button>
                         <button onClick={()=>setData({...data, win:false})} className={`flex-1 py-2 text-xs rounded-md transition ${!data.win?'bg-white shadow text-muji-green font-bold':'text-gray-400'}`}>輸</button>
